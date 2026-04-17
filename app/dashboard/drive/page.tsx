@@ -193,7 +193,7 @@ export default function DrivePage() {
         {breadcrumbs.map((crumb, i) => (
           <span key={i} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
             <span style={{ color: 'var(--text-muted)' }}>/</span>
-            <button onClick={() => setCurrentFolder(breadcrumbs.slice(0, i+1).join('/'))} style={{ border: 'none', background: 'none', cursor: 'pointer', color: i === breadcrumbs.length - 1 ? 'var(--text-primary)' : 'var(--accent)', fontWeight: 560, fontFamily: 'Geist, sans-serif', fontSize: 13, padding: '4px 8px', borderRadius: 7 }}>{crumb}</span>
+            <button onClick={() => setCurrentFolder(breadcrumbs.slice(0, i+1).join('/'))} style={{ border: 'none', background: 'none', cursor: 'pointer', color: i === breadcrumbs.length - 1 ? 'var(--text-primary)' : 'var(--accent)', fontWeight: 560, fontFamily: 'Geist, sans-serif', fontSize: 13, padding: '4px 8px', borderRadius: 7 }}>{crumb}</button>
           </span>
         ))}
       </div>
