@@ -13,6 +13,17 @@ const COLORS = ['#6366f1','#a78bfa','#34d399','#f59e0b','#ef4444','#ec4899']
 const HOURS = Array.from({ length: 15 }, (_, i) => i + 7)
 const HOUR_HEIGHT = 56 // px per hour
 
+// Always use LOCAL date to avoid UTC shift (critical for AU timezones UTC+10/11)
+const localDateStr = (d: Date) =>
+  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+
+// Parse a timestamp from Supabase robustly (handles Z suffix, +offset, or bare local)
+const parseTS = (s: string): Date => {
+  // If it has no timezone marker, treat as local time by appending nothing
+  // If it has Z or offset, Date will handle it correctly
+  return new Date(s)
+}
+
 export default function CalendarPage() {
   const { user } = useAuth()
   const [events, setEvents] = useState<Ev[]>([])
@@ -31,7 +42,16 @@ export default function CalendarPage() {
 
   const load = async () => {
     if (!user) return
-    const { data } = await supabase.from('calendar_events').select('*').eq('user_id', user.id)
+    // Fetch a reasonable window: 3 months back to 6 months forward
+    const from = new Date(); from.setMonth(from.getMonth() - 3)
+    const to = new Date(); to.setMonth(to.getMonth() + 6)
+    const { data } = await supabase
+      .from('calendar_events')
+      .select('*')
+      .eq('user_id', user.id)
+      .gte('start_time', from.toISOString())
+      .lte('start_time', to.toISOString())
+      .order('start_time', { ascending: true })
     setEvents(data || [])
   }
   useEffect(() => { if (user) load() }, [user])
@@ -55,7 +75,7 @@ export default function CalendarPage() {
   }
 
   const openDay = (d: Date) => {
-    const iso = d.toISOString().split('T')[0]
+    const iso = localDateStr(d)
     openModal(`${iso}T09:00`, `${iso}T10:00`)
   }
 
@@ -71,7 +91,7 @@ export default function CalendarPage() {
     const mm = m >= 60 ? 59 : m
     const hh = m >= 60 ? h + 1 : h
     const pad = (n: number) => String(n).padStart(2, '0')
-    return `${day.toISOString().split('T')[0]}T${pad(hh)}:${pad(mm)}`
+    return `${localDateStr(day)}T${pad(hh)}:${pad(mm)}`
   }
 
   const handleMouseDown = (e: React.MouseEvent, day: Date) => {
@@ -87,7 +107,7 @@ export default function CalendarPage() {
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
     if (!dragging || dragDay === null) return
-    const col = document.querySelector(`[data-day="${dragDay.toISOString().split('T')[0]}"]`) as HTMLElement
+    const col = document.querySelector(`[data-day="${localDateStr(dragDay)}"]`) as HTMLElement
     if (!col) return
     const rect = col.getBoundingClientRect()
     const y = Math.max(0, Math.min(e.clientY - rect.top, HOUR_HEIGHT * HOURS.length))
@@ -124,11 +144,8 @@ export default function CalendarPage() {
   for (let i = 1; i <= lastDay.getDate(); i++) cells.push(new Date(cur.getFullYear(), cur.getMonth(), i))
 
   const today = new Date()
-  const isToday = (d: Date) => d.getDate() === today.getDate() && d.getMonth() === today.getMonth() && d.getFullYear() === today.getFullYear()
-  const dayEvs = (d: Date) => events.filter(e => {
-    const ed = new Date(e.start_time)
-    return ed.getDate() === d.getDate() && ed.getMonth() === d.getMonth() && ed.getFullYear() === d.getFullYear()
-  })
+  const isToday = (d: Date) => localDateStr(d) === localDateStr(today)
+  const dayEvs = (d: Date) => events.filter(e => localDateStr(parseTS(e.start_time)) === localDateStr(d))
 
   // Week helpers
   const weekStart = new Date(cur)
@@ -145,7 +162,7 @@ export default function CalendarPage() {
   // Drag preview in week view
   const getDragPreview = (day: Date) => {
     if (!dragging || !dragDay || dragStartY === null || dragEndY === null) return null
-    if (day.toDateString() !== dragDay.toDateString()) return null
+    if (localDateStr(day) !== localDateStr(dragDay)) return null
     const minY = Math.min(dragStartY, dragEndY)
     const maxY = Math.max(dragStartY, dragEndY)
     const top = Math.max(0, minY)
@@ -180,7 +197,7 @@ export default function CalendarPage() {
               </button>
             ))}
           </div>
-          <button className="glass-button-primary" onClick={() => { const iso = today.toISOString().split('T')[0]; openModal(`${iso}T09:00`, `${iso}T10:00`) }}>+ Add event</button>
+          <button className="glass-button-primary" onClick={() => { const iso = localDateStr(today); openModal(`${iso}T09:00`, `${iso}T10:00`) }}>+ Add event</button>
         </div>
       </div>
 
@@ -241,7 +258,7 @@ export default function CalendarPage() {
             {weekDays.map(d => {
               const evs = dayEvs(d)
               const preview = getDragPreview(d)
-              const dayISO = d.toISOString().split('T')[0]
+              const dayISO = localDateStr(d)
               return (
                 <div
                   key={d.toISOString()}
@@ -274,8 +291,8 @@ export default function CalendarPage() {
 
                   {/* Events */}
                   {evs.map(e => {
-                    const s = new Date(e.start_time)
-                    const en = e.end_time ? new Date(e.end_time) : new Date(s.getTime() + 3600000)
+                    const s = parseTS(e.start_time)
+                    const en = e.end_time ? parseTS(e.end_time) : new Date(s.getTime() + 3600000)
                     const startHour = s.getHours() + s.getMinutes() / 60
                     const endHour = en.getHours() + en.getMinutes() / 60
                     const top = (startHour - HOURS[0]) * HOUR_HEIGHT
@@ -301,8 +318,8 @@ export default function CalendarPage() {
                         <div style={{ fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{e.title}</div>
                         {height > 28 && (
                           <div style={{ fontSize: 10, opacity: 0.7, marginTop: 1 }}>
-                            {new Date(e.start_time).toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' })}
-                            {e.end_time && ` – ${new Date(e.end_time).toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' })}`}
+                            {parseTS(e.start_time).toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' })}
+                            {e.end_time && ` – ${parseTS(e.end_time).toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' })}`}
                           </div>
                         )}
                       </div>
