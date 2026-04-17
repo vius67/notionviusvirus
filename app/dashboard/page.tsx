@@ -36,105 +36,122 @@ export default function DashboardPage() {
   const name = user?.email?.split('@')[0] || 'student'
 
   const getDueLabel = (due: string) => {
-    const d = new Date(due)
-    const diff = Math.ceil((d.getTime() - new Date().setHours(0,0,0,0)) / 86400000)
+    const diff = Math.ceil((new Date(due).getTime() - new Date().setHours(0,0,0,0)) / 86400000)
     if (diff < 0) return { label: 'Overdue', color: '#ef4444', bg: 'rgba(239,68,68,0.1)' }
     if (diff === 0) return { label: 'Today', color: '#f59e0b', bg: 'rgba(245,158,11,0.1)' }
     if (diff === 1) return { label: 'Tomorrow', color: '#f59e0b', bg: 'rgba(245,158,11,0.07)' }
     return { label: `${diff}d`, color: 'var(--text-muted)', bg: 'rgba(148,163,184,0.08)' }
   }
 
-  const HERO_TILES = [
+  const hwPct  = stats.hw  > 0 ? Math.round((stats.hwDone  / stats.hw)  * 100) : 0
+  const todoPct = stats.todos > 0 ? Math.round((stats.todosDone / stats.todos) * 100) : 0
+
+  const STAT_CARDS = [
     {
-      label: 'Homework', value: loading ? '—' : `${stats.hwDone}/${stats.hw}`,
-      sub: 'completed', href: '/dashboard/homework',
-      gradient: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
-      glow: 'rgba(99,102,241,0.45)', icon: '📚',
+      label: 'Homework', href: '/dashboard/homework',
+      pct: hwPct, done: stats.hwDone, total: stats.hw,
+      gradient: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+      bar: 'linear-gradient(90deg, #6366f1, #a78bfa)',
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="white" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M4 3h9a2 2 0 012 2v11a2 2 0 01-2 2H4a1 1 0 01-1-1V4a1 1 0 011-1z"/><path d="M15 14h1a1 1 0 000-2h-1"/><path d="M7 7h5M7 10h5M7 13h3"/></svg>
+      ),
     },
     {
-      label: 'To-do', value: loading ? '—' : `${stats.todosDone}/${stats.todos}`,
-      sub: 'done', href: '/dashboard/todos',
-      gradient: 'linear-gradient(135deg, #a78bfa 0%, #ec4899 100%)',
-      glow: 'rgba(167,139,250,0.45)', icon: '✅',
+      label: 'To-do', href: '/dashboard/todos',
+      pct: todoPct, done: stats.todosDone, total: stats.todos,
+      gradient: 'linear-gradient(135deg, #a78bfa, #ec4899)',
+      bar: 'linear-gradient(90deg, #a78bfa, #ec4899)',
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="white" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="14" height="14" rx="3.5"/><path d="M7 10l2.5 2.5L13 8"/></svg>
+      ),
     },
     {
-      label: 'Past Papers', value: loading ? '—' : String(stats.papers),
-      sub: 'logged', href: '/dashboard/past-papers',
-      gradient: 'linear-gradient(135deg, #34d399 0%, #06b6d4 100%)',
-      glow: 'rgba(52,211,153,0.45)', icon: '📊',
+      label: 'Past Papers', href: '/dashboard/past-papers',
+      pct: null, done: stats.papers, total: null,
+      gradient: 'linear-gradient(135deg, #34d399, #06b6d4)',
+      bar: 'linear-gradient(90deg, #34d399, #06b6d4)',
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="white" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M3 17V9l4-4 4 4 4-6"/><path d="M3 17h14"/></svg>
+      ),
     },
     {
-      label: 'Study Time',
-      value: loading ? '—' : stats.studyMins >= 60 ? `${Math.floor(stats.studyMins/60)}h ${stats.studyMins%60}m` : `${stats.studyMins}m`,
-      sub: 'total', href: '/dashboard/timer',
-      gradient: 'linear-gradient(135deg, #f59e0b 0%, #f97316 100%)',
-      glow: 'rgba(245,158,11,0.45)', icon: '⏱',
+      label: 'Study Time', href: '/dashboard/timer',
+      pct: null,
+      done: stats.studyMins >= 60 ? Math.floor(stats.studyMins / 60) : stats.studyMins,
+      total: null,
+      suffix: stats.studyMins >= 60 ? 'h total' : 'm total',
+      gradient: 'linear-gradient(135deg, #f59e0b, #f97316)',
+      bar: 'linear-gradient(90deg, #f59e0b, #f97316)',
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="white" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><circle cx="10" cy="11" r="7"/><path d="M10 7v4l2.5 2.5"/><path d="M8 2h4"/></svg>
+      ),
     },
   ]
 
   const QUICK_NAV = [
-    { href: '/dashboard/timer',       label: 'Study Timer',  icon: '⏱', color: '#6366f1' },
-    { href: '/dashboard/past-papers', label: 'Past Papers',  icon: '📊', color: '#34d399' },
-    { href: '/dashboard/calendar',    label: 'Calendar',     icon: '📅', color: '#f59e0b' },
-    { href: '/dashboard/notes',       label: 'Notes',        icon: '📝', color: '#a78bfa' },
-    { href: '/dashboard/drive',       label: 'Drive',        icon: '☁️', color: '#ec4899' },
+    { href: '/dashboard/timer',       label: 'Study Timer', icon: <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><circle cx="10" cy="11" r="7"/><path d="M10 7v4l2.5 2.5"/><path d="M8 2h4"/></svg> },
+    { href: '/dashboard/past-papers', label: 'Past Papers', icon: <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M3 17V9l4-4 4 4 4-6"/><path d="M3 17h14"/></svg> },
+    { href: '/dashboard/calendar',    label: 'Calendar',    icon: <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="14" height="14" rx="3"/><path d="M3 8h14M7 2v4M13 2v4"/></svg> },
+    { href: '/dashboard/notes',       label: 'Notes',       icon: <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M5 3h10a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2z"/><path d="M7 7h6M7 10h6M7 13h4"/></svg> },
+    { href: '/dashboard/drive',       label: 'Drive',       icon: <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M3 14l3.5-7h7L17 14H3z"/><path d="M3 14h14"/><circle cx="7" cy="14" r="1.2" fill="currentColor" stroke="none"/><circle cx="13" cy="14" r="1.2" fill="currentColor" stroke="none"/></svg> },
   ]
 
   return (
     <div style={{ maxWidth: 1100, margin: '0 auto' }}>
 
-      {/* ── HERO: 4 tiles fill first screen ── */}
-      <div style={{ height: 'calc(100vh - 100px)', display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: '1fr 1fr', gap: 16, marginBottom: 48 }}>
-        {HERO_TILES.map((tile, i) => (
-          <Link key={tile.label} href={tile.href} style={{ textDecoration: 'none' }}>
-            <div style={{
-              height: '100%',
-              background: tile.gradient,
-              borderRadius: 28,
-              padding: '36px 40px',
-              display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
-              boxShadow: `0 20px 60px ${tile.glow}, 0 4px 16px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.25)`,
-              animation: `heroTile 0.7s cubic-bezier(0.22,1,0.36,1) ${i * 80}ms both`,
-              cursor: 'pointer', overflow: 'hidden', position: 'relative',
-              transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-            }}
-            onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.transform = 'scale(1.02)'; (e.currentTarget as HTMLDivElement).style.boxShadow = `0 28px 80px ${tile.glow}, 0 6px 24px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.25)` }}
-            onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.transform = 'scale(1)'; (e.currentTarget as HTMLDivElement).style.boxShadow = `0 20px 60px ${tile.glow}, 0 4px 16px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.25)` }}
-            >
-              {/* Background orb */}
-              <div style={{ position: 'absolute', top: -40, right: -40, width: 180, height: 180, borderRadius: '50%', background: 'rgba(255,255,255,0.1)', pointerEvents: 'none' }} />
-              <div style={{ position: 'absolute', bottom: -20, left: -20, width: 120, height: 120, borderRadius: '50%', background: 'rgba(255,255,255,0.07)', pointerEvents: 'none' }} />
+      {/* Greeting */}
+      <div className="fade-up" style={{ marginBottom: 28 }}>
+        <p className="page-eyebrow">Overview</p>
+        <h1 style={{ fontSize: 30, fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.04em', lineHeight: 1.1 }}>
+          {greeting}, {name} {greetingEmoji}
+        </h1>
+        <p style={{ fontSize: 13.5, color: 'var(--text-muted)', marginTop: 5 }}>
+          {new Date().toLocaleDateString('en-AU', { weekday: 'long', month: 'long', day: 'numeric' })}
+          {!loading && (stats.hw - stats.hwDone > 0 ? ` · ${stats.hw - stats.hwDone} homework pending` : ' · All homework done 🎉')}
+        </p>
+      </div>
 
-              <div>
-                <span style={{ fontSize: 32 }}>{tile.icon}</span>
-                <div style={{ fontSize: 13, fontWeight: 640, color: 'rgba(255,255,255,0.75)', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: 16 }}>{tile.label}</div>
+      {/* Stat cards */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14, marginBottom: 20 }}>
+        {STAT_CARDS.map((card, i) => (
+          <Link key={card.label} href={card.href} style={{ textDecoration: 'none' }}>
+            <div className="glass-card fade-up" style={{ padding: '20px 22px', animationDelay: `${i * 50}ms`, cursor: 'pointer', overflow: 'hidden', position: 'relative' }}>
+              {/* icon badge */}
+              <div style={{ width: 36, height: 36, borderRadius: 11, background: card.gradient, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14, boxShadow: '0 4px 14px rgba(0,0,0,0.12)' }}>
+                {card.icon}
               </div>
-              <div>
-                <div style={{ fontSize: 56, fontWeight: 720, color: 'white', letterSpacing: '-0.04em', lineHeight: 1, fontVariantNumeric: 'tabular-nums' }}>{tile.value}</div>
-                <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.65)', marginTop: 8, fontWeight: 500 }}>{tile.sub}</div>
-              </div>
+
+              <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 6 }}>{card.label}</div>
+
+              {loading ? (
+                <div className="skeleton" style={{ height: 28, width: '60%', marginBottom: 14 }} />
+              ) : (
+                <div style={{ fontSize: 28, fontWeight: 720, color: 'var(--text-primary)', letterSpacing: '-0.03em', lineHeight: 1, marginBottom: 14, fontVariantNumeric: 'tabular-nums' }}>
+                  {card.done}
+                  {card.total !== null && <span style={{ fontSize: 15, fontWeight: 500, color: 'var(--text-muted)', marginLeft: 4 }}>/ {card.total}</span>}
+                  {card.suffix && <span style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-muted)', marginLeft: 5 }}>{card.suffix}</span>}
+                </div>
+              )}
+
+              {/* progress bar (only for hw + todos) */}
+              {card.pct !== null && (
+                <div>
+                  <div style={{ height: 5, background: 'rgba(0,0,0,0.06)', borderRadius: 6, overflow: 'hidden' }}>
+                    <div style={{ height: '100%', width: loading ? '0%' : `${card.pct}%`, background: card.bar, borderRadius: 6, transition: 'width 0.7s cubic-bezier(0.22,1,0.36,1)' }} />
+                  </div>
+                  <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 5 }}>{loading ? '—' : `${card.pct}% complete`}</div>
+                </div>
+              )}
             </div>
           </Link>
         ))}
       </div>
 
-      {/* ── GREETING + DETAIL SECTION ── */}
-      <div className="fade-up" style={{ marginBottom: 32 }}>
-        <p className="page-eyebrow">Overview</p>
-        <h1 style={{ fontSize: 32, fontWeight: 680, color: 'var(--text-primary)', letterSpacing: '-0.04em', lineHeight: 1.1 }}>
-          {greeting}, {name} {greetingEmoji}
-        </h1>
-        <p style={{ fontSize: 14, color: 'var(--text-muted)', marginTop: 6 }}>
-          {new Date().toLocaleDateString('en-AU', { weekday: 'long', month: 'long', day: 'numeric' })}
-          {stats.hw - stats.hwDone > 0 ? ` · ${stats.hw - stats.hwDone} hw pending` : ' · All homework done 🎉'}
-        </p>
-      </div>
-
-      {/* ── TWO COLUMN ── */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
-        <div className="glass-card fade-up" style={{ padding: 22 }}>
+      {/* Two column */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 14 }}>
+        <div className="glass-card fade-up" style={{ padding: 22, animationDelay: '200ms' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-            <h2 style={{ fontSize: 14, fontWeight: 640, color: 'var(--text-primary)' }}>Upcoming Homework</h2>
+            <h2 style={{ fontSize: 13.5, fontWeight: 660, color: 'var(--text-primary)' }}>Upcoming Homework</h2>
             <Link href="/dashboard/homework" style={{ fontSize: 12, color: 'var(--accent)', textDecoration: 'none', fontWeight: 500 }}>View all →</Link>
           </div>
           {loading ? <SkeletonList /> : upcomingHW.length === 0
@@ -156,9 +173,9 @@ export default function DashboardPage() {
           }
         </div>
 
-        <div className="glass-card fade-up" style={{ padding: 22, animationDelay: '60ms' }}>
+        <div className="glass-card fade-up" style={{ padding: 22, animationDelay: '250ms' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-            <h2 style={{ fontSize: 14, fontWeight: 640, color: 'var(--text-primary)' }}>Open Tasks</h2>
+            <h2 style={{ fontSize: 13.5, fontWeight: 660, color: 'var(--text-primary)' }}>Open Tasks</h2>
             <Link href="/dashboard/todos" style={{ fontSize: 12, color: 'var(--accent)', textDecoration: 'none', fontWeight: 500 }}>View all →</Link>
           </div>
           {loading ? <SkeletonList /> : recentTodos.length === 0
@@ -181,25 +198,17 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* ── QUICK NAV ── */}
+      {/* Quick nav */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 12, marginBottom: 40 }}>
         {QUICK_NAV.map((item, i) => (
           <Link key={item.href} href={item.href} style={{ textDecoration: 'none' }}>
-            <div className="glass-card fade-up" style={{ padding: '18px', cursor: 'pointer', animationDelay: `${180 + i * 40}ms`, textAlign: 'center' }}>
-              <div style={{ fontSize: 24, marginBottom: 10 }}>{item.icon}</div>
-              <div style={{ fontSize: 12.5, fontWeight: 620, color: 'var(--text-primary)' }}>{item.label}</div>
+            <div className="glass-card fade-up" style={{ padding: '16px 12px', cursor: 'pointer', animationDelay: `${300 + i * 40}ms`, textAlign: 'center' }}>
+              <div style={{ display: 'flex', justifyContent: 'center', color: 'var(--accent-mid)', marginBottom: 8 }}>{item.icon}</div>
+              <div style={{ fontSize: 12, fontWeight: 620, color: 'var(--text-primary)' }}>{item.label}</div>
             </div>
           </Link>
         ))}
       </div>
-
-      <style>{`
-        @keyframes heroTile {
-          0%   { opacity: 0; transform: scale(0.88) translateY(24px); }
-          65%  { transform: scale(1.02) translateY(-4px); }
-          100% { opacity: 1; transform: scale(1) translateY(0); }
-        }
-      `}</style>
     </div>
   )
 }
