@@ -77,6 +77,8 @@ export default function NotesPage() {
   const openNote = useCallback(async (note: Note) => {
     // Flush current note's pending changes before switching
     await flushSave()
+    // Set ref SYNCHRONOUSLY before state update so scheduleSave gets the right ID immediately
+    selectedIdRef.current = note.id
     setSelectedId(note.id)
     setEditTitle(note.title)
     setEditContent(note.content || '')
