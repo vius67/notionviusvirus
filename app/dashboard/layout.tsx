@@ -1,80 +1,6 @@
 'use client'
 import { useState, useEffect, ReactNode, useCallback, useRef } from 'react'
 
-// ── Aurora particle canvas ──────────────────────────────────────────────────
-const AURORA_COLORS = [
-  [56, 189, 248],
-  [99, 102, 241],
-  [139, 92, 246],
-  [52, 211, 153],
-  [16, 185, 129],
-]
-
-interface Particle {
-  x: number; y: number
-  vx: number; vy: number
-  r: number; t: number; speed: number
-  color: number[]; ox: number; oy: number; angle: number
-}
-
-function mkP(W: number, H: number): Particle {
-  const angle = Math.random() * Math.PI * 2
-  const speed = 0.08 + Math.random() * 0.18
-  return {
-    x: Math.random() * W, y: Math.random() * H,
-    ox: 0, oy: 0,
-    vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed,
-    r: 40 + Math.random() * 80,
-    t: Math.random() * Math.PI * 2,
-    speed,
-    color: AURORA_COLORS[Math.floor(Math.random() * AURORA_COLORS.length)],
-    angle,
-  }
-}
-
-function AuroraParticles() {
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-  useEffect(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
-    let W = window.innerWidth, H = window.innerHeight
-    canvas.width = W; canvas.height = H
-    const particles: Particle[] = Array.from({ length: 28 }, () => mkP(W, H))
-    const onResize = () => { W = window.innerWidth; H = window.innerHeight; canvas.width = W; canvas.height = H }
-    window.addEventListener('resize', onResize)
-    let raf: number
-    const draw = () => {
-      ctx.clearRect(0, 0, W, H)
-      for (const p of particles) {
-        p.t += 0.004
-        // gentle drift — slow sine wobble layered on top of base velocity
-        p.x += p.vx + Math.sin(p.t * 1.3) * 0.12
-        p.y += p.vy + Math.cos(p.t) * 0.09
-        // soft boundary wrap
-        if (p.x < -p.r * 2) p.x = W + p.r
-        if (p.x > W + p.r * 2) p.x = -p.r
-        if (p.y < -p.r * 2) p.y = H + p.r
-        if (p.y > H + p.r * 2) p.y = -p.r
-        const [r, g, b] = p.color
-        const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r)
-        grad.addColorStop(0,   `rgba(${r},${g},${b},0.13)`)
-        grad.addColorStop(0.5, `rgba(${r},${g},${b},0.06)`)
-        grad.addColorStop(1,   `rgba(${r},${g},${b},0)`)
-        ctx.beginPath()
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
-        ctx.fillStyle = grad
-        ctx.fill()
-      }
-      raf = requestAnimationFrame(draw)
-    }
-    draw()
-    return () => { cancelAnimationFrame(raf); window.removeEventListener('resize', onResize) }
-  }, [])
-  return <canvas ref={canvasRef} style={{ position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none' }} />
-}
-// ────────────────────────────────────────────────────────────────────────────
 import { useRouter, usePathname } from 'next/navigation'
 import { useAuth } from '@/lib/auth-context'
 import Link from 'next/link'
@@ -193,7 +119,6 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         <div className="aurora-blob-2" />
         <div className="aurora-blob-3" />
       </div>
-      <AuroraParticles />
 
       {/* ── Pill glass navbar ── */}
       <header style={{
