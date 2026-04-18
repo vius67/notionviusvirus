@@ -10,14 +10,20 @@ const COLORS = ['#6366f1','#a78bfa','#34d399','#f59e0b','#ef4444','#f87171']
 const HOURS = Array.from({ length: 15 }, (_, i) => i + 7)
 const HOUR_HEIGHT = 56
 
-// Always use local date — never UTC — to avoid AU timezone day-shift
 const localDateStr = (d: Date) =>
   `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`
 
-// Strip any timezone suffix so the timestamp is always treated as LOCAL time.
-// This fixes the classic AU UTC+10/11 issue where events shift to the wrong day.
-const parseTS = (s: string): Date =>
-  new Date(s.replace(/Z$/, '').replace(/[+-]\d{2}:\d{2}$/, ''))
+// Robustly parse any Supabase timestamp as LOCAL time by stripping all timezone info.
+// Handles: "2026-04-18T09:00:00Z", "2026-04-18T09:00:00+00:00", "2026-04-18 09:00:00+00",
+//          "2026-04-18T09:00:00.000Z", bare "2026-04-18T09:00"
+const parseTS = (s: string): Date => {
+  const clean = s
+    .replace(' ', 'T')                     // normalise space separator
+    .replace(/\.\d+/, '')                  // strip milliseconds
+    .replace(/Z$/i, '')                    // strip Z
+    .replace(/[+-]\d{2}:?\d{2}$/, '')     // strip +00:00 or +00 or -05:30
+  return new Date(clean)
+}
 
 const fmtTime = (s: string) =>
   parseTS(s).toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' })
@@ -171,11 +177,12 @@ export default function CalendarPage() {
     return { top: Math.max(0, minY), height: Math.max(HOUR_HEIGHT * 0.5, maxY - minY) }
   }
 
-  // Upcoming events (next 7 days) for side panel list
+  // Upcoming events — compare by date string only so today's events always show
+  const todayStr = localDateStr(today)
+  const thirtyDaysStr = localDateStr(new Date(today.getFullYear(), today.getMonth(), today.getDate() + 30))
   const upcomingEvs = events.filter(e => {
-    const d = parseTS(e.start_time)
-    const diff = (d.getTime() - today.getTime()) / 86400000
-    return diff >= 0 && diff <= 30
+    const ds = localDateStr(parseTS(e.start_time))
+    return ds >= todayStr && ds <= thirtyDaysStr
   }).slice(0, 8)
 
   return (
@@ -244,7 +251,7 @@ export default function CalendarPage() {
           {view === 'week' && (
             <div className="glass-card" style={{ overflow: 'hidden', padding: 0 }}>
               {/* Day headers */}
-              <div style={{ display: 'grid', gridTemplateColumns: '48px repeat(7,1fr)', borderBottom: '1px solid rgba(99,102,241,0.08)', position: 'sticky', top: 0, background: 'rgba(255,255,255,0.94)', backdropFilter: 'blur(20px)', zIndex: 10 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '48px repeat(7,1fr)', borderBottom: '1px solid rgba(99,102,241,0.08)', position: 'sticky', top: 76, background: 'rgba(255,255,255,0.94)', backdropFilter: 'blur(20px)', zIndex: 10 }}>
                 <div />
                 {weekDays.map(d => (
                   <div key={localDateStr(d)} style={{ padding: '10px 0', textAlign: 'center', borderLeft: '1px solid rgba(99,102,241,0.05)' }}>
@@ -255,7 +262,7 @@ export default function CalendarPage() {
               </div>
 
               {/* Time grid */}
-              <div style={{ display: 'grid', gridTemplateColumns: '48px repeat(7,1fr)', maxHeight: 'calc(100vh - 300px)', overflowY: 'auto' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '48px repeat(7,1fr)', maxHeight: 'calc(100vh - 340px)', overflowY: 'auto' }}>
                 {/* Hour labels */}
                 <div style={{ borderRight: '1px solid rgba(99,102,241,0.06)' }}>
                   {HOURS.map(h => (
