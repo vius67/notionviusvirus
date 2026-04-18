@@ -111,6 +111,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', position: 'relative' }}>
       <div className="grid-bg" />
+      <div className="noise-overlay" />
       <div className="aurora-wrap">
         <div className="aurora-band-1" />
         <div className="aurora-band-2" />
@@ -118,6 +119,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         <div className="aurora-blob-1" />
         <div className="aurora-blob-2" />
         <div className="aurora-blob-3" />
+        <div className="aurora-blob-4" />
       </div>
 
       {/* ── Pill glass navbar ── */}
@@ -125,12 +127,12 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         position: 'fixed', top: 14, left: '50%', transform: 'translateX(-50%)',
         zIndex: 50, width: 'max-content', maxWidth: 'calc(100vw - 48px)',
         height: 50,
-        background: 'rgba(255,255,255,0.72)',
-        backdropFilter: 'blur(72px) saturate(2.2)',
-        WebkitBackdropFilter: 'blur(72px) saturate(2.2)',
-        border: '1px solid rgba(255,255,255,0.9)',
+        background: 'rgba(255,255,255,0.75)',
+        backdropFilter: 'blur(80px) saturate(2.4)',
+        WebkitBackdropFilter: 'blur(80px) saturate(2.4)',
+        border: '1px solid rgba(255,255,255,0.92)',
         borderRadius: 999,
-        boxShadow: '0 2px 0 rgba(255,255,255,0.95) inset, 0 8px 40px rgba(80,100,200,0.12), 0 1px 0 rgba(200,210,250,0.2)',
+        boxShadow: '0 2px 0 rgba(255,255,255,0.98) inset, 0 8px 48px rgba(80,100,200,0.14), 0 1px 0 rgba(180,190,255,0.25), 0 0 0 0.5px rgba(200,210,255,0.2)',
         display: 'flex', alignItems: 'center',
         padding: '0 8px 0 14px',
         gap: 0,
