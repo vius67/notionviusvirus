@@ -225,7 +225,7 @@ export default function TodosPage() {
                     {editingColId === col.id ? (
                       <input value={editingColLabel} onChange={e => setEditingColLabel(e.target.value)} onBlur={commitRename} onKeyDown={e => { if (e.key === 'Enter') commitRename(); if (e.key === 'Escape') setEditingColId(null) }} autoFocus style={{ flex: 1, fontSize: 13, fontWeight: 640, border: 'none', outline: 'none', background: 'transparent', fontFamily: 'Geist, sans-serif', color: 'var(--text-primary)', borderBottom: '1.5px solid var(--accent)' }} />
                     ) : (
-                      <span style={{ fontSize: 13, fontWeight: 640, color: 'var(--text-primary)', flex: 1, cursor: 'text' }} onDoubleClick={() => startRename(col)} title="Double-click to rename">{col.label}</span>
+                      <span style={{ fontSize: 13, fontWeight: 640, color: 'var(--text-primary)', flex: 1, cursor: 'text' }} onDoubleClick={() => startRename(col)} >{col.label}</span>
                     )}
                     <span style={{ fontSize: 11, color: 'var(--text-muted)', background: 'rgba(255,255,255,0.65)', padding: '1px 7px', borderRadius: 6, fontWeight: 500 }}>{colTodos.length}</span>
                     {cols.length > 1 && <button onClick={() => deleteCol(col.id)} style={{ border: 'none', background: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: 3, opacity: 0.35, fontSize: 14, flexShrink: 0 }}>✕</button>}
@@ -287,7 +287,7 @@ export default function TodosPage() {
                 </div>
               </div>
             ) : (
-              <div onClick={() => setAddingCol(true)} style={{ minWidth: 52, width: 52, flexShrink: 0, borderRadius: 'var(--radius)', border: '1.5px dashed rgba(99,102,241,0.22)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-muted)', fontSize: 24, transition: 'all 0.2s', minHeight: 80 }} title="Add column">+</div>
+              <div onClick={() => setAddingCol(true)} style={{ minWidth: 52, width: 52, flexShrink: 0, borderRadius: 'var(--radius)', border: '1.5px dashed rgba(99,102,241,0.22)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-muted)', fontSize: 24, transition: 'all 0.2s', minHeight: 80 }}>+</div>
             )}
           </div>
           <p style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>💡 Drag cards · Double-click column header to rename</p>
