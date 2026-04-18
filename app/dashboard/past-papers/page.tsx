@@ -43,7 +43,7 @@ export default function PastPapersPage() {
   const pctColor = (pct: number|null) => pct == null ? 'var(--text-muted)' : pct >= 80 ? '#22c55e' : pct >= 60 ? '#f59e0b' : '#ef4444'
 
   const barData = SUBJECTS.filter(s => papers.some(p => p.subject === s)).map(s => {
-    const sp = papers.filter(p => p.subject === s && p.score != null && p.max_score)
+    const sp = papers.filter(p => p.subject === s && p.score != null && p.max_score != null && p.max_score > 0)
     const avg = sp.length ? Math.round(sp.reduce((a, p) => a + (p.score! / p.max_score!) * 100, 0) / sp.length) : 0
     return { subject: s.slice(0, 5), avg, count: sp.length }
   }).filter(d => d.count > 0)

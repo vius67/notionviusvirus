@@ -50,7 +50,7 @@ export default function HomeworkPage() {
 
   const getDue = (due: string|null) => {
     if (!due) return null
-    const diff = Math.ceil((new Date(due).getTime() - new Date().setHours(0,0,0,0)) / 86400000)
+    const diff = Math.ceil((new Date(due + 'T00:00').getTime() - new Date().setHours(0,0,0,0)) / 86400000)
     if (diff < 0)  return { label: 'Overdue',  color: '#ef4444', bg: 'rgba(239,68,68,0.1)' }
     if (diff === 0) return { label: 'Today',    color: '#f59e0b', bg: 'rgba(245,158,11,0.1)' }
     if (diff === 1) return { label: 'Tomorrow', color: '#f59e0b', bg: 'rgba(245,158,11,0.07)' }
