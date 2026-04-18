@@ -1,5 +1,104 @@
 'use client'
 import { useState, useEffect, ReactNode, useCallback, useRef } from 'react'
+
+// ── Aurora particle canvas ──────────────────────────────────────────────────
+const COLORS = [
+  [56, 189, 248],   // sky blue
+  [99, 102, 241],   // indigo
+  [139, 92, 246],   // violet
+  [52, 211, 153],   // emerald
+  [16, 185, 129],   // teal green
+]
+
+interface Particle {
+  x: number; y: number
+  vx: number; vy: number
+  r: number; life: number; maxLife: number
+  color: number[]; amp: number; freq: number; phase: number; baseY: number
+}
+
+function mkParticle(W: number, H: number): Particle {
+  const color = COLORS[Math.floor(Math.random() * COLORS.length)]
+  const maxLife = 220 + Math.random() * 280
+  return {
+    x: Math.random() * W,
+    y: Math.random() * H * 0.6,
+    baseY: Math.random() * H * 0.6,
+    vx: 0.35 + Math.random() * 0.55,
+    vy: 0,
+    r: 4 + Math.random() * 18,
+    life: 0,
+    maxLife,
+    color,
+    amp: 30 + Math.random() * 80,
+    freq: 0.003 + Math.random() * 0.007,
+    phase: Math.random() * Math.PI * 2,
+  }
+}
+
+function AuroraParticles() {
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+    let W = window.innerWidth, H = window.innerHeight
+    canvas.width = W; canvas.height = H
+    const COUNT = 55
+    const particles: Particle[] = Array.from({ length: COUNT }, () => {
+      const p = mkParticle(W, H)
+      p.life = Math.random() * p.maxLife  // stagger start
+      return p
+    })
+    const onResize = () => {
+      W = window.innerWidth; H = window.innerHeight
+      canvas.width = W; canvas.height = H
+    }
+    window.addEventListener('resize', onResize)
+    let raf: number
+    const draw = () => {
+      ctx.clearRect(0, 0, W, H)
+      for (const p of particles) {
+        p.life++
+        p.x += p.vx
+        p.y = p.baseY + Math.sin(p.x * p.freq + p.phase) * p.amp
+        const t = p.life / p.maxLife
+        const alpha = t < 0.15 ? t / 0.15 : t > 0.75 ? (1 - t) / 0.25 : 1
+        const [r, g, b] = p.color
+        // outer glow
+        const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 3.5)
+        grad.addColorStop(0,   `rgba(${r},${g},${b},${0.55 * alpha})`)
+        grad.addColorStop(0.35,`rgba(${r},${g},${b},${0.22 * alpha})`)
+        grad.addColorStop(1,   `rgba(${r},${g},${b},0)`)
+        ctx.beginPath()
+        ctx.arc(p.x, p.y, p.r * 3.5, 0, Math.PI * 2)
+        ctx.fillStyle = grad
+        ctx.fill()
+        // core
+        const core = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r)
+        core.addColorStop(0, `rgba(255,255,255,${0.85 * alpha})`)
+        core.addColorStop(0.4, `rgba(${r},${g},${b},${0.7 * alpha})`)
+        core.addColorStop(1,  `rgba(${r},${g},${b},0)`)
+        ctx.beginPath()
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
+        ctx.fillStyle = core
+        ctx.fill()
+        // recycle
+        if (p.life >= p.maxLife || p.x > W + 60) {
+          Object.assign(p, mkParticle(W, H))
+          p.x = -20
+          p.life = 0
+        }
+      }
+      raf = requestAnimationFrame(draw)
+    }
+    draw()
+    return () => { cancelAnimationFrame(raf); window.removeEventListener('resize', onResize) }
+  }, [])
+  return <canvas ref={canvasRef} style={{ position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none' }} />
+}
+// ────────────────────────────────────────────────────────────────────────────
 import { useRouter, usePathname } from 'next/navigation'
 import { useAuth } from '@/lib/auth-context'
 import Link from 'next/link'
@@ -118,6 +217,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         <div className="aurora-blob-2" />
         <div className="aurora-blob-3" />
       </div>
+      <AuroraParticles />
 
       {/* ── Pill glass navbar ── */}
       <header style={{
