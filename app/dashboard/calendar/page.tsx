@@ -251,7 +251,7 @@ export default function CalendarPage() {
           {view === 'week' && (
             <div className="glass-card" style={{ overflow: 'hidden', padding: 0 }}>
               {/* Day headers */}
-              <div style={{ display: 'grid', gridTemplateColumns: '48px repeat(7,1fr)', borderBottom: '1px solid rgba(99,102,241,0.08)', position: 'sticky', top: 76, background: 'rgba(255,255,255,0.94)', backdropFilter: 'blur(20px)', zIndex: 10 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '48px repeat(7,1fr)', borderBottom: '1px solid rgba(99,102,241,0.08)', position: 'sticky', top: 0, background: 'rgba(255,255,255,0.94)', backdropFilter: 'blur(20px)', zIndex: 10 }}>
                 <div />
                 {weekDays.map(d => (
                   <div key={localDateStr(d)} style={{ padding: '10px 0', textAlign: 'center', borderLeft: '1px solid rgba(99,102,241,0.05)' }}>

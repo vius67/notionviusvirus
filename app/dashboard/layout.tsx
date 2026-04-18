@@ -1,6 +1,5 @@
 'use client'
 import { useState, useEffect, ReactNode, useCallback, useRef } from 'react'
-
 import { useRouter, usePathname } from 'next/navigation'
 import { useAuth } from '@/lib/auth-context'
 import Link from 'next/link'
@@ -44,6 +43,9 @@ function IconSpotify({ s }: { s: number }) {
 function IconLogout({ s }: { s: number }) {
   return <svg width={s} height={s} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M13 10H3m0 0l3-3m-3 3l3 3"/><path d="M9 6V4a1 1 0 011-1h6a1 1 0 011 1v12a1 1 0 01-1 1h-6a1 1 0 01-1-1v-2"/></svg>
 }
+function IconClock({ s }: { s: number }) {
+  return <svg width={s} height={s} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><circle cx="10" cy="10" r="7"/><path d="M10 6.5v3.5l2 2"/></svg>
+}
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   const { user, loading, signOut } = useAuth()
@@ -54,6 +56,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   const [showShortcuts, setShowShortcuts] = useState(false)
   const [showUser, setShowUser] = useState(false)
   const [gPressed, setGPressed] = useState(false)
+  const [open, setOpen] = useState(false)
   const gTimer = useRef<NodeJS.Timeout | null>(null)
   const [nowPlaying, setNowPlaying] = useState<{ name: string; artist: string; is_playing: boolean } | null>(null)
 
@@ -104,12 +107,14 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   if (loading || !user) return (
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <div style={{ width: 28, height: 28, border: '2.5px solid #6366f1', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.7s linear infinite' }} />
-      <style>{`@keyframes spin{to{transform:rotate(360deg)}} @keyframes equBar1{from{height:3px}to{height:12px}} @keyframes equBar2{from{height:6px}to{height:16px}} @keyframes equBar3{from{height:3px}to{height:9px}}`}</style>
+      <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
     </div>
   )
 
+  const W = open ? 228 : 60
+
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+    <div style={{ minHeight: '100vh', display: 'flex', position: 'relative' }}>
       <div className="grid-bg" />
       <div className="noise-overlay" />
       <div className="aurora-wrap">
@@ -122,38 +127,71 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         <div className="aurora-blob-4" />
       </div>
 
-      {/* ── Pill glass navbar ── */}
-      <header style={{
-        position: 'fixed', top: 14, left: '50%', transform: 'translateX(-50%)',
-        zIndex: 50, width: 'max-content', maxWidth: 'calc(100vw - 48px)',
-        height: 50,
-        background: 'rgba(255,255,255,0.75)',
-        backdropFilter: 'blur(80px) saturate(2.4)',
-        WebkitBackdropFilter: 'blur(80px) saturate(2.4)',
-        border: '1px solid rgba(255,255,255,0.92)',
-        borderRadius: 999,
-        boxShadow: '0 2px 0 rgba(255,255,255,0.98) inset, 0 8px 48px rgba(80,100,200,0.14), 0 1px 0 rgba(180,190,255,0.25), 0 0 0 0.5px rgba(200,210,255,0.2)',
-        display: 'flex', alignItems: 'center',
-        padding: '0 8px 0 14px',
-        gap: 0,
-      }}>
-
+      {/* ── Vertical pill sidebar ── */}
+      <aside
+        onMouseEnter={() => setOpen(true)}
+        onMouseLeave={() => { setOpen(false); setShowUser(false) }}
+        style={{
+          position: 'fixed',
+          left: 14, top: 14, bottom: 14,
+          zIndex: 50,
+          width: W,
+          background: 'rgba(255,255,255,0.80)',
+          backdropFilter: 'blur(80px) saturate(2.4)',
+          WebkitBackdropFilter: 'blur(80px) saturate(2.4)',
+          border: '1px solid rgba(255,255,255,0.94)',
+          borderRadius: 24,
+          boxShadow: [
+            'inset 0 1.5px 0 rgba(255,255,255,1)',
+            '0 8px 48px rgba(80,100,200,0.16)',
+            '0 2px 8px rgba(80,100,200,0.06)',
+            '0 0 0 0.5px rgba(200,210,255,0.22)',
+          ].join(', '),
+          transition: 'width 0.38s cubic-bezier(0.34,1.56,0.64,1)',
+          overflow: 'hidden',
+          display: 'flex',
+          flexDirection: 'column',
+          padding: '14px 10px',
+          gap: 0,
+        }}
+      >
         {/* Logo */}
-        <Link href="/dashboard" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 9, marginRight: 28, flexShrink: 0 }}>
-          <div style={{ width: 28, height: 28, borderRadius: 8, background: 'linear-gradient(135deg, #6366f1, #a78bfa)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 3px 12px rgba(99,102,241,0.38)' }}>
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <Link
+          href="/dashboard"
+          style={{
+            display: 'flex', alignItems: 'center', gap: 11,
+            textDecoration: 'none',
+            padding: '4px 2px 16px',
+            borderBottom: '1px solid rgba(99,102,241,0.08)',
+            marginBottom: 10,
+            flexShrink: 0,
+            minWidth: 0,
+          }}
+        >
+          <div style={{
+            width: 36, height: 36, borderRadius: 11, flexShrink: 0,
+            background: 'linear-gradient(135deg, #6366f1, #a78bfa)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            boxShadow: '0 3px 14px rgba(99,102,241,0.42)',
+          }}>
+            <svg width="16" height="16" viewBox="0 0 14 14" fill="none">
               <path d="M2 2h4v4H2zM8 2h4v4H8zM2 8h4v4H2z" fill="white" fillOpacity=".95"/>
               <path d="M8 8h4v4H8z" fill="white" fillOpacity=".35"/>
             </svg>
           </div>
-          <span style={{ fontSize: 13.5, fontWeight: 740, color: 'var(--text-primary)', letterSpacing: '-0.03em' }}>productivity.</span>
+          <span style={{
+            fontSize: 14, fontWeight: 760, letterSpacing: '-0.035em',
+            color: 'var(--text-primary)', whiteSpace: 'nowrap',
+            opacity: open ? 1 : 0,
+            transform: open ? 'translateX(0)' : 'translateX(-6px)',
+            transition: 'opacity 0.2s, transform 0.2s',
+          }}>
+            productivity.
+          </span>
         </Link>
 
-        {/* Divider */}
-        <div style={{ width: 1, height: 20, background: 'rgba(99,102,241,0.12)', marginRight: 20, flexShrink: 0 }} />
-
         {/* Nav items */}
-        <nav style={{ display: 'flex', alignItems: 'center', gap: 2, flex: 1 }}>
+        <nav style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 3, minWidth: 0 }}>
           {NAV_ITEMS.map(item => {
             const active = pathname === item.href
             const Icon = item.icon
@@ -162,77 +200,170 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                 key={item.href}
                 href={item.href}
                 style={{
-                  display: 'flex', alignItems: 'center', gap: 6,
-                  padding: '5px 11px', borderRadius: 999,
-                  textDecoration: 'none', fontSize: 13, fontWeight: active ? 600 : 460,
+                  display: 'flex', alignItems: 'center', gap: 11,
+                  padding: '9px 10px',
+                  borderRadius: 14,
+                  textDecoration: 'none',
+                  fontSize: 13.5, fontWeight: active ? 620 : 450,
                   color: active ? 'var(--accent-deep)' : 'var(--text-secondary)',
-                  background: active ? 'linear-gradient(135deg, rgba(99,102,241,0.12), rgba(139,92,246,0.07))' : 'transparent',
-                  boxShadow: active ? 'inset 0 1px 0 rgba(255,255,255,0.8), 0 1px 4px rgba(99,102,241,0.08)' : 'none',
-                  border: active ? '1px solid rgba(99,102,241,0.12)' : '1px solid transparent',
+                  background: active
+                    ? 'linear-gradient(135deg, rgba(99,102,241,0.14), rgba(139,92,246,0.08))'
+                    : 'transparent',
+                  border: active ? '1px solid rgba(99,102,241,0.13)' : '1px solid transparent',
+                  boxShadow: active
+                    ? '0 2px 10px rgba(99,102,241,0.13), inset 0 1px 0 rgba(255,255,255,0.92)'
+                    : 'none',
                   transition: 'all 0.18s ease',
-                  position: 'relative',
                   whiteSpace: 'nowrap',
+                  flexShrink: 0,
+                  position: 'relative',
+                  overflow: 'hidden',
                 }}
                 onMouseEnter={e => {
-                  if (!active) {
-                    (e.currentTarget as HTMLElement).style.background = 'rgba(99,102,241,0.06)'
-                    ;(e.currentTarget as HTMLElement).style.color = 'var(--text-primary)'
-                  }
+                  if (!active) (e.currentTarget as HTMLElement).style.background = 'rgba(99,102,241,0.06)'
                 }}
                 onMouseLeave={e => {
-                  if (!active) {
-                    (e.currentTarget as HTMLElement).style.background = 'transparent'
-                    ;(e.currentTarget as HTMLElement).style.color = 'var(--text-secondary)'
-                  }
+                  if (!active) (e.currentTarget as HTMLElement).style.background = 'transparent'
                 }}
               >
-                <span style={{ opacity: active ? 1 : 0.75, display: 'flex', color: active ? 'var(--accent)' : 'currentColor' }}>
-                  <Icon s={15} />
-                </span>
-                {item.label}
+                {/* Active indicator bar */}
                 {active && (
-                  <span style={{ position: 'absolute', bottom: -1, left: '20%', right: '20%', height: 2, borderRadius: 2, background: 'linear-gradient(90deg, #6366f1, #a78bfa)' }} />
+                  <span style={{
+                    position: 'absolute', left: 0, top: '50%', transform: 'translateY(-50%)',
+                    width: 3, height: 18, borderRadius: 3,
+                    background: 'linear-gradient(to bottom, #6366f1, #a78bfa)',
+                  }} />
                 )}
+                <span style={{
+                  flexShrink: 0, display: 'flex',
+                  color: active ? 'var(--accent)' : 'currentColor',
+                  opacity: active ? 1 : 0.68,
+                }}>
+                  <Icon s={17} />
+                </span>
+                <span style={{
+                  opacity: open ? 1 : 0,
+                  transform: open ? 'translateX(0)' : 'translateX(-4px)',
+                  transition: 'opacity 0.18s 0.04s, transform 0.18s 0.04s',
+                  overflow: 'hidden',
+                }}>
+                  {item.label}
+                </span>
               </Link>
             )
           })}
         </nav>
 
-        {/* Right side */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0, marginLeft: 12 }}>
+        {/* Bottom section */}
+        <div style={{
+          display: 'flex', flexDirection: 'column', gap: 6,
+          paddingTop: 10,
+          borderTop: '1px solid rgba(99,102,241,0.08)',
+          flexShrink: 0,
+          minWidth: 0,
+        }}>
 
-          {/* Now playing pill */}
+          {/* Spotify now-playing */}
           {nowPlaying && (
-            <Link href="/dashboard/spotify" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 7, padding: '5px 12px', borderRadius: 20, background: 'rgba(29,185,84,0.08)', border: '1px solid rgba(29,185,84,0.18)', maxWidth: 200, overflow: 'hidden' }}>
+            <Link href="/dashboard/spotify" style={{
+              display: 'flex', alignItems: 'center', gap: 9,
+              padding: '8px 10px', borderRadius: 13,
+              background: 'rgba(29,185,84,0.08)',
+              border: '1px solid rgba(29,185,84,0.18)',
+              textDecoration: 'none', overflow: 'hidden', flexShrink: 0,
+            }}>
               <div style={{ display: 'flex', gap: 2, alignItems: 'flex-end', flexShrink: 0 }}>
                 {[1,2,3].map(i => (
-                  <div key={i} style={{ width: 2.5, background: '#1db954', borderRadius: 2, animation: nowPlaying.is_playing ? `equBar${i} 0.7s ease infinite alternate` : 'none', height: nowPlaying.is_playing ? undefined : 3, animationDelay: `${i*0.12}s` }} />
+                  <div key={i} style={{
+                    width: 2.5, background: '#1db954', borderRadius: 2,
+                    animation: nowPlaying.is_playing ? `equBar${i} 0.7s ease infinite alternate` : 'none',
+                    height: nowPlaying.is_playing ? undefined : 3,
+                    animationDelay: `${i * 0.12}s`,
+                  }} />
                 ))}
               </div>
-              <span style={{ fontSize: 11.5, fontWeight: 520, color: '#1db954', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{nowPlaying.name}</span>
+              <span style={{
+                fontSize: 11.5, fontWeight: 530, color: '#1db954',
+                overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                opacity: open ? 1 : 0,
+                transition: 'opacity 0.15s',
+              }}>
+                {nowPlaying.name}
+              </span>
             </Link>
           )}
 
-          {/* Time */}
-          <div style={{ fontFamily: 'Geist Mono, monospace', fontSize: 12.5, color: 'var(--text-muted)', letterSpacing: '0.04em', background: 'rgba(255,255,255,0.6)', border: '1px solid rgba(200,210,240,0.4)', padding: '4px 10px', borderRadius: 999 }}>
-            {time}
+          {/* Clock */}
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: 9,
+            padding: '8px 10px', borderRadius: 13,
+            background: 'rgba(255,255,255,0.55)',
+            border: '1px solid rgba(200,210,240,0.45)',
+            overflow: 'hidden', flexShrink: 0,
+          }}>
+            <span style={{ flexShrink: 0, display: 'flex', color: 'var(--text-muted)' }}>
+              <IconClock s={14} />
+            </span>
+            <span style={{
+              fontFamily: 'Geist Mono, monospace', fontSize: 12.5,
+              color: 'var(--text-muted)', letterSpacing: '0.04em', whiteSpace: 'nowrap',
+              opacity: open ? 1 : 0,
+              transition: 'opacity 0.15s',
+            }}>
+              {time}
+            </span>
           </div>
 
-          {/* User avatar */}
-          <div style={{ position: 'relative' }}>
+          {/* User */}
+          <div style={{ position: 'relative', flexShrink: 0 }}>
             <button
               onClick={() => setShowUser(s => !s)}
-              style={{ width: 32, height: 32, borderRadius: '50%', background: 'linear-gradient(135deg, #6366f1, #a78bfa)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12.5, fontWeight: 700, color: 'white', boxShadow: '0 2px 10px rgba(99,102,241,0.35)', flexShrink: 0 }}
+              style={{
+                width: '100%', display: 'flex', alignItems: 'center', gap: 10,
+                padding: '6px 6px', border: 'none', background: 'none',
+                cursor: 'pointer', borderRadius: 14, overflow: 'hidden',
+                transition: 'background 0.18s',
+              }}
+              onMouseEnter={e => (e.currentTarget.style.background = 'rgba(99,102,241,0.06)')}
+              onMouseLeave={e => (e.currentTarget.style.background = 'none')}
             >
-              {user.email?.[0].toUpperCase()}
+              <div style={{
+                width: 36, height: 36, flexShrink: 0, borderRadius: '50%',
+                background: 'linear-gradient(135deg, #6366f1, #a78bfa)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: 13.5, fontWeight: 700, color: 'white',
+                boxShadow: '0 2px 10px rgba(99,102,241,0.38)',
+              }}>
+                {user.email?.[0].toUpperCase()}
+              </div>
+              <div style={{
+                textAlign: 'left', flex: 1, minWidth: 0,
+                opacity: open ? 1 : 0,
+                transform: open ? 'translateX(0)' : 'translateX(-4px)',
+                transition: 'opacity 0.18s, transform 0.18s',
+              }}>
+                <div style={{ fontSize: 10.5, color: 'var(--text-muted)', whiteSpace: 'nowrap', marginBottom: 1 }}>signed in as</div>
+                <div style={{ fontSize: 12, fontWeight: 580, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 152 }}>
+                  {user.email}
+                </div>
+              </div>
             </button>
-            {showUser && (
-              <div style={{ position: 'absolute', top: 40, right: 0, background: 'rgba(255,255,255,0.96)', backdropFilter: 'blur(40px)', border: '1px solid rgba(255,255,255,0.9)', borderRadius: 14, padding: '8px', boxShadow: '0 12px 40px rgba(80,100,200,0.16)', minWidth: 200, animation: 'scaleIn 0.18s ease', zIndex: 100 }}>
-                <div style={{ padding: '8px 10px 10px', borderBottom: '1px solid rgba(99,102,241,0.06)', marginBottom: 6 }}>
+
+            {showUser && open && (
+              <div style={{
+                position: 'absolute', bottom: 50, left: 0,
+                background: 'rgba(255,255,255,0.97)',
+                backdropFilter: 'blur(40px)',
+                border: '1px solid rgba(255,255,255,0.9)',
+                borderRadius: 14, padding: '8px',
+                boxShadow: '0 12px 40px rgba(80,100,200,0.18)',
+                minWidth: 206, animation: 'scaleIn 0.18s ease', zIndex: 100,
+              }}>
+                <div style={{ padding: '8px 10px 10px', borderBottom: '1px solid rgba(99,102,241,0.07)', marginBottom: 6 }}>
                   <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 2 }}>Signed in as</div>
                   <div style={{ fontSize: 12.5, fontWeight: 560, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user.email}</div>
                 </div>
-                <button onClick={() => setShowShortcuts(true)} style={{ width: '100%', border: 'none', background: 'none', cursor: 'pointer', color: 'var(--text-secondary)', fontSize: 13, padding: '7px 10px', borderRadius: 8, textAlign: 'left', fontFamily: 'Geist, sans-serif', transition: 'background 0.15s' }}>⌨ Keyboard shortcuts</button>
+                <button onClick={() => { setShowShortcuts(true); setShowUser(false) }} style={{ width: '100%', border: 'none', background: 'none', cursor: 'pointer', color: 'var(--text-secondary)', fontSize: 13, padding: '7px 10px', borderRadius: 8, textAlign: 'left', fontFamily: 'Geist, sans-serif', transition: 'background 0.15s' }}>⌨ Keyboard shortcuts</button>
                 <button onClick={signOut} style={{ width: '100%', border: 'none', background: 'none', cursor: 'pointer', color: '#ef4444', fontSize: 13, padding: '7px 10px', borderRadius: 8, textAlign: 'left', fontFamily: 'Geist, sans-serif', display: 'flex', alignItems: 'center', gap: 7, transition: 'background 0.15s' }}>
                   <IconLogout s={13} /> Sign out
                 </button>
@@ -240,7 +371,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
             )}
           </div>
         </div>
-      </header>
+      </aside>
 
       {/* G key hint */}
       {gPressed && (
@@ -278,12 +409,9 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         </div>
       )}
 
-      {/* Click outside to close user dropdown */}
-      {showUser && <div style={{ position: 'fixed', inset: 0, zIndex: 49 }} onClick={() => setShowUser(false)} />}
-
       {/* Main content */}
-      <main style={{ flex: 1, position: 'relative', zIndex: 1, paddingTop: 76 }}>
-        <div key={pathname} className="page-enter" style={{ padding: '32px 40px', maxWidth: 1400, margin: '0 auto' }}>
+      <main style={{ flex: 1, position: 'relative', zIndex: 1, paddingLeft: 88 }}>
+        <div key={pathname} className="page-enter" style={{ padding: '36px 44px', maxWidth: 1360, margin: '0 auto' }}>
           {mounted ? children : null}
         </div>
       </main>
@@ -292,6 +420,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         @keyframes equBar1 { from { height: 3px; } to { height: 12px; } }
         @keyframes equBar2 { from { height: 6px; } to { height: 16px; } }
         @keyframes equBar3 { from { height: 3px; } to { height: 9px;  } }
+        @keyframes scaleIn { from { opacity: 0; transform: scale(0.94) translateY(6px); } to { opacity: 1; transform: scale(1) translateY(0); } }
       `}</style>
     </div>
   )
