@@ -8,7 +8,7 @@ type KanbanCol = { id: string; label: string; color: string }
 
 const SUBJECTS = ['Mathematics','English','Science','Physics','Chemistry','Biology','History','Geography','German','Enterprise Computing','PDHPE','Personal','Other']
 const PRIOS = [{ v: 'high', label: 'High', color: '#ef4444' },{ v: 'medium', label: 'Medium', color: '#f59e0b' },{ v: 'low', label: 'Low', color: '#22c55e' }]
-const COL_COLORS = ['#6366f1','#a78bfa','#f59e0b','#ef4444','#34d399','#ec4899','#3b82f6','#f97316']
+const COL_COLORS = ['#6366f1','#a78bfa','#f59e0b','#ef4444','#34d399','#f87171','#3b82f6','#f97316']
 
 const DEFAULT_COLS: KanbanCol[] = [
   { id: 'todo',        label: 'To Do',       color: '#6366f1' },

@@ -7,7 +7,7 @@ import Modal from '@/components/Modal'
 type Ev = { id: string; title: string; description: string|null; start_time: string; end_time: string|null; color: string|null }
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December']
-const COLORS = ['#6366f1','#a78bfa','#34d399','#f59e0b','#ef4444','#ec4899']
+const COLORS = ['#6366f1','#a78bfa','#34d399','#f59e0b','#ef4444','#f87171']
 
 // Hours visible in week view (7am - 9pm)
 const HOURS = Array.from({ length: 15 }, (_, i) => i + 7)

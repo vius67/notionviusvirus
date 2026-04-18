@@ -3,7 +3,7 @@ import './globals.css'
 import { AuthProvider } from '@/lib/auth-context'
 
 export const metadata: Metadata = {
-  title: 'BEAM Portal',
+  title: 'Productivity',
   description: 'Your student productivity hub',
 }
 

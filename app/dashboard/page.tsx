@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/lib/auth-context'
 import Link from 'next/link'
@@ -10,6 +10,8 @@ export default function DashboardPage() {
   const [upcomingHW, setUpcomingHW] = useState<any[]>([])
   const [recentTodos, setRecentTodos] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [countdown, setCountdown] = useState({ d: 0, h: 0, m: 0, s: 0 })
+  const tickRef = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
     if (!user) return
@@ -24,11 +26,31 @@ export default function DashboardPage() {
       const todosData = todos.data || []
       const studyMins = (sessions.data || []).reduce((a: number, s: any) => a + (s.duration_minutes || 0), 0)
       setStats({ hw: hwData.length, hwDone: hwData.filter((h: any) => h.completed).length, todos: todosData.length, todosDone: todosData.filter((t: any) => t.completed).length, papers: (papers.data || []).length, studyMins })
-      setUpcomingHW(hwData.filter((h: any) => !h.completed && h.due_date).sort((a: any, b: any) => new Date(a.due_date).getTime() - new Date(b.due_date).getTime()).slice(0, 4))
+      const sorted = hwData.filter((h: any) => !h.completed && h.due_date).sort((a: any, b: any) => new Date(a.due_date).getTime() - new Date(b.due_date).getTime())
+      setUpcomingHW(sorted.slice(0, 4))
       setRecentTodos(todosData.filter((t: any) => !t.completed).slice(0, 4))
       setLoading(false)
     })()
   }, [user])
+
+  // Live countdown to next homework due date (end of that day)
+  const nextHW = upcomingHW[0] ?? null
+  useEffect(() => {
+    if (!nextHW?.due_date) return
+    const tick = () => {
+      const target = new Date(nextHW.due_date + 'T23:59:59').getTime()
+      const diff = Math.max(0, target - Date.now())
+      setCountdown({
+        d: Math.floor(diff / 86400000),
+        h: Math.floor((diff % 86400000) / 3600000),
+        m: Math.floor((diff % 3600000) / 60000),
+        s: Math.floor((diff % 60000) / 1000),
+      })
+    }
+    tick()
+    tickRef.current = setInterval(tick, 1000)
+    return () => { if (tickRef.current) clearInterval(tickRef.current) }
+  }, [nextHW?.due_date])
 
   const hour = new Date().getHours()
   const greeting = hour < 5 ? 'Still up?' : hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening'
@@ -59,8 +81,8 @@ export default function DashboardPage() {
     {
       label: 'To-do', href: '/dashboard/todos',
       pct: todoPct, done: stats.todosDone, total: stats.todos,
-      gradient: 'linear-gradient(135deg, #a78bfa, #ec4899)',
-      bar: 'linear-gradient(90deg, #a78bfa, #ec4899)',
+      gradient: 'linear-gradient(135deg, #a78bfa, #f87171)',
+      bar: 'linear-gradient(90deg, #a78bfa, #f87171)',
       icon: (
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="white" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="14" height="14" rx="3.5"/><path d="M7 10l2.5 2.5L13 8"/></svg>
       ),
@@ -146,6 +168,27 @@ export default function DashboardPage() {
           </Link>
         ))}
       </div>
+
+      {/* Next homework countdown */}
+      {!loading && nextHW && (
+        <Link href="/dashboard/homework" style={{ textDecoration: 'none', display: 'block', marginBottom: 14 }}>
+          <div className="glass-card fade-up" style={{ padding: '18px 24px', animationDelay: '180ms', background: 'linear-gradient(135deg, rgba(99,102,241,0.07) 0%, rgba(167,139,250,0.05) 100%)', border: '1px solid rgba(99,102,241,0.14)', display: 'flex', alignItems: 'center', gap: 20, flexWrap: 'wrap' }}>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--accent-mid)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>Next due</div>
+              <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{nextHW.title}</div>
+              {nextHW.subject && <span className="subject-tag" style={{ marginTop: 4, display: 'inline-block' }}>{nextHW.subject}</span>}
+            </div>
+            <div style={{ display: 'flex', gap: 10, flexShrink: 0 }}>
+              {[{ v: countdown.d, l: 'd' }, { v: countdown.h, l: 'h' }, { v: countdown.m, l: 'm' }, { v: countdown.s, l: 's' }].map(({ v, l }) => (
+                <div key={l} style={{ textAlign: 'center', minWidth: 44, background: 'rgba(255,255,255,0.72)', borderRadius: 12, padding: '8px 10px', border: '1px solid rgba(255,255,255,0.9)', boxShadow: '0 1px 4px rgba(80,100,200,0.07)' }}>
+                  <div style={{ fontFamily: 'Geist Mono, monospace', fontSize: 22, fontWeight: 700, color: 'var(--accent-deep)', lineHeight: 1, fontVariantNumeric: 'tabular-nums' }}>{String(v).padStart(2, '0')}</div>
+                  <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 3, fontWeight: 600, letterSpacing: '0.06em' }}>{l}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Link>
+      )}
 
       {/* Two column */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 14 }}>
