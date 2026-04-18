@@ -2,37 +2,33 @@
 import { useState, useEffect, ReactNode, useCallback, useRef } from 'react'
 
 // ── Aurora particle canvas ──────────────────────────────────────────────────
-const COLORS = [
-  [56, 189, 248],   // sky blue
-  [99, 102, 241],   // indigo
-  [139, 92, 246],   // violet
-  [52, 211, 153],   // emerald
-  [16, 185, 129],   // teal green
+const AURORA_COLORS = [
+  [56, 189, 248],
+  [99, 102, 241],
+  [139, 92, 246],
+  [52, 211, 153],
+  [16, 185, 129],
 ]
 
 interface Particle {
   x: number; y: number
   vx: number; vy: number
-  r: number; life: number; maxLife: number
-  color: number[]; amp: number; freq: number; phase: number; baseY: number
+  r: number; t: number; speed: number
+  color: number[]; ox: number; oy: number; angle: number
 }
 
-function mkParticle(W: number, H: number): Particle {
-  const color = COLORS[Math.floor(Math.random() * COLORS.length)]
-  const maxLife = 220 + Math.random() * 280
+function mkP(W: number, H: number): Particle {
+  const angle = Math.random() * Math.PI * 2
+  const speed = 0.08 + Math.random() * 0.18
   return {
-    x: Math.random() * W,
-    y: Math.random() * H * 0.6,
-    baseY: Math.random() * H * 0.6,
-    vx: 0.35 + Math.random() * 0.55,
-    vy: 0,
-    r: 4 + Math.random() * 18,
-    life: 0,
-    maxLife,
-    color,
-    amp: 30 + Math.random() * 80,
-    freq: 0.003 + Math.random() * 0.007,
-    phase: Math.random() * Math.PI * 2,
+    x: Math.random() * W, y: Math.random() * H,
+    ox: 0, oy: 0,
+    vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed,
+    r: 40 + Math.random() * 80,
+    t: Math.random() * Math.PI * 2,
+    speed,
+    color: AURORA_COLORS[Math.floor(Math.random() * AURORA_COLORS.length)],
+    angle,
   }
 }
 
@@ -45,51 +41,31 @@ function AuroraParticles() {
     if (!ctx) return
     let W = window.innerWidth, H = window.innerHeight
     canvas.width = W; canvas.height = H
-    const COUNT = 55
-    const particles: Particle[] = Array.from({ length: COUNT }, () => {
-      const p = mkParticle(W, H)
-      p.life = Math.random() * p.maxLife  // stagger start
-      return p
-    })
-    const onResize = () => {
-      W = window.innerWidth; H = window.innerHeight
-      canvas.width = W; canvas.height = H
-    }
+    const particles: Particle[] = Array.from({ length: 28 }, () => mkP(W, H))
+    const onResize = () => { W = window.innerWidth; H = window.innerHeight; canvas.width = W; canvas.height = H }
     window.addEventListener('resize', onResize)
     let raf: number
     const draw = () => {
       ctx.clearRect(0, 0, W, H)
       for (const p of particles) {
-        p.life++
-        p.x += p.vx
-        p.y = p.baseY + Math.sin(p.x * p.freq + p.phase) * p.amp
-        const t = p.life / p.maxLife
-        const alpha = t < 0.15 ? t / 0.15 : t > 0.75 ? (1 - t) / 0.25 : 1
+        p.t += 0.004
+        // gentle drift — slow sine wobble layered on top of base velocity
+        p.x += p.vx + Math.sin(p.t * 1.3) * 0.12
+        p.y += p.vy + Math.cos(p.t) * 0.09
+        // soft boundary wrap
+        if (p.x < -p.r * 2) p.x = W + p.r
+        if (p.x > W + p.r * 2) p.x = -p.r
+        if (p.y < -p.r * 2) p.y = H + p.r
+        if (p.y > H + p.r * 2) p.y = -p.r
         const [r, g, b] = p.color
-        // outer glow
-        const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 3.5)
-        grad.addColorStop(0,   `rgba(${r},${g},${b},${0.55 * alpha})`)
-        grad.addColorStop(0.35,`rgba(${r},${g},${b},${0.22 * alpha})`)
+        const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r)
+        grad.addColorStop(0,   `rgba(${r},${g},${b},0.13)`)
+        grad.addColorStop(0.5, `rgba(${r},${g},${b},0.06)`)
         grad.addColorStop(1,   `rgba(${r},${g},${b},0)`)
         ctx.beginPath()
-        ctx.arc(p.x, p.y, p.r * 3.5, 0, Math.PI * 2)
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
         ctx.fillStyle = grad
         ctx.fill()
-        // core
-        const core = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r)
-        core.addColorStop(0, `rgba(255,255,255,${0.85 * alpha})`)
-        core.addColorStop(0.4, `rgba(${r},${g},${b},${0.7 * alpha})`)
-        core.addColorStop(1,  `rgba(${r},${g},${b},0)`)
-        ctx.beginPath()
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
-        ctx.fillStyle = core
-        ctx.fill()
-        // recycle
-        if (p.life >= p.maxLife || p.x > W + 60) {
-          Object.assign(p, mkParticle(W, H))
-          p.x = -20
-          p.life = 0
-        }
       }
       raf = requestAnimationFrame(draw)
     }
