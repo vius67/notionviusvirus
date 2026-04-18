@@ -6,11 +6,11 @@ import Link from 'next/link'
 import { isConnected, getPlayer } from '@/lib/spotify'
 
 const NAV_ITEMS = [
-  { href: '/dashboard',             label: 'Dashboard',   icon: IconDash,   key: 'h' },
-  { href: '/dashboard/homework',    label: 'Homework',    icon: IconBook,   key: 'w' },
-  { href: '/dashboard/todos',       label: 'To-do',       icon: IconCheck,  key: 't' },
-  { href: '/dashboard/past-papers', label: 'Past Papers', icon: IconChart,  key: 'p' },
-  { href: '/dashboard/timer',       label: 'Study Timer', icon: IconTimer,  key: 's' },
+  { href: '/dashboard',             label: 'Dashboard',   icon: IconDash,    key: 'h' },
+  { href: '/dashboard/homework',    label: 'Homework',    icon: IconBook,    key: 'w' },
+  { href: '/dashboard/todos',       label: 'To-do',       icon: IconCheck,   key: 't' },
+  { href: '/dashboard/past-papers', label: 'Past Papers', icon: IconChart,   key: 'p' },
+  { href: '/dashboard/timer',       label: 'Timer',       icon: IconTimer,   key: 's' },
   { href: '/dashboard/calendar',    label: 'Calendar',    icon: IconCal,     key: 'c' },
   { href: '/dashboard/drive',       label: 'Drive',       icon: IconDrive,   key: 'd' },
   { href: '/dashboard/spotify',     label: 'Spotify',     icon: IconSpotify, key: 'm' },
@@ -34,9 +34,6 @@ function IconTimer({ s }: { s: number }) {
 function IconCal({ s }: { s: number }) {
   return <svg width={s} height={s} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="14" height="14" rx="3"/><path d="M3 8h14M7 2v4M13 2v4"/></svg>
 }
-function IconNotes({ s }: { s: number }) {
-  return <svg width={s} height={s} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M5 3h10a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2z"/><path d="M7 7h6M7 10h6M7 13h4"/></svg>
-}
 function IconDrive({ s }: { s: number }) {
   return <svg width={s} height={s} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M3 14l3.5-7h7L17 14H3z"/><path d="M3 14h14"/><circle cx="7" cy="14" r="1.2" fill="currentColor" stroke="none"/><circle cx="13" cy="14" r="1.2" fill="currentColor" stroke="none"/></svg>
 }
@@ -51,18 +48,16 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   const { user, loading, signOut } = useAuth()
   const router = useRouter()
   const pathname = usePathname()
-  const [hovered, setHovered] = useState(false)
-  const [islandExpanded, setIslandExpanded] = useState(false)
   const [time, setTime] = useState('')
   const [mounted, setMounted] = useState(false)
   const [showShortcuts, setShowShortcuts] = useState(false)
+  const [showUser, setShowUser] = useState(false)
   const [gPressed, setGPressed] = useState(false)
   const gTimer = useRef<NodeJS.Timeout | null>(null)
   const [nowPlaying, setNowPlaying] = useState<{ name: string; artist: string; is_playing: boolean } | null>(null)
 
   useEffect(() => { setMounted(true) }, [])
 
-  // Poll Spotify now-playing for Dynamic Island
   useEffect(() => {
     if (!mounted) return
     const poll = async () => {
@@ -75,32 +70,28 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     const id = setInterval(poll, 8000)
     return () => clearInterval(id)
   }, [mounted])
+
   useEffect(() => { if (!loading && !user) router.replace('/') }, [user, loading, router])
   useEffect(() => {
     const tick = () => setTime(new Date().toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' }))
     tick(); const id = setInterval(tick, 1000); return () => clearInterval(id)
   }, [])
 
-  // Keyboard shortcuts
   const handleKey = useCallback((e: KeyboardEvent) => {
     const tag = (e.target as HTMLElement).tagName
     if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return
     if (e.metaKey || e.ctrlKey || e.altKey) return
-
     if (e.key === '?') { setShowShortcuts(s => !s); return }
-    if (e.key === 'Escape') { setShowShortcuts(false); setGPressed(false); return }
-
+    if (e.key === 'Escape') { setShowShortcuts(false); setShowUser(false); setGPressed(false); return }
     if (e.key === 'g' || e.key === 'G') {
       setGPressed(true)
       if (gTimer.current) clearTimeout(gTimer.current)
       gTimer.current = setTimeout(() => setGPressed(false), 1500)
       return
     }
-
     if (gPressed) {
       const item = NAV_ITEMS.find(n => n.key === e.key.toLowerCase())
       if (item) { router.push(item.href); setGPressed(false); if (gTimer.current) clearTimeout(gTimer.current) }
-      return
     }
   }, [gPressed, router])
 
@@ -116,81 +107,128 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     </div>
   )
 
-  const navW = hovered ? 'var(--nav-w-open)' : 'var(--nav-w)'
-
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', position: 'relative' }}>
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', position: 'relative' }}>
       <div className="grid-bg" />
       <div className="orb-1" /><div className="orb-2" /><div className="orb-3" />
 
-      {/* Floating sidebar */}
-      <aside
-        className="glass-nav"
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-        style={{
-          position: 'fixed', top: 12, left: 12, bottom: 12,
-          width: navW, zIndex: 50, overflow: 'hidden',
-          display: 'flex', flexDirection: 'column',
-          borderRadius: 22,
-          transition: 'width 0.34s cubic-bezier(0.4,0,0.2,1)',
-          willChange: 'width',
-          boxShadow: '0 8px 40px rgba(80,100,200,0.1), inset 0 1px 0 rgba(255,255,255,0.9)',
-        }}
-      >
+      {/* ── Horizontal glass navbar ── */}
+      <header style={{
+        position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50,
+        height: 58,
+        background: 'rgba(255,255,255,0.68)',
+        backdropFilter: 'blur(72px) saturate(2.2)',
+        WebkitBackdropFilter: 'blur(72px) saturate(2.2)',
+        borderBottom: '1px solid rgba(255,255,255,0.85)',
+        boxShadow: '0 1px 0 rgba(255,255,255,0.9) inset, 0 4px 32px rgba(80,100,200,0.07)',
+        display: 'flex', alignItems: 'center',
+        padding: '0 24px',
+        gap: 0,
+      }}>
+
         {/* Logo */}
-        <div style={{ padding: '20px 14px 14px', display: 'flex', alignItems: 'center', gap: 11, flexShrink: 0 }}>
-          <div style={{ width: 32, height: 32, borderRadius: 10, flexShrink: 0, background: 'linear-gradient(135deg, #6366f1 0%, #a78bfa 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 16px rgba(99,102,241,0.4), inset 0 1px 0 rgba(255,255,255,0.25)' }}>
-            <svg width="16" height="16" viewBox="0 0 14 14" fill="none">
+        <Link href="/dashboard" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 9, marginRight: 28, flexShrink: 0 }}>
+          <div style={{ width: 28, height: 28, borderRadius: 8, background: 'linear-gradient(135deg, #6366f1, #a78bfa)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 3px 12px rgba(99,102,241,0.38)' }}>
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
               <path d="M2 2h4v4H2zM8 2h4v4H8zM2 8h4v4H2z" fill="white" fillOpacity=".95"/>
               <path d="M8 8h4v4H8z" fill="white" fillOpacity=".35"/>
             </svg>
           </div>
-          <span style={{ fontSize: 14, fontWeight: 720, color: 'var(--text-primary)', letterSpacing: '-0.03em', opacity: hovered ? 1 : 0, transform: hovered ? 'translateX(0)' : 'translateX(-8px)', transition: 'opacity 0.22s ease, transform 0.22s ease', whiteSpace: 'nowrap' }}>productivity.</span>
-        </div>
+          <span style={{ fontSize: 13.5, fontWeight: 740, color: 'var(--text-primary)', letterSpacing: '-0.03em' }}>productivity.</span>
+        </Link>
 
-        {/* Nav */}
-        <nav style={{ flex: 1, padding: '2px 8px', display: 'flex', flexDirection: 'column', gap: 2, overflowY: 'auto', overflowX: 'hidden' }}>
-          {NAV_ITEMS.map((item, i) => {
+        {/* Divider */}
+        <div style={{ width: 1, height: 20, background: 'rgba(99,102,241,0.12)', marginRight: 20, flexShrink: 0 }} />
+
+        {/* Nav items */}
+        <nav style={{ display: 'flex', alignItems: 'center', gap: 2, flex: 1 }}>
+          {NAV_ITEMS.map(item => {
             const active = pathname === item.href
             const Icon = item.icon
             return (
-              <Link key={item.href} href={item.href} className={`nav-item ${active ? 'active' : ''}`} title={!hovered ? item.label : undefined} style={{ justifyContent: 'flex-start' }}>
-                <span style={{ flexShrink: 0, display: 'flex', color: active ? 'var(--accent)' : 'currentColor', opacity: active ? 1 : 0.78, transition: 'opacity 0.2s, color 0.2s' }}>
-                  <Icon s={18} />
+              <Link
+                key={item.href}
+                href={item.href}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 6,
+                  padding: '6px 11px', borderRadius: 10,
+                  textDecoration: 'none', fontSize: 13, fontWeight: active ? 600 : 460,
+                  color: active ? 'var(--accent-deep)' : 'var(--text-secondary)',
+                  background: active ? 'linear-gradient(135deg, rgba(99,102,241,0.12), rgba(139,92,246,0.07))' : 'transparent',
+                  boxShadow: active ? 'inset 0 1px 0 rgba(255,255,255,0.8), 0 1px 4px rgba(99,102,241,0.08)' : 'none',
+                  border: active ? '1px solid rgba(99,102,241,0.12)' : '1px solid transparent',
+                  transition: 'all 0.18s ease',
+                  position: 'relative',
+                  whiteSpace: 'nowrap',
+                }}
+                onMouseEnter={e => {
+                  if (!active) {
+                    (e.currentTarget as HTMLElement).style.background = 'rgba(99,102,241,0.06)'
+                    ;(e.currentTarget as HTMLElement).style.color = 'var(--text-primary)'
+                  }
+                }}
+                onMouseLeave={e => {
+                  if (!active) {
+                    (e.currentTarget as HTMLElement).style.background = 'transparent'
+                    ;(e.currentTarget as HTMLElement).style.color = 'var(--text-secondary)'
+                  }
+                }}
+              >
+                <span style={{ opacity: active ? 1 : 0.75, display: 'flex', color: active ? 'var(--accent)' : 'currentColor' }}>
+                  <Icon s={15} />
                 </span>
-                <span style={{ opacity: hovered ? 1 : 0, transform: hovered ? 'translateX(0)' : 'translateX(-6px)', transition: `opacity 0.22s ease ${i * 14}ms, transform 0.22s ease ${i * 14}ms`, pointerEvents: 'none', fontSize: 13.5, fontWeight: active ? 640 : 460 }}>
-                  {item.label}
-                </span>
-                {/* Shortcut hint */}
-                {hovered && !active && (
-                  <span style={{ marginLeft: 'auto', fontSize: 10, color: 'var(--text-muted)', opacity: 0.5, background: 'rgba(0,0,0,0.04)', padding: '1px 5px', borderRadius: 4, fontFamily: 'monospace', flexShrink: 0 }}>g{item.key}</span>
+                {item.label}
+                {active && (
+                  <span style={{ position: 'absolute', bottom: -1, left: '20%', right: '20%', height: 2, borderRadius: 2, background: 'linear-gradient(90deg, #6366f1, #a78bfa)' }} />
                 )}
               </Link>
             )
           })}
         </nav>
 
-        <div style={{ height: 1, margin: '0 10px', background: 'rgba(99,102,241,0.07)', flexShrink: 0 }} />
+        {/* Right side */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0, marginLeft: 12 }}>
 
-        {/* User footer */}
-        <div style={{ padding: '10px 8px 14px', flexShrink: 0 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '9px 10px', borderRadius: 14, background: 'rgba(99,102,241,0.05)', border: '1px solid rgba(99,102,241,0.07)' }}>
-            <div style={{ width: 30, height: 30, borderRadius: '50%', flexShrink: 0, background: 'linear-gradient(135deg, #6366f1, #a78bfa)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, color: 'white', boxShadow: '0 2px 10px rgba(99,102,241,0.35)' }}>
-              {user.email?.[0].toUpperCase()}
-            </div>
-            <span style={{ flex: 1, fontSize: 12, fontWeight: 520, color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', opacity: hovered ? 1 : 0, transition: 'opacity 0.22s ease' }}>{user.email}</span>
-            <button onClick={signOut} title="Sign out" style={{ border: 'none', background: 'none', cursor: 'pointer', color: 'var(--text-muted)', display: 'flex', padding: 4, borderRadius: 7, opacity: hovered ? 0.65 : 0, transition: 'opacity 0.22s, color 0.15s', flexShrink: 0 }}>
-              <IconLogout s={15} />
-            </button>
-          </div>
-          {hovered && (
-            <button onClick={() => setShowShortcuts(true)} style={{ marginTop: 6, width: '100%', border: 'none', background: 'transparent', cursor: 'pointer', color: 'var(--text-muted)', fontSize: 11.5, padding: '4px 0', fontFamily: 'Geist, sans-serif', opacity: 0.6, transition: 'opacity 0.15s' }}>
-              ⌨ Keyboard shortcuts (?)
-            </button>
+          {/* Now playing pill */}
+          {nowPlaying && (
+            <Link href="/dashboard/spotify" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 7, padding: '5px 12px', borderRadius: 20, background: 'rgba(29,185,84,0.08)', border: '1px solid rgba(29,185,84,0.18)', maxWidth: 200, overflow: 'hidden' }}>
+              <div style={{ display: 'flex', gap: 2, alignItems: 'flex-end', flexShrink: 0 }}>
+                {[1,2,3].map(i => (
+                  <div key={i} style={{ width: 2.5, background: '#1db954', borderRadius: 2, animation: nowPlaying.is_playing ? `equBar${i} 0.7s ease infinite alternate` : 'none', height: nowPlaying.is_playing ? undefined : 3, animationDelay: `${i*0.12}s` }} />
+                ))}
+              </div>
+              <span style={{ fontSize: 11.5, fontWeight: 520, color: '#1db954', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{nowPlaying.name}</span>
+            </Link>
           )}
+
+          {/* Time */}
+          <div style={{ fontFamily: 'Geist Mono, monospace', fontSize: 12.5, color: 'var(--text-muted)', letterSpacing: '0.04em', background: 'rgba(255,255,255,0.6)', border: '1px solid rgba(200,210,240,0.4)', padding: '4px 10px', borderRadius: 8 }}>
+            {time}
+          </div>
+
+          {/* User avatar */}
+          <div style={{ position: 'relative' }}>
+            <button
+              onClick={() => setShowUser(s => !s)}
+              style={{ width: 32, height: 32, borderRadius: '50%', background: 'linear-gradient(135deg, #6366f1, #a78bfa)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12.5, fontWeight: 700, color: 'white', boxShadow: '0 2px 10px rgba(99,102,241,0.35)', flexShrink: 0 }}
+            >
+              {user.email?.[0].toUpperCase()}
+            </button>
+            {showUser && (
+              <div style={{ position: 'absolute', top: 40, right: 0, background: 'rgba(255,255,255,0.96)', backdropFilter: 'blur(40px)', border: '1px solid rgba(255,255,255,0.9)', borderRadius: 14, padding: '8px', boxShadow: '0 12px 40px rgba(80,100,200,0.16)', minWidth: 200, animation: 'scaleIn 0.18s ease', zIndex: 100 }}>
+                <div style={{ padding: '8px 10px 10px', borderBottom: '1px solid rgba(99,102,241,0.06)', marginBottom: 6 }}>
+                  <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 2 }}>Signed in as</div>
+                  <div style={{ fontSize: 12.5, fontWeight: 560, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user.email}</div>
+                </div>
+                <button onClick={() => setShowShortcuts(true)} style={{ width: '100%', border: 'none', background: 'none', cursor: 'pointer', color: 'var(--text-secondary)', fontSize: 13, padding: '7px 10px', borderRadius: 8, textAlign: 'left', fontFamily: 'Geist, sans-serif', transition: 'background 0.15s' }}>⌨ Keyboard shortcuts</button>
+                <button onClick={signOut} style={{ width: '100%', border: 'none', background: 'none', cursor: 'pointer', color: '#ef4444', fontSize: 13, padding: '7px 10px', borderRadius: 8, textAlign: 'left', fontFamily: 'Geist, sans-serif', display: 'flex', alignItems: 'center', gap: 7, transition: 'background 0.15s' }}>
+                  <IconLogout s={13} /> Sign out
+                </button>
+              </div>
+            )}
+          </div>
         </div>
-      </aside>
+      </header>
 
       {/* G key hint */}
       {gPressed && (
@@ -202,7 +240,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
       {/* Shortcuts panel */}
       {showShortcuts && (
-        <div className="modal-overlay" onClick={() => setShowShortcuts(false)}>
+        <div className="modal-overlay" onClick={() => { setShowShortcuts(false); setShowUser(false) }}>
           <div className="modal-content" style={{ width: 420, padding: 28 }} onClick={e => e.stopPropagation()}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
               <h2 style={{ fontSize: 16, fontWeight: 660, color: 'var(--text-primary)' }}>⌨ Keyboard Shortcuts</h2>
@@ -213,13 +251,10 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
               {NAV_ITEMS.map(item => (
                 <div key={item.key} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 12px', background: 'rgba(99,102,241,0.04)', borderRadius: 10 }}>
                   <span style={{ fontSize: 13.5, color: 'var(--text-secondary)' }}>{item.label}</span>
-                  <div style={{ display: 'flex', gap: 5 }}>
-                    <Kbd>g</Kbd><Kbd>{item.key}</Kbd>
-                  </div>
+                  <div style={{ display: 'flex', gap: 5 }}><Kbd>g</Kbd><Kbd>{item.key}</Kbd></div>
                 </div>
               ))}
               <div style={{ height: 1, background: 'rgba(99,102,241,0.08)', margin: '6px 0' }} />
-              <p style={{ fontSize: 11, fontWeight: 640, color: 'var(--accent-mid)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>General</p>
               {[['Show shortcuts', '?'], ['Close/dismiss', 'Esc']].map(([label, k]) => (
                 <div key={k} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 12px', background: 'rgba(99,102,241,0.04)', borderRadius: 10 }}>
                   <span style={{ fontSize: 13.5, color: 'var(--text-secondary)' }}>{label}</span>
@@ -231,51 +266,21 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         </div>
       )}
 
-      {/* Main */}
-      <main style={{ marginLeft: 'calc(var(--nav-w) + 24px)', flex: 1, position: 'relative', zIndex: 1, transition: 'margin-left 0.34s cubic-bezier(0.4,0,0.2,1)', minHeight: '100vh' }}>
-        {/* Dynamic Island */}
-        <div style={{ position: 'fixed', top: 14, left: '50%', transform: 'translateX(-50%)', zIndex: 100 }}>
-          <div className="dynamic-island" onClick={() => setIslandExpanded(!islandExpanded)} style={{ padding: islandExpanded ? '9px 22px' : '7px 20px', display: 'flex', alignItems: 'center', gap: 10 }}>
-            {islandExpanded ? (
-              <div style={{ display: 'flex', alignItems: 'center', gap: 14, color: 'rgba(255,255,255,0.88)', fontSize: 13 }}>
-                <span style={{ fontFamily: 'Geist Mono, monospace', fontWeight: 400, fontSize: 14, letterSpacing: '0.04em' }}>{time}</span>
-                <span style={{ width: 1, height: 14, background: 'rgba(255,255,255,0.1)' }} />
-                <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12 }}>{new Date().toLocaleDateString('en-AU', { weekday: 'short', month: 'short', day: 'numeric' })}</span>
-                {nowPlaying && (
-                  <>
-                    <span style={{ width: 1, height: 14, background: 'rgba(255,255,255,0.1)' }} />
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                      <div style={{ display: 'flex', gap: 2, alignItems: 'flex-end' }}>
-                        {[1,2,3].map(i => (
-                          <div key={i} style={{ width: 2.5, background: '#1db954', borderRadius: 2, animation: nowPlaying.is_playing ? `equBar${i} 0.7s ease infinite alternate` : 'none', height: nowPlaying.is_playing ? undefined : 3, animationDelay: `${i*0.12}s` }} />
-                        ))}
-                      </div>
-                      <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.75)', maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{nowPlaying.name} <span style={{ opacity: 0.5 }}>·</span> {nowPlaying.artist}</span>
-                    </div>
-                  </>
-                )}
-              </div>
-            ) : (
-              <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
-                {nowPlaying?.is_playing ? (
-                  <div style={{ display: 'flex', gap: 2, alignItems: 'flex-end' }}>
-                    {[1,2,3].map(i => (
-                      <div key={i} style={{ width: 2.5, background: '#1db954', borderRadius: 2, animation: `equBar${i} 0.7s ease infinite alternate`, animationDelay: `${i*0.12}s` }} />
-                    ))}
-                  </div>
-                ) : (
-                  <div style={{ width: 7, height: 7, borderRadius: '50%', background: '#818cf8', animation: 'pulse-dot 2s ease infinite' }} />
-                )}
-                <span style={{ fontFamily: 'Geist Mono, monospace', color: 'rgba(255,255,255,0.84)', fontSize: 13, letterSpacing: '0.04em' }}>{time}</span>
-              </div>
-            )}
-          </div>
-        </div>
+      {/* Click outside to close user dropdown */}
+      {showUser && <div style={{ position: 'fixed', inset: 0, zIndex: 49 }} onClick={() => setShowUser(false)} />}
 
-        <div key={pathname} className="page-enter" style={{ padding: '28px 36px', paddingTop: 72 }}>
+      {/* Main content */}
+      <main style={{ flex: 1, position: 'relative', zIndex: 1, paddingTop: 58 }}>
+        <div key={pathname} className="page-enter" style={{ padding: '32px 40px', maxWidth: 1400, margin: '0 auto' }}>
           {mounted ? children : null}
         </div>
       </main>
+
+      <style>{`
+        @keyframes equBar1 { from { height: 3px; } to { height: 12px; } }
+        @keyframes equBar2 { from { height: 6px; } to { height: 16px; } }
+        @keyframes equBar3 { from { height: 3px; } to { height: 9px;  } }
+      `}</style>
     </div>
   )
 }
@@ -287,4 +292,3 @@ function Kbd({ children }: { children: React.ReactNode }) {
     </span>
   )
 }
-
