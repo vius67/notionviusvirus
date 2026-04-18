@@ -12,8 +12,8 @@
   --text-primary: #0f172a;
   --text-secondary: #475569;
   --text-muted: #94a3b8;
-  --bg-base: #eef0ff;
-  --bg-grid: rgba(99, 102, 241, 0.028);
+  --bg-base: #f1f2f4;
+  --bg-grid: rgba(100, 116, 139, 0.022);
   --radius: 18px;
   --nav-w: 60px;
   --nav-w-open: 234px;
@@ -32,10 +32,10 @@ html {
 body {
   min-height: 100vh;
   background:
-    radial-gradient(ellipse 90% 70% at 10% -5%, rgba(139,92,246,0.14) 0%, transparent 55%),
-    radial-gradient(ellipse 70% 60% at 90% 100%, rgba(99,102,241,0.1) 0%, transparent 55%),
-    radial-gradient(ellipse 60% 50% at 60% 30%, rgba(239,68,68,0.05) 0%, transparent 50%),
-    linear-gradient(160deg, #f0f0ff 0%, #f8f7ff 40%, #eef6ff 100%);
+    radial-gradient(ellipse 80% 60% at 0% 0%, rgba(226,232,240,0.7) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 50% at 100% 100%, rgba(203,213,225,0.5) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 40% at 50% 50%, rgba(241,245,249,0.4) 0%, transparent 60%),
+    linear-gradient(160deg, #f8f9fb 0%, #f3f4f6 40%, #f8f9fb 100%);
   background-attachment: fixed;
 }
 
@@ -50,21 +50,21 @@ body {
 
 /* ── Ambient orbs ── */
 .orb-1 {
-  position: fixed; top: -140px; left: 12%; width: 640px; height: 640px;
+  position: fixed; top: -120px; left: 8%; width: 600px; height: 600px;
   border-radius: 50%; pointer-events: none; z-index: 0;
-  background: radial-gradient(circle, rgba(139,92,246,0.13) 0%, rgba(99,102,241,0.06) 40%, transparent 65%);
-  filter: blur(2px);
+  background: radial-gradient(circle, rgba(148,163,184,0.18) 0%, rgba(203,213,225,0.08) 40%, transparent 65%);
+  filter: blur(4px);
 }
 .orb-2 {
-  position: fixed; bottom: -110px; right: 4%; width: 520px; height: 520px;
+  position: fixed; bottom: -100px; right: 4%; width: 500px; height: 500px;
   border-radius: 50%; pointer-events: none; z-index: 0;
-  background: radial-gradient(circle, rgba(99,102,241,0.11) 0%, rgba(167,139,250,0.05) 40%, transparent 65%);
-  filter: blur(2px);
+  background: radial-gradient(circle, rgba(99,102,241,0.08) 0%, rgba(167,139,250,0.04) 40%, transparent 65%);
+  filter: blur(4px);
 }
 .orb-3 {
-  position: fixed; top: 35%; left: -60px; width: 340px; height: 340px;
+  position: fixed; top: 40%; left: -60px; width: 320px; height: 320px;
   border-radius: 50%; pointer-events: none; z-index: 0;
-  background: radial-gradient(circle, rgba(239,68,68,0.06) 0%, transparent 65%);
+  background: radial-gradient(circle, rgba(226,232,240,0.5) 0%, transparent 65%);
 }
 
 /* ── Glass layers ── */
@@ -221,6 +221,25 @@ textarea.glass-input { resize: vertical; min-height: 72px; }
 .fade-in    { animation: fadeIn    0.25s ease both; }
 .scale-in   { animation: scaleIn   0.34s cubic-bezier(0.22,1,0.36,1) both; }
 .slide-right { animation: slideRight 0.32s cubic-bezier(0.22,1,0.36,1) both; }
+
+/* ── Page transitions ── */
+@keyframes pageEnter {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.page-enter { animation: pageEnter 0.38s cubic-bezier(0.22,1,0.36,1) both; }
+
+/* ── Card pop on hover ── */
+.glass-card {
+  transition: box-shadow 0.28s ease, transform 0.28s cubic-bezier(0.34,1.56,0.64,1) !important;
+}
+.glass-card:hover {
+  transform: translateY(-3px) !important;
+  box-shadow:
+    0 16px 48px rgba(80,100,200,0.12),
+    0 2px 8px rgba(80,100,200,0.06),
+    inset 0 1px 0 rgba(255,255,255,1) !important;
+}
 
 /* stagger children */
 .stagger > *:nth-child(1) { animation-delay: 0ms; }

@@ -114,7 +114,6 @@ export default function DashboardPage() {
     { href: '/dashboard/timer',       label: 'Study Timer', icon: <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><circle cx="10" cy="11" r="7"/><path d="M10 7v4l2.5 2.5"/><path d="M8 2h4"/></svg> },
     { href: '/dashboard/past-papers', label: 'Past Papers', icon: <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M3 17V9l4-4 4 4 4-6"/><path d="M3 17h14"/></svg> },
     { href: '/dashboard/calendar',    label: 'Calendar',    icon: <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="14" height="14" rx="3"/><path d="M3 8h14M7 2v4M13 2v4"/></svg> },
-    { href: '/dashboard/notes',       label: 'Notes',       icon: <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M5 3h10a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2z"/><path d="M7 7h6M7 10h6M7 13h4"/></svg> },
     { href: '/dashboard/drive',       label: 'Drive',       icon: <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M3 14l3.5-7h7L17 14H3z"/><path d="M3 14h14"/><circle cx="7" cy="14" r="1.2" fill="currentColor" stroke="none"/><circle cx="13" cy="14" r="1.2" fill="currentColor" stroke="none"/></svg> },
   ]
 
@@ -242,7 +241,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Quick nav */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 12, marginBottom: 40 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 40 }}>
         {QUICK_NAV.map((item, i) => (
           <Link key={item.href} href={item.href} style={{ textDecoration: 'none' }}>
             <div className="glass-card fade-up" style={{ padding: '16px 12px', cursor: 'pointer', animationDelay: `${300 + i * 40}ms`, textAlign: 'center' }}>

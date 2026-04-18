@@ -11,7 +11,6 @@ const NAV_ITEMS = [
   { href: '/dashboard/past-papers', label: 'Past Papers', icon: IconChart,  key: 'p' },
   { href: '/dashboard/timer',       label: 'Study Timer', icon: IconTimer,  key: 's' },
   { href: '/dashboard/calendar',    label: 'Calendar',    icon: IconCal,    key: 'c' },
-  { href: '/dashboard/notes',       label: 'Notes',       icon: IconNotes,  key: 'n' },
   { href: '/dashboard/drive',       label: 'Drive',       icon: IconDrive,  key: 'd' },
 ]
 
@@ -127,7 +126,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
               <path d="M8 8h4v4H8z" fill="white" fillOpacity=".35"/>
             </svg>
           </div>
-          <span style={{ fontSize: 16, fontWeight: 720, color: 'var(--text-primary)', letterSpacing: '-0.03em', opacity: hovered ? 1 : 0, transform: hovered ? 'translateX(0)' : 'translateX(-8px)', transition: 'opacity 0.22s ease, transform 0.22s ease', whiteSpace: 'nowrap' }}>beam.</span>
+          <span style={{ fontSize: 14, fontWeight: 720, color: 'var(--text-primary)', letterSpacing: '-0.03em', opacity: hovered ? 1 : 0, transform: hovered ? 'translateX(0)' : 'translateX(-8px)', transition: 'opacity 0.22s ease, transform 0.22s ease', whiteSpace: 'nowrap' }}>productivity.</span>
         </div>
 
         {/* Nav */}
@@ -137,7 +136,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
             const Icon = item.icon
             return (
               <Link key={item.href} href={item.href} className={`nav-item ${active ? 'active' : ''}`} title={!hovered ? item.label : undefined} style={{ justifyContent: 'flex-start' }}>
-                <span style={{ flexShrink: 0, display: 'flex', color: active ? 'var(--accent)' : 'currentColor', opacity: active ? 1 : 0.58, transition: 'opacity 0.2s, color 0.2s' }}>
+                <span style={{ flexShrink: 0, display: 'flex', color: active ? 'var(--accent)' : 'currentColor', opacity: active ? 1 : 0.78, transition: 'opacity 0.2s, color 0.2s' }}>
                   <Icon s={18} />
                 </span>
                 <span style={{ opacity: hovered ? 1 : 0, transform: hovered ? 'translateX(0)' : 'translateX(-6px)', transition: `opacity 0.22s ease ${i * 14}ms, transform 0.22s ease ${i * 14}ms`, pointerEvents: 'none', fontSize: 13.5, fontWeight: active ? 640 : 460 }}>
@@ -234,7 +233,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           </div>
         </div>
 
-        <div style={{ padding: '28px 36px', paddingTop: 72 }}>
+        <div key={pathname} className="page-enter" style={{ padding: '28px 36px', paddingTop: 72 }}>
           {mounted ? children : null}
         </div>
       </main>
