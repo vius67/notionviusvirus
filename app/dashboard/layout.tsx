@@ -3,6 +3,7 @@ import { useState, useEffect, ReactNode, useCallback, useRef } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { useAuth } from '@/lib/auth-context'
 import Link from 'next/link'
+import { isConnected, getPlayer } from '@/lib/spotify'
 
 const NAV_ITEMS = [
   { href: '/dashboard',             label: 'Dashboard',   icon: IconDash,   key: 'h' },
@@ -10,8 +11,9 @@ const NAV_ITEMS = [
   { href: '/dashboard/todos',       label: 'To-do',       icon: IconCheck,  key: 't' },
   { href: '/dashboard/past-papers', label: 'Past Papers', icon: IconChart,  key: 'p' },
   { href: '/dashboard/timer',       label: 'Study Timer', icon: IconTimer,  key: 's' },
-  { href: '/dashboard/calendar',    label: 'Calendar',    icon: IconCal,    key: 'c' },
-  { href: '/dashboard/drive',       label: 'Drive',       icon: IconDrive,  key: 'd' },
+  { href: '/dashboard/calendar',    label: 'Calendar',    icon: IconCal,     key: 'c' },
+  { href: '/dashboard/drive',       label: 'Drive',       icon: IconDrive,   key: 'd' },
+  { href: '/dashboard/spotify',     label: 'Spotify',     icon: IconSpotify, key: 'm' },
 ]
 
 function IconDash({ s }: { s: number }) {
@@ -38,6 +40,9 @@ function IconNotes({ s }: { s: number }) {
 function IconDrive({ s }: { s: number }) {
   return <svg width={s} height={s} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M3 14l3.5-7h7L17 14H3z"/><path d="M3 14h14"/><circle cx="7" cy="14" r="1.2" fill="currentColor" stroke="none"/><circle cx="13" cy="14" r="1.2" fill="currentColor" stroke="none"/></svg>
 }
+function IconSpotify({ s }: { s: number }) {
+  return <svg width={s} height={s} viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+}
 function IconLogout({ s }: { s: number }) {
   return <svg width={s} height={s} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M13 10H3m0 0l3-3m-3 3l3 3"/><path d="M9 6V4a1 1 0 011-1h6a1 1 0 011 1v12a1 1 0 01-1 1h-6a1 1 0 01-1-1v-2"/></svg>
 }
@@ -53,8 +58,23 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   const [showShortcuts, setShowShortcuts] = useState(false)
   const [gPressed, setGPressed] = useState(false)
   const gTimer = useRef<NodeJS.Timeout | null>(null)
+  const [nowPlaying, setNowPlaying] = useState<{ name: string; artist: string; is_playing: boolean } | null>(null)
 
   useEffect(() => { setMounted(true) }, [])
+
+  // Poll Spotify now-playing for Dynamic Island
+  useEffect(() => {
+    if (!mounted) return
+    const poll = async () => {
+      if (!isConnected()) return
+      const p = await getPlayer()
+      if (p?.item) setNowPlaying({ name: p.item.name, artist: p.item.artists[0]?.name ?? '', is_playing: p.is_playing })
+      else setNowPlaying(null)
+    }
+    poll()
+    const id = setInterval(poll, 8000)
+    return () => clearInterval(id)
+  }, [mounted])
   useEffect(() => { if (!loading && !user) router.replace('/') }, [user, loading, router])
   useEffect(() => {
     const tick = () => setTime(new Date().toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' }))
@@ -92,7 +112,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   if (loading || !user) return (
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <div style={{ width: 28, height: 28, border: '2.5px solid #6366f1', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.7s linear infinite' }} />
-      <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+      <style>{`@keyframes spin{to{transform:rotate(360deg)}} @keyframes equBar1{from{height:3px}to{height:12px}} @keyframes equBar2{from{height:6px}to{height:16px}} @keyframes equBar3{from{height:3px}to{height:9px}}`}</style>
     </div>
   )
 
@@ -221,12 +241,31 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                 <span style={{ fontFamily: 'Geist Mono, monospace', fontWeight: 400, fontSize: 14, letterSpacing: '0.04em' }}>{time}</span>
                 <span style={{ width: 1, height: 14, background: 'rgba(255,255,255,0.1)' }} />
                 <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12 }}>{new Date().toLocaleDateString('en-AU', { weekday: 'short', month: 'short', day: 'numeric' })}</span>
-                <span style={{ width: 1, height: 14, background: 'rgba(255,255,255,0.1)' }} />
-                <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)' }}>beam.</span>
+                {nowPlaying && (
+                  <>
+                    <span style={{ width: 1, height: 14, background: 'rgba(255,255,255,0.1)' }} />
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <div style={{ display: 'flex', gap: 2, alignItems: 'flex-end' }}>
+                        {[1,2,3].map(i => (
+                          <div key={i} style={{ width: 2.5, background: '#1db954', borderRadius: 2, animation: nowPlaying.is_playing ? `equBar${i} 0.7s ease infinite alternate` : 'none', height: nowPlaying.is_playing ? undefined : 3, animationDelay: `${i*0.12}s` }} />
+                        ))}
+                      </div>
+                      <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.75)', maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{nowPlaying.name} <span style={{ opacity: 0.5 }}>·</span> {nowPlaying.artist}</span>
+                    </div>
+                  </>
+                )}
               </div>
             ) : (
               <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
-                <div style={{ width: 7, height: 7, borderRadius: '50%', background: '#818cf8', animation: 'pulse-dot 2s ease infinite' }} />
+                {nowPlaying?.is_playing ? (
+                  <div style={{ display: 'flex', gap: 2, alignItems: 'flex-end' }}>
+                    {[1,2,3].map(i => (
+                      <div key={i} style={{ width: 2.5, background: '#1db954', borderRadius: 2, animation: `equBar${i} 0.7s ease infinite alternate`, animationDelay: `${i*0.12}s` }} />
+                    ))}
+                  </div>
+                ) : (
+                  <div style={{ width: 7, height: 7, borderRadius: '50%', background: '#818cf8', animation: 'pulse-dot 2s ease infinite' }} />
+                )}
                 <span style={{ fontFamily: 'Geist Mono, monospace', color: 'rgba(255,255,255,0.84)', fontSize: 13, letterSpacing: '0.04em' }}>{time}</span>
               </div>
             )}
