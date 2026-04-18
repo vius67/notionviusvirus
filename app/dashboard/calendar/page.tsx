@@ -228,7 +228,7 @@ export default function CalendarPage() {
                         <>
                           <div style={{ width: 26, height: 26, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', fontSize: 12.5, fontWeight: tod ? 660 : 400, color: tod ? 'white' : 'var(--text-primary)', background: tod ? 'var(--accent)' : 'transparent', boxShadow: tod ? '0 2px 10px rgba(99,102,241,0.4)' : 'none', marginBottom: 3 }}>{day.getDate()}</div>
                           {evs.slice(0,3).map(e => (
-                            <div key={e.id} onClick={ev => { ev.stopPropagation(); del(e.id) }} style={{ fontSize: 10.5, fontWeight: 520, padding: '2px 7px', borderRadius: 5, background: (e.color||'#6366f1')+'22', color: e.color||'#6366f1', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', cursor: 'pointer', marginBottom: 2, borderLeft: `2.5px solid ${e.color||'#6366f1'}`, opacity: deletingId===e.id ? 0.4 : 1 }} title="Click to delete">{e.title}</div>
+                            <div key={e.id} onClick={ev => { ev.stopPropagation(); del(e.id) }} style={{ fontSize: 10.5, fontWeight: 520, padding: '2px 7px', borderRadius: 5, background: (e.color||'#6366f1')+'22', color: e.color||'#6366f1', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', cursor: 'pointer', marginBottom: 2, borderLeft: `2.5px solid ${e.color||'#6366f1'}`, opacity: deletingId===e.id ? 0.4 : 1 }} >{e.title}</div>
                           ))}
                           {evs.length > 3 && <div style={{ fontSize: 10, color: 'var(--text-muted)', paddingLeft: 2 }}>+{evs.length-3}</div>}
                         </>
@@ -304,8 +304,7 @@ export default function CalendarPage() {
                           <div
                             key={e.id}
                             onClick={ev => { ev.stopPropagation(); del(e.id) }}
-                            title={`${e.title} — click to delete`}
-                            style={{ position: 'absolute', left: 3, right: 3, top, height, background: `${e.color||'#6366f1'}22`, border: `1px solid ${e.color||'#6366f1'}44`, borderLeft: `3px solid ${e.color||'#6366f1'}`, borderRadius: 7, padding: '3px 7px', fontSize: 10.5, fontWeight: 540, color: e.color||'var(--accent-deep)', overflow: 'hidden', cursor: 'pointer', zIndex: 1, transition: 'opacity 0.15s', opacity: deletingId===e.id ? 0.3 : 1, backdropFilter: 'blur(6px)' }}
+                                                        style={{ position: 'absolute', left: 3, right: 3, top, height, background: `${e.color||'#6366f1'}22`, border: `1px solid ${e.color||'#6366f1'}44`, borderLeft: `3px solid ${e.color||'#6366f1'}`, borderRadius: 7, padding: '3px 7px', fontSize: 10.5, fontWeight: 540, color: e.color||'var(--accent-deep)', overflow: 'hidden', cursor: 'pointer', zIndex: 1, transition: 'opacity 0.15s', opacity: deletingId===e.id ? 0.3 : 1, backdropFilter: 'blur(6px)' }}
                           >
                             <div style={{ fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 11 }}>{e.title}</div>
                             {height > 30 && <div style={{ fontSize: 9.5, opacity: 0.7, marginTop: 1 }}>{fmtTime(e.start_time)}{e.end_time ? ` – ${fmtTime(e.end_time)}` : ''}</div>}
@@ -399,7 +398,7 @@ export default function CalendarPage() {
                           {d.toLocaleDateString('en-AU', { weekday: 'short', month: 'short', day: 'numeric' })} · {fmtTime(e.start_time)}
                         </div>
                       </div>
-                      <button onClick={() => del(e.id)} style={{ border: 'none', background: 'none', cursor: 'pointer', color: 'var(--text-muted)', fontSize: 14, padding: '2px 4px', borderRadius: 5, lineHeight: 1, opacity: 0.5, transition: 'opacity 0.15s' }} title="Delete">✕</button>
+                      <button onClick={() => del(e.id)} style={{ border: 'none', background: 'none', cursor: 'pointer', color: 'var(--text-muted)', fontSize: 14, padding: '2px 4px', borderRadius: 5, lineHeight: 1, opacity: 0.5, transition: 'opacity 0.15s' }} >✕</button>
                     </div>
                   )
                 })}
