@@ -42,8 +42,12 @@ export default function LoginPage() {
   return (
     <div style={{minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',position:'relative'}}>
       <div className="grid-bg"/>
-      <div style={{position:'fixed',top:'10%',left:'15%',width:400,height:400,borderRadius:'50%',background:'radial-gradient(circle, rgba(123,158,240,0.12) 0%, transparent 70%)',pointerEvents:'none'}}/>
-      <div style={{position:'fixed',bottom:'15%',right:'10%',width:300,height:300,borderRadius:'50%',background:'radial-gradient(circle, rgba(167,139,250,0.1) 0%, transparent 70%)',pointerEvents:'none'}}/>
+      <div className="aurora-wrap">
+        <div className="aurora-band-1" />
+        <div className="aurora-band-2" />
+        <div className="aurora-blob-1" />
+        <div className="aurora-blob-2" />
+      </div>
       <div className="glass-card scale-in" style={{width:400,maxWidth:'95vw',padding:40,position:'relative',zIndex:1}}>
         <div style={{textAlign:'center',marginBottom:32}}>
           <div style={{width:52,height:52,borderRadius:14,background:'linear-gradient(135deg, #7B9EF0, #a78bfa)',display:'flex',alignItems:'center',justifyContent:'center',margin:'0 auto 14px',fontSize:22,fontWeight:700,color:'white',boxShadow:'0 8px 24px rgba(123,158,240,0.35)'}}>B</div>

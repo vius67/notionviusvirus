@@ -110,7 +110,14 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', position: 'relative' }}>
       <div className="grid-bg" />
-      <div className="orb-1" /><div className="orb-2" /><div className="orb-3" />
+      <div className="aurora-wrap">
+        <div className="aurora-band-1" />
+        <div className="aurora-band-2" />
+        <div className="aurora-band-3" />
+        <div className="aurora-blob-1" />
+        <div className="aurora-blob-2" />
+        <div className="aurora-blob-3" />
+      </div>
 
       {/* ── Pill glass navbar ── */}
       <header style={{
