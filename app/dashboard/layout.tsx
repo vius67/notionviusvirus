@@ -112,17 +112,19 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       <div className="grid-bg" />
       <div className="orb-1" /><div className="orb-2" /><div className="orb-3" />
 
-      {/* ── Horizontal glass navbar ── */}
+      {/* ── Pill glass navbar ── */}
       <header style={{
-        position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50,
-        height: 58,
-        background: 'rgba(255,255,255,0.68)',
+        position: 'fixed', top: 14, left: '50%', transform: 'translateX(-50%)',
+        zIndex: 50, width: 'max-content', maxWidth: 'calc(100vw - 48px)',
+        height: 50,
+        background: 'rgba(255,255,255,0.72)',
         backdropFilter: 'blur(72px) saturate(2.2)',
         WebkitBackdropFilter: 'blur(72px) saturate(2.2)',
-        borderBottom: '1px solid rgba(255,255,255,0.85)',
-        boxShadow: '0 1px 0 rgba(255,255,255,0.9) inset, 0 4px 32px rgba(80,100,200,0.07)',
+        border: '1px solid rgba(255,255,255,0.9)',
+        borderRadius: 999,
+        boxShadow: '0 2px 0 rgba(255,255,255,0.95) inset, 0 8px 40px rgba(80,100,200,0.12), 0 1px 0 rgba(200,210,250,0.2)',
         display: 'flex', alignItems: 'center',
-        padding: '0 24px',
+        padding: '0 8px 0 14px',
         gap: 0,
       }}>
 
@@ -151,7 +153,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                 href={item.href}
                 style={{
                   display: 'flex', alignItems: 'center', gap: 6,
-                  padding: '6px 11px', borderRadius: 10,
+                  padding: '5px 11px', borderRadius: 999,
                   textDecoration: 'none', fontSize: 13, fontWeight: active ? 600 : 460,
                   color: active ? 'var(--accent-deep)' : 'var(--text-secondary)',
                   background: active ? 'linear-gradient(135deg, rgba(99,102,241,0.12), rgba(139,92,246,0.07))' : 'transparent',
@@ -202,7 +204,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           )}
 
           {/* Time */}
-          <div style={{ fontFamily: 'Geist Mono, monospace', fontSize: 12.5, color: 'var(--text-muted)', letterSpacing: '0.04em', background: 'rgba(255,255,255,0.6)', border: '1px solid rgba(200,210,240,0.4)', padding: '4px 10px', borderRadius: 8 }}>
+          <div style={{ fontFamily: 'Geist Mono, monospace', fontSize: 12.5, color: 'var(--text-muted)', letterSpacing: '0.04em', background: 'rgba(255,255,255,0.6)', border: '1px solid rgba(200,210,240,0.4)', padding: '4px 10px', borderRadius: 999 }}>
             {time}
           </div>
 
@@ -270,7 +272,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       {showUser && <div style={{ position: 'fixed', inset: 0, zIndex: 49 }} onClick={() => setShowUser(false)} />}
 
       {/* Main content */}
-      <main style={{ flex: 1, position: 'relative', zIndex: 1, paddingTop: 58 }}>
+      <main style={{ flex: 1, position: 'relative', zIndex: 1, paddingTop: 76 }}>
         <div key={pathname} className="page-enter" style={{ padding: '32px 40px', maxWidth: 1400, margin: '0 auto' }}>
           {mounted ? children : null}
         </div>
