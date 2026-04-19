@@ -81,7 +81,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   const [gPressed, setGPressed]       = useState(false)
   const [open, setOpen]               = useState(false)
   const [isMobile, setIsMobile]       = useState(false)
-  const [theme, setThemeState]        = useState<Theme>('light')
+  const [theme, setThemeState]        = useState<Theme>('sunset')
   const gTimer      = useRef<NodeJS.Timeout | null>(null)
   const touchStartX = useRef(0)
   const touchStartY = useRef(0)
