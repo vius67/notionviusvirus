@@ -15,12 +15,14 @@ type Paper = {
 }
 
 const SUBJECTS = [
+  'Kurt',
   'Mathematics','English','Physics','Chemistry',
   'Biology','Science','History','Geography','German',
   'Enterprise Computing','PDHPE','Other',
 ]
 
 const SUBJECT_COLOR: Record<string, string> = {
+  'Kurt':                  '#8b5cf6',
   'Mathematics':           '#6366f1',
   'English':               '#ec4899',
   'Physics':               '#f59e0b',
@@ -62,18 +64,18 @@ export default function KurtPage() {
 
   // hw form
   const [showHwForm, setShowHwForm]   = useState(false)
-  const [hwForm, setHwForm] = useState({ title: '', subject: 'Mathematics', due_date: '', notes: '' })
+  const [hwForm, setHwForm] = useState({ title: '', subject: 'Kurt', due_date: '', notes: '' })
   const [savingHw, setSavingHw]       = useState(false)
   const [deletingHw, setDeletingHw]   = useState<string | null>(null)
 
   // paper form
   const [showPForm, setShowPForm]     = useState(false)
-  const [pForm, setPForm] = useState({ subject: 'Mathematics', year: String(new Date().getFullYear()), score: '', max_score: '100', notes: '', completed_at: TODAY })
+  const [pForm, setPForm] = useState({ subject: 'Kurt', year: String(new Date().getFullYear()), score: '', max_score: '100', notes: '', completed_at: TODAY })
   const [savingP, setSavingP]         = useState(false)
   const [deletingP, setDeletingP]     = useState<string | null>(null)
 
   // filters
-  const [subjFilter, setSubjFilter]   = useState('all')
+  const [subjFilter, setSubjFilter]   = useState('Kurt')
   const [hwFilter, setHwFilter]       = useState<'pending' | 'all' | 'done'>('pending')
 
   const load = async () => {
@@ -102,7 +104,7 @@ export default function KurtPage() {
       if (!b.due_date) return -1
       return a.due_date.localeCompare(b.due_date)
     }))
-    setHwForm({ title: '', subject: 'Mathematics', due_date: '', notes: '' })
+    setHwForm({ title: '', subject: 'Kurt', due_date: '', notes: '' })
     setSavingHw(false); setShowHwForm(false)
   }
 
@@ -129,7 +131,7 @@ export default function KurtPage() {
       notes: pForm.notes || null, completed_at: pForm.completed_at || TODAY,
     }).select().single()
     if (data) setPapers(p => [data, ...p])
-    setPForm({ subject: 'Mathematics', year: String(new Date().getFullYear()), score: '', max_score: '100', notes: '', completed_at: TODAY })
+    setPForm({ subject: 'Kurt', year: String(new Date().getFullYear()), score: '', max_score: '100', notes: '', completed_at: TODAY })
     setSavingP(false); setShowPForm(false)
   }
 
@@ -141,26 +143,30 @@ export default function KurtPage() {
   }
 
   /* ── Derived stats ── */
-  const hwPending  = hw.filter(h => !h.completed).length
-  const hwDone     = hw.filter(h => h.completed).length
-  const scored     = papers.filter(p => p.score != null && p.max_score && p.max_score > 0)
+  const allSubjects = Array.from(new Set([
+    ...hw.map(h => h.subject).filter(Boolean),
+    ...papers.map(p => p.subject),
+  ])) as string[]
+
+  // Subject-only filtered (for stats chips + subject breakdown)
+  const subjHw      = hw.filter(h => subjFilter === 'all' || h.subject === subjFilter)
+  const filteredPapers = papers.filter(p => subjFilter === 'all' || p.subject === subjFilter)
+
+  // Apply hw status filter on top (for display list only)
+  const filteredHw  = subjHw.filter(h =>
+    hwFilter === 'all' ? true : hwFilter === 'pending' ? !h.completed : h.completed
+  )
+
+  // Stats based on subject-filtered view so chips reflect active subject
+  const hwPending  = subjHw.filter(h => !h.completed).length
+  const hwDone     = subjHw.filter(h => h.completed).length
+  const scored     = filteredPapers.filter(p => p.score != null && p.max_score && p.max_score > 0)
   const avgScore   = scored.length
     ? Math.round(scored.reduce((a, p) => a + (p.score! / p.max_score!) * 100, 0) / scored.length)
     : null
   const bestScore  = scored.length
     ? Math.round(Math.max(...scored.map(p => (p.score! / p.max_score!) * 100)))
     : null
-
-  const allSubjects = Array.from(new Set([
-    ...hw.map(h => h.subject).filter(Boolean),
-    ...papers.map(p => p.subject),
-  ])) as string[]
-
-  const filteredHw = hw
-    .filter(h => subjFilter === 'all' || h.subject === subjFilter)
-    .filter(h => hwFilter === 'all' ? true : hwFilter === 'pending' ? !h.completed : h.completed)
-
-  const filteredPapers = papers.filter(p => subjFilter === 'all' || p.subject === subjFilter)
 
   if (loading) return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 300 }}>
@@ -183,7 +189,7 @@ export default function KurtPage() {
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
             <Chip label="Pending" value={hwPending} color="#f59e0b" />
             <Chip label="Done" value={hwDone} color="#22c55e" />
-            <Chip label="Papers" value={papers.length} color="#6366f1" />
+            <Chip label="Papers" value={filteredPapers.length} color="#6366f1" />
             {avgScore != null && <Chip label="Avg" value={`${avgScore}%`} color={pctColor(avgScore)} />}
             {bestScore != null && <Chip label="Best" value={`${bestScore}%`} color="#22c55e" />}
           </div>
@@ -314,7 +320,7 @@ export default function KurtPage() {
               </div>
               <div>
                 <div style={{ fontSize: 14.5, fontWeight: 660, color: 'var(--text-primary)' }}>Past Papers</div>
-                <div style={{ fontSize: 11.5, color: 'var(--text-muted)' }}>{papers.length} attempts{avgScore != null ? ` · ${avgScore}% avg` : ''}</div>
+                <div style={{ fontSize: 11.5, color: 'var(--text-muted)' }}>{filteredPapers.length} attempts{avgScore != null ? ` · ${avgScore}% avg` : ''}</div>
               </div>
             </div>
             <button onClick={() => { setShowPForm(s => !s); setShowHwForm(false) }} style={{ width: 30, height: 30, borderRadius: 8, border: 'none', background: showPForm ? '#f59e0b' : 'rgba(245,158,11,0.1)', color: showPForm ? 'white' : '#f59e0b', cursor: 'pointer', fontSize: 18, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.18s', fontWeight: 300 }}>
