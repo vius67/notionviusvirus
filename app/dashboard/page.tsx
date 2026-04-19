@@ -68,16 +68,14 @@ export default function DashboardPage() {
   useEffect(() => {
     if (!user) return
     ;(async () => {
-      const [hw, todos, papers, sessions] = await Promise.all([
+      const [hw, todos, papers] = await Promise.all([
         supabase.from('homework').select('*').eq('user_id', user.id),
         supabase.from('todos').select('*').eq('user_id', user.id),
         supabase.from('past_papers').select('id').eq('user_id', user.id),
-        supabase.from('study_sessions').select('duration_minutes').eq('user_id', user.id),
       ])
       const hwData    = hw.data    || []
       const todosData = todos.data || []
-      const studyMins = (sessions.data || []).reduce((a: number, s: any) => a + (s.duration_minutes || 0), 0)
-      setStats({ hw: hwData.length, hwDone: hwData.filter((h: any) => h.completed).length, todos: todosData.length, todosDone: todosData.filter((t: any) => t.completed).length, papers: (papers.data || []).length, studyMins })
+      setStats({ hw: hwData.length, hwDone: hwData.filter((h: any) => h.completed).length, todos: todosData.length, todosDone: todosData.filter((t: any) => t.completed).length, papers: (papers.data || []).length, studyMins: 0 })
       const sorted = hwData.filter((h: any) => !h.completed && h.due_date).sort((a: any, b: any) => new Date(a.due_date).getTime() - new Date(b.due_date).getTime())
       setUpcomingHW(sorted.slice(0, 6))
       setRecentTodos(todosData.filter((t: any) => !t.completed).slice(0, 4))
@@ -181,14 +179,13 @@ export default function DashboardPage() {
     { label: 'Homework', href: '/dashboard/homework', pct: hwPct, done: stats.hwDone, total: stats.hw, gradient: 'linear-gradient(135deg, #6366f1, #8b5cf6)', bar: 'linear-gradient(90deg, #6366f1, #a78bfa)', icon: <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="white" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M4 3h9a2 2 0 012 2v11a2 2 0 01-2 2H4a1 1 0 01-1-1V4a1 1 0 011-1z"/><path d="M15 14h1a1 1 0 000-2h-1"/><path d="M7 7h5M7 10h5M7 13h3"/></svg> },
     { label: 'To-do',    href: '/dashboard/todos',    pct: todoPct, done: stats.todosDone, total: stats.todos, gradient: 'linear-gradient(135deg, #a78bfa, #f87171)', bar: 'linear-gradient(90deg, #a78bfa, #f87171)', icon: <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="white" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="14" height="14" rx="3.5"/><path d="M7 10l2.5 2.5L13 8"/></svg> },
     { label: 'Past Papers', href: '/dashboard/past-papers', pct: null, done: stats.papers, total: null, gradient: 'linear-gradient(135deg, #34d399, #06b6d4)', bar: 'linear-gradient(90deg, #34d399, #06b6d4)', icon: <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="white" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M3 17V9l4-4 4 4 4-6"/><path d="M3 17h14"/></svg> },
-    { label: 'Study Time', href: '/dashboard/timer', pct: null, done: stats.studyMins >= 60 ? Math.floor(stats.studyMins / 60) : stats.studyMins, total: null, suffix: stats.studyMins >= 60 ? 'h total' : 'm total', gradient: 'linear-gradient(135deg, #f59e0b, #f97316)', bar: 'linear-gradient(90deg, #f59e0b, #f97316)', icon: <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="white" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><circle cx="10" cy="11" r="7"/><path d="M10 7v4l2.5 2.5"/><path d="M8 2h4"/></svg> },
   ]
 
   const QUICK_NAV = [
-    { href: '/dashboard/timer',       label: 'Study Timer', icon: <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><circle cx="10" cy="11" r="7"/><path d="M10 7v4l2.5 2.5"/><path d="M8 2h4"/></svg> },
     { href: '/dashboard/past-papers', label: 'Past Papers', icon: <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M3 17V9l4-4 4 4 4-6"/><path d="M3 17h14"/></svg> },
     { href: '/dashboard/calendar',    label: 'Calendar',    icon: <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="14" height="14" rx="3"/><path d="M3 8h14M7 2v4M13 2v4"/></svg> },
     { href: '/dashboard/drive',       label: 'Drive',       icon: <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M3 14l3.5-7h7L17 14H3z"/><path d="M3 14h14"/><circle cx="7" cy="14" r="1.2" fill="currentColor" stroke="none"/><circle cx="13" cy="14" r="1.2" fill="currentColor" stroke="none"/></svg> },
+    { href: '/dashboard/spotify',     label: 'Spotify',     icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg> },
   ]
 
   return (
@@ -208,7 +205,7 @@ export default function DashboardPage() {
       </div>
 
       {/* ── Stat cards ── */}
-      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)', gap: isMobile ? 10 : 14, marginBottom: 20 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)', gap: isMobile ? 10 : 14, marginBottom: 20 }}>
         {STAT_CARDS.map((card, i) => (
           <Link key={card.label} href={card.href} style={{ textDecoration: 'none' }}>
             <div className="glass-card fade-up" style={{ padding: isMobile ? '16px 14px' : '20px 22px', animationDelay: `${i * 50}ms`, cursor: 'pointer', overflow: 'hidden', position: 'relative' }}>

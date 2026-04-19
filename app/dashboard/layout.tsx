@@ -20,14 +20,13 @@ const NAV_ITEMS = [
   { href: '/dashboard/homework',    label: 'Homework',    icon: IconBook,    key: 'w' },
   { href: '/dashboard/todos',       label: 'To-do',       icon: IconCheck,   key: 't' },
   { href: '/dashboard/past-papers', label: 'Past Papers', icon: IconChart,   key: 'p' },
-  { href: '/dashboard/timer',       label: 'Timer',       icon: IconTimer,   key: 's' },
   { href: '/dashboard/calendar',    label: 'Calendar',    icon: IconCal,     key: 'c' },
   { href: '/dashboard/kurt',        label: 'Kurt',        icon: IconKurt,    key: 'k' },
   { href: '/dashboard/drive',       label: 'Drive',       icon: IconDrive,   key: 'd' },
   { href: '/dashboard/spotify',     label: 'Spotify',     icon: IconSpotify, key: 'm' },
 ]
-const MOBILE_PRIMARY = [NAV_ITEMS[0], NAV_ITEMS[1], NAV_ITEMS[2], NAV_ITEMS[5], NAV_ITEMS[6]]
-const MOBILE_MORE    = [NAV_ITEMS[3], NAV_ITEMS[4], NAV_ITEMS[7], NAV_ITEMS[8]]
+const MOBILE_PRIMARY = [NAV_ITEMS[0], NAV_ITEMS[1], NAV_ITEMS[2], NAV_ITEMS[4], NAV_ITEMS[5]]
+const MOBILE_MORE    = [NAV_ITEMS[3], NAV_ITEMS[6], NAV_ITEMS[7]]
 
 // ── Icons ─────────────────────────────────────────────────────────────────────
 function IconDash({ s }: { s: number }) {
@@ -41,9 +40,6 @@ function IconCheck({ s }: { s: number }) {
 }
 function IconChart({ s }: { s: number }) {
   return <svg width={s} height={s} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M3 17V9l4-4 4 4 4-6"/><path d="M3 17h14"/></svg>
-}
-function IconTimer({ s }: { s: number }) {
-  return <svg width={s} height={s} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><circle cx="10" cy="11" r="7"/><path d="M10 7v4l2.5 2.5"/><path d="M8 2h4"/></svg>
 }
 function IconCal({ s }: { s: number }) {
   return <svg width={s} height={s} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="14" height="14" rx="3"/><path d="M3 8h14M7 2v4M13 2v4"/></svg>
