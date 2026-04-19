@@ -12,13 +12,14 @@ const NAV_ITEMS = [
   { href: '/dashboard/past-papers', label: 'Past Papers', icon: IconChart,   key: 'p' },
   { href: '/dashboard/timer',       label: 'Timer',       icon: IconTimer,   key: 's' },
   { href: '/dashboard/calendar',    label: 'Calendar',    icon: IconCal,     key: 'c' },
+  { href: '/dashboard/kurt',        label: 'Kurt',        icon: IconKurt,    key: 'k' },
   { href: '/dashboard/drive',       label: 'Drive',       icon: IconDrive,   key: 'd' },
   { href: '/dashboard/spotify',     label: 'Spotify',     icon: IconSpotify, key: 'm' },
 ]
 
-// First 5 shown in bottom bar, rest in "more" drawer
-const MOBILE_PRIMARY = NAV_ITEMS.slice(0, 5)
-const MOBILE_MORE    = NAV_ITEMS.slice(5)
+// Bottom bar: Dashboard, Homework, To-do, Calendar, Kurt — rest in "more"
+const MOBILE_PRIMARY = [NAV_ITEMS[0], NAV_ITEMS[1], NAV_ITEMS[2], NAV_ITEMS[5], NAV_ITEMS[6]]
+const MOBILE_MORE    = [NAV_ITEMS[3], NAV_ITEMS[4], NAV_ITEMS[7], NAV_ITEMS[8]]
 
 function IconDash({ s }: { s: number }) {
   return <svg width={s} height={s} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="7" height="7" rx="2.5"/><rect x="11" y="2" width="7" height="7" rx="2.5"/><rect x="2" y="11" width="7" height="7" rx="2.5"/><rect x="11" y="11" width="7" height="7" rx="2.5"/></svg>
@@ -49,6 +50,9 @@ function IconLogout({ s }: { s: number }) {
 }
 function IconClock({ s }: { s: number }) {
   return <svg width={s} height={s} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><circle cx="10" cy="10" r="7"/><path d="M10 6.5v3.5l2 2"/></svg>
+}
+function IconKurt({ s }: { s: number }) {
+  return <svg width={s} height={s} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M10 2l1.8 3.6L16 6.2l-3 2.9.7 4.1L10 11.1l-3.7 2.1.7-4.1L4 6.2l4.2-.6L10 2z"/><path d="M6 17h8"/><path d="M10 14v3"/></svg>
 }
 function IconMore({ s }: { s: number }) {
   return <svg width={s} height={s} viewBox="0 0 20 20" fill="currentColor"><circle cx="4" cy="10" r="1.6"/><circle cx="10" cy="10" r="1.6"/><circle cx="16" cy="10" r="1.6"/></svg>
