@@ -57,6 +57,15 @@ function IconKurt({ s }: { s: number }) {
 function IconMore({ s }: { s: number }) {
   return <svg width={s} height={s} viewBox="0 0 20 20" fill="currentColor"><circle cx="4" cy="10" r="1.6"/><circle cx="10" cy="10" r="1.6"/><circle cx="16" cy="10" r="1.6"/></svg>
 }
+function IconAurora({ s }: { s: number }) {
+  return (
+    <svg width={s} height={s} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.65" strokeLinecap="round">
+      <path d="M1 5 Q4 2 7 5 Q10 8 13 5 Q16 2 19 4"/>
+      <path d="M1 10 Q4 7 7 10 Q10 13 13 10 Q16 7 19 9" strokeOpacity="0.65"/>
+      <path d="M1 15 Q4 12 7 15 Q10 18 13 15 Q16 12 19 14" strokeOpacity="0.35"/>
+    </svg>
+  )
+}
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   const { user, loading, signOut } = useAuth()
@@ -74,8 +83,23 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   const touchStartX = useRef(0)
   const touchStartY = useRef(0)
   const [nowPlaying, setNowPlaying] = useState<{ name: string; artist: string; is_playing: boolean } | null>(null)
+  const [auroraOn, setAuroraOn] = useState(false)
 
   useEffect(() => { setMounted(true) }, [])
+
+  // Persist aurora toggle in localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem('aurora-enabled')
+    if (saved === 'true') setAuroraOn(true)
+  }, [])
+
+  const toggleAurora = useCallback(() => {
+    setAuroraOn(v => {
+      const next = !v
+      localStorage.setItem('aurora-enabled', String(next))
+      return next
+    })
+  }, [])
 
   // Mobile detection
   useEffect(() => {
@@ -158,8 +182,9 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     <div style={{ minHeight: '100vh', display: 'flex', position: 'relative', overflowX: 'hidden' }}>
       <div className="grid-bg" />
       <div className="noise-overlay" />
-      <div className="aurora-wrap">
+      <div className="aurora-wrap" style={{ opacity: auroraOn ? 1 : 0 }}>
         <div className="aurora-band-1" /><div className="aurora-band-2" /><div className="aurora-band-3" />
+        <div className="aurora-ray-1" /><div className="aurora-ray-2" /><div className="aurora-ray-3" /><div className="aurora-ray-4" />
         <div className="aurora-blob-1" /><div className="aurora-blob-2" /><div className="aurora-blob-3" /><div className="aurora-blob-4" />
       </div>
 
@@ -222,6 +247,23 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
               <span style={{ flexShrink: 0, display: 'flex', color: 'var(--text-muted)' }}><IconClock s={14} /></span>
               <span style={{ fontFamily: 'Geist Mono, monospace', fontSize: 12.5, color: 'var(--text-muted)', letterSpacing: '0.04em', whiteSpace: 'nowrap', opacity: open ? 1 : 0, transition: 'opacity 0.15s' }}>{time}</span>
             </div>
+
+            {/* Aurora toggle */}
+            <button onClick={toggleAurora} style={{
+              width: '100%', display: 'flex', alignItems: 'center', gap: 9, padding: '8px 10px',
+              border: `1px solid ${auroraOn ? 'rgba(34,197,94,0.38)' : 'rgba(200,210,240,0.45)'}`,
+              background: auroraOn ? 'linear-gradient(135deg, rgba(34,197,94,0.12), rgba(168,85,247,0.08))' : 'rgba(255,255,255,0.55)',
+              borderRadius: 13, cursor: 'pointer', fontFamily: 'Geist, sans-serif',
+              transition: 'all 0.5s ease', flexShrink: 0, overflow: 'hidden',
+              boxShadow: auroraOn ? '0 0 12px rgba(34,197,94,0.18), inset 0 1px 0 rgba(255,255,255,0.8)' : 'none',
+            }}>
+              <span style={{ flexShrink: 0, display: 'flex', color: auroraOn ? '#22c55e' : 'var(--text-muted)', transition: 'color 0.5s', filter: auroraOn ? 'drop-shadow(0 0 4px rgba(34,197,94,0.6))' : 'none' }}>
+                <IconAurora s={14} />
+              </span>
+              <span style={{ fontSize: 12.5, fontWeight: auroraOn ? 580 : 450, color: auroraOn ? '#16a34a' : 'var(--text-muted)', opacity: open ? 1 : 0, transition: 'opacity 0.15s, color 0.5s', whiteSpace: 'nowrap' }}>
+                {auroraOn ? 'Aurora on' : 'Aurora off'}
+              </span>
+            </button>
             <div style={{ position: 'relative', flexShrink: 0 }}>
               <button onClick={() => setShowUser(s => !s)} style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 10, padding: '6px 6px', border: 'none', background: 'none', cursor: 'pointer', borderRadius: 14, overflow: 'hidden', transition: 'background 0.18s' }}
                 onMouseEnter={e => (e.currentTarget.style.background = 'rgba(99,102,241,0.06)')}
@@ -266,6 +308,9 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                 <span style={{ fontSize: 11, fontWeight: 520, color: '#1db954', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{nowPlaying.name}</span>
               </Link>
             )}
+            <button onClick={toggleAurora} style={{ width: 32, height: 32, borderRadius: 10, border: `1px solid ${auroraOn ? 'rgba(34,197,94,0.4)' : 'rgba(200,210,240,0.5)'}`, background: auroraOn ? 'linear-gradient(135deg, rgba(34,197,94,0.15), rgba(168,85,247,0.10))' : 'rgba(255,255,255,0.7)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: auroraOn ? '#22c55e' : 'var(--text-muted)', transition: 'all 0.45s ease', boxShadow: auroraOn ? '0 0 10px rgba(34,197,94,0.22)' : 'none', filter: auroraOn ? 'drop-shadow(0 0 3px rgba(34,197,94,0.5))' : 'none' }}>
+              <IconAurora s={14} />
+            </button>
             <button onClick={() => setShowUser(s => !s)} style={{ width: 32, height: 32, borderRadius: '50%', background: 'linear-gradient(135deg, #6366f1, #a78bfa)', border: 'none', cursor: 'pointer', fontSize: 12.5, fontWeight: 700, color: 'white', boxShadow: '0 2px 8px rgba(99,102,241,0.35)' }}>
               {user.email?.[0].toUpperCase()}
             </button>
