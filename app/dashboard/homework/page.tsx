@@ -59,6 +59,13 @@ export default function HomeworkPage() {
   const [hw, setHw] = useState<HW[]>([])
   const [papers, setPapers] = useState<Paper[]>([])
   const [loading, setLoading] = useState(true)
+  const [isMobile, setIsMobile] = useState(false)
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
 
   const [showHwForm, setShowHwForm] = useState(false)
   const [hwForm, setHwForm] = useState({ title: '', subject: 'Mathematics', due_date: '', notes: '' })
@@ -166,7 +173,7 @@ export default function HomeworkPage() {
         <p className="page-eyebrow">Tracker</p>
         <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
           <div>
-            <h1 style={{ fontSize: 34, fontWeight: 780, letterSpacing: '-0.045em', color: 'var(--text-primary)', lineHeight: 1.1 }}>Homework</h1>
+            <h1 style={{ fontSize: isMobile ? 26 : 34, fontWeight: 780, letterSpacing: '-0.045em', color: 'var(--text-primary)', lineHeight: 1.1 }}>Homework</h1>
             <p style={{ fontSize: 13.5, color: 'var(--text-muted)', marginTop: 4 }}>
               {hwPending} pending · {hwDone} done · {papers.length} papers logged
             </p>
@@ -201,7 +208,7 @@ export default function HomeworkPage() {
       )}
 
       {/* ── Two-column layout ── */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, alignItems: 'start' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? 14 : 20, alignItems: 'start' }}>
 
         {/* ════ HOMEWORK ════ */}
         <div className="glass-card fade-up" style={{ padding: 0, overflow: 'hidden', animationDelay: '60ms' }}>
@@ -231,7 +238,7 @@ export default function HomeworkPage() {
           {showHwForm && (
             <div style={{ margin: '12px 20px 0', padding: '14px', background: 'rgba(99,102,241,0.04)', border: '1px solid rgba(99,102,241,0.12)', borderRadius: 14, display: 'flex', flexDirection: 'column', gap: 10 }}>
               <input className="glass-input" placeholder="Assignment title *" value={hwForm.title} onChange={e => setHwForm(f => ({ ...f, title: e.target.value }))} onKeyDown={e => e.key === 'Enter' && addHw()} style={{ padding: '9px 12px', fontSize: 13.5 }} />
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 8 }}>
                 <select className="glass-input" value={hwForm.subject} onChange={e => setHwForm(f => ({ ...f, subject: e.target.value }))} style={{ padding: '9px 12px', fontSize: 13 }}>
                   {SUBJECTS.map(s => <option key={s}>{s}</option>)}
                 </select>
@@ -244,7 +251,7 @@ export default function HomeworkPage() {
             </div>
           )}
 
-          <div style={{ padding: '12px 12px 12px', display: 'flex', flexDirection: 'column', gap: 4, maxHeight: 520, overflowY: 'auto' }}>
+          <div style={{ padding: '12px 12px 12px', display: 'flex', flexDirection: 'column', gap: 4, maxHeight: isMobile ? undefined : 520, overflowY: isMobile ? undefined : 'auto' }}>
             {filteredHw.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '32px 20px', color: 'var(--text-muted)', fontSize: 13 }}>
                 {hwFilter === 'done' ? 'No completed assignments yet' : 'No pending assignments 🎉'}
@@ -269,9 +276,9 @@ export default function HomeworkPage() {
                       {item.notes && <span style={{ fontSize: 10.5, color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 120 }}>{item.notes}</span>}
                     </div>
                   </div>
-                  <button onClick={() => deleteHw(item.id)} style={{ flexShrink: 0, width: 24, height: 24, borderRadius: 6, border: 'none', background: 'rgba(239,68,68,0.08)', color: '#ef4444', cursor: 'pointer', fontSize: 13, display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0, transition: 'opacity 0.15s' }}
-                    onMouseEnter={e => (e.currentTarget.style.opacity = '1')} onMouseLeave={e => (e.currentTarget.style.opacity = '0')}
-                    onFocus={e => (e.currentTarget.style.opacity = '1')} onBlur={e => (e.currentTarget.style.opacity = '0')}
+                  <button onClick={() => deleteHw(item.id)} style={{ flexShrink: 0, width: 28, height: 28, borderRadius: 7, border: 'none', background: 'rgba(239,68,68,0.08)', color: '#ef4444', cursor: 'pointer', fontSize: 15, display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: isMobile ? 0.7 : 0, transition: 'opacity 0.15s' }}
+                    onMouseEnter={e => (e.currentTarget.style.opacity = '1')} onMouseLeave={e => (e.currentTarget.style.opacity = isMobile ? '0.7' : '0')}
+                    onFocus={e => (e.currentTarget.style.opacity = '1')} onBlur={e => (e.currentTarget.style.opacity = isMobile ? '0.7' : '0')}
                   >×</button>
                 </div>
               )
@@ -298,7 +305,7 @@ export default function HomeworkPage() {
 
           {showPForm && (
             <div style={{ margin: '12px 20px 0', padding: '14px', background: 'rgba(245,158,11,0.04)', border: '1px solid rgba(245,158,11,0.14)', borderRadius: 14, display: 'flex', flexDirection: 'column', gap: 10 }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 8 }}>
                 <select className="glass-input" value={pForm.subject} onChange={e => setPForm(f => ({ ...f, subject: e.target.value }))} style={{ padding: '9px 12px', fontSize: 13 }}>
                   {SUBJECTS.map(s => <option key={s}>{s}</option>)}
                 </select>
@@ -318,7 +325,7 @@ export default function HomeworkPage() {
                   </span>
                 </div>
               )}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 8 }}>
                 <input className="glass-input" type="date" value={pForm.completed_at} onChange={e => setPForm(f => ({ ...f, completed_at: e.target.value }))} style={{ padding: '9px 12px', fontSize: 13 }} />
                 <input className="glass-input" placeholder="Notes (optional)" value={pForm.notes} onChange={e => setPForm(f => ({ ...f, notes: e.target.value }))} style={{ padding: '9px 12px', fontSize: 13 }} />
               </div>
@@ -328,7 +335,7 @@ export default function HomeworkPage() {
             </div>
           )}
 
-          <div style={{ padding: '12px 12px 12px', display: 'flex', flexDirection: 'column', gap: 4, maxHeight: 520, overflowY: 'auto' }}>
+          <div style={{ padding: '12px 12px 12px', display: 'flex', flexDirection: 'column', gap: 4, maxHeight: isMobile ? undefined : 520, overflowY: isMobile ? undefined : 'auto' }}>
             {filteredPapers.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '32px 20px', color: 'var(--text-muted)', fontSize: 13 }}>
                 No past papers logged yet
@@ -369,9 +376,9 @@ export default function HomeworkPage() {
                       </div>
                     )}
                   </div>
-                  <button onClick={() => deletePaper(paper.id)} style={{ flexShrink: 0, width: 24, height: 24, borderRadius: 6, border: 'none', background: 'rgba(239,68,68,0.08)', color: '#ef4444', cursor: 'pointer', fontSize: 13, display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0, transition: 'opacity 0.15s' }}
-                    onMouseEnter={e => (e.currentTarget.style.opacity = '1')} onMouseLeave={e => (e.currentTarget.style.opacity = '0')}
-                    onFocus={e => (e.currentTarget.style.opacity = '1')} onBlur={e => (e.currentTarget.style.opacity = '0')}
+                  <button onClick={() => deletePaper(paper.id)} style={{ flexShrink: 0, width: 28, height: 28, borderRadius: 7, border: 'none', background: 'rgba(239,68,68,0.08)', color: '#ef4444', cursor: 'pointer', fontSize: 15, display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: isMobile ? 0.7 : 0, transition: 'opacity 0.15s' }}
+                    onMouseEnter={e => (e.currentTarget.style.opacity = '1')} onMouseLeave={e => (e.currentTarget.style.opacity = isMobile ? '0.7' : '0')}
+                    onFocus={e => (e.currentTarget.style.opacity = '1')} onBlur={e => (e.currentTarget.style.opacity = isMobile ? '0.7' : '0')}
                   >×</button>
                 </div>
               )

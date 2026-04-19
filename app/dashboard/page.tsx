@@ -87,6 +87,7 @@ export default function DashboardPage() {
   const [savingCI, setSavingCI]       = useState<CheckinKey | null>(null)
   const [ciLoading, setCiLoading]     = useState(true)
   const [hoveredDay, setHoveredDay]   = useState<string | null>(null)
+  const [isMobile, setIsMobile]       = useState(false)
 
   // ── Load ─────────────────────────────────────────────────────────────────
   useEffect(() => {
@@ -108,6 +109,14 @@ export default function DashboardPage() {
       setLoading(false)
     })()
   }, [user])
+
+  // Mobile detection
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
 
   // load check-ins (last 35 days)
   useEffect(() => {
@@ -224,7 +233,7 @@ export default function DashboardPage() {
       {/* ── Greeting ── */}
       <div className="fade-up" style={{ marginBottom: 28 }}>
         <p className="page-eyebrow">Overview</p>
-        <h1 style={{ fontSize: 30, fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.04em', lineHeight: 1.1 }}>
+        <h1 style={{ fontSize: isMobile ? 22 : 30, fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.04em', lineHeight: 1.1 }}>
           {greeting}, {name} {greetingEmoji}
         </h1>
         <p style={{ fontSize: 13.5, color: 'var(--text-muted)', marginTop: 5 }}>
@@ -235,14 +244,14 @@ export default function DashboardPage() {
       </div>
 
       {/* ── Stat cards ── */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14, marginBottom: 20 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)', gap: isMobile ? 10 : 14, marginBottom: 20 }}>
         {STAT_CARDS.map((card, i) => (
           <Link key={card.label} href={card.href} style={{ textDecoration: 'none' }}>
-            <div className="glass-card fade-up" style={{ padding: '20px 22px', animationDelay: `${i * 50}ms`, cursor: 'pointer', overflow: 'hidden', position: 'relative' }}>
+            <div className="glass-card fade-up" style={{ padding: isMobile ? '16px 14px' : '20px 22px', animationDelay: `${i * 50}ms`, cursor: 'pointer', overflow: 'hidden', position: 'relative' }}>
               <div style={{ width: 36, height: 36, borderRadius: 11, background: card.gradient, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14, boxShadow: '0 4px 14px rgba(0,0,0,0.12)' }}>{card.icon}</div>
               <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 6 }}>{card.label}</div>
               {loading ? <div className="skeleton" style={{ height: 28, width: '60%', marginBottom: 14 }} /> : (
-                <div style={{ fontSize: 28, fontWeight: 720, color: 'var(--text-primary)', letterSpacing: '-0.03em', lineHeight: 1, marginBottom: 14, fontVariantNumeric: 'tabular-nums' }}>
+                <div style={{ fontSize: isMobile ? 22 : 28, fontWeight: 720, color: 'var(--text-primary)', letterSpacing: '-0.03em', lineHeight: 1, marginBottom: 14, fontVariantNumeric: 'tabular-nums' }}>
                   {card.done}
                   {card.total !== null && <span style={{ fontSize: 15, fontWeight: 500, color: 'var(--text-muted)', marginLeft: 4 }}>/ {card.total}</span>}
                   {(card as any).suffix && <span style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-muted)', marginLeft: 5 }}>{(card as any).suffix}</span>}
@@ -262,7 +271,7 @@ export default function DashboardPage() {
       </div>
 
       {/* ── Daily check-in + History ── */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.15fr', gap: 14, marginBottom: 14 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1.15fr', gap: 14, marginBottom: 14 }}>
 
         {/* ── Daily Check-in ── */}
         <div className="glass-card fade-up" style={{ padding: '20px 22px', animationDelay: '180ms', overflow: 'hidden' }}>
@@ -444,7 +453,7 @@ export default function DashboardPage() {
       )}
 
       {/* ── Two columns ── */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 14 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 14, marginBottom: 14 }}>
         <div className="glass-card fade-up" style={{ padding: 22, animationDelay: '300ms' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
             <h2 style={{ fontSize: 13.5, fontWeight: 660, color: 'var(--text-primary)' }}>Upcoming Homework</h2>
@@ -495,7 +504,7 @@ export default function DashboardPage() {
       </div>
 
       {/* ── Quick nav ── */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 40 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)', gap: 12, marginBottom: 40 }}>
         {QUICK_NAV.map((item, i) => (
           <Link key={item.href} href={item.href} style={{ textDecoration: 'none' }}>
             <div className="glass-card fade-up" style={{ padding: '16px 12px', cursor: 'pointer', animationDelay: `${380 + i * 40}ms`, textAlign: 'center' }}>
