@@ -110,10 +110,10 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       pts.push({
         x: Math.random() * W,
         y: Math.random() * H,
-        r: 0.8 + depth * 3.2,
+        r: 1.0 + depth * 3.5,
         vx: (Math.random() - 0.5) * (0.22 + depth * 0.38),
         vy: (Math.random() - 0.5) * (0.16 + depth * 0.28),
-        base: 0.08 + depth * 0.18,
+        base: 0.18 + depth * 0.28,   // bumped up so they're actually visible
         phase: Math.random() * Math.PI * 2,
         ps: Math.random() * 0.0022 + 0.0006,
         depth,
@@ -123,7 +123,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     let rafId: number
     const draw = () => {
       ctx.clearRect(0, 0, W, H)
-      const dark = themeRef.current === 'dark'
+      const t = themeRef.current
       for (const p of pts) {
         p.phase += p.ps
         p.x += p.vx + Math.sin(p.phase) * 0.04
@@ -131,12 +131,20 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         if (p.x < -4) p.x = W + 4; if (p.x > W + 4) p.x = -4
         if (p.y < -4) p.y = H + 4; if (p.y > H + 4) p.y = -4
         const op = p.base * (0.75 + 0.25 * Math.sin(p.phase * 1.4))
-        const g = dark
-          ? Math.round(190 + p.depth * 40)   // 190-230 bright on dark bg
-          : Math.round(155 - p.depth * 80)   // 75-155 grey on light/sunset/aurora
+        // Colour per theme so dots are always visible against the bg
+        let r: number, g: number, b: number
+        if (t === 'dark') {
+          const v = Math.round(190 + p.depth * 50); r = v; g = v; b = v + 15
+        } else if (t === 'sunset') {
+          r = 255; g = Math.round(200 - p.depth * 60); b = Math.round(180 - p.depth * 80)
+        } else if (t === 'aurora') {
+          r = Math.round(160 - p.depth * 40); g = Math.round(220 - p.depth * 30); b = Math.round(200 - p.depth * 40)
+        } else {
+          const v = Math.round(120 - p.depth * 60); r = v; g = v; b = v + 20
+        }
         ctx.beginPath()
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
-        ctx.fillStyle = `rgba(${g},${g},${g},${op.toFixed(3)})`
+        ctx.fillStyle = `rgba(${r},${g},${b},${op.toFixed(3)})`
         ctx.fill()
       }
       rafId = requestAnimationFrame(draw)
@@ -277,7 +285,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       </div>
 
       {/* Particle canvas — above bg, below all UI */}
-      <canvas ref={canvasRef} style={{ position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none' }} />
+      <canvas ref={canvasRef} style={{ position: 'fixed', top: 0, right: 0, bottom: 0, left: 0, zIndex: 0, pointerEvents: 'none' }} />
 
       {/* ── DESKTOP: Vertical pill sidebar ── */}
       {!isMobile && (
