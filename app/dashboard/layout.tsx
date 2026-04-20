@@ -81,9 +81,73 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   const gTimer      = useRef<NodeJS.Timeout | null>(null)
   const touchStartX = useRef(0)
   const touchStartY = useRef(0)
+  const canvasRef   = useRef<HTMLCanvasElement>(null)
+  const themeRef    = useRef<Theme>(theme)
   const [nowPlaying, setNowPlaying]   = useState<{ name: string; artist: string; is_playing: boolean } | null>(null)
 
   useEffect(() => { setMounted(true) }, [])
+
+  // Keep themeRef in sync so particle loop can read latest theme without re-init
+  useEffect(() => { themeRef.current = theme }, [theme])
+
+  // Particle system — runs once on mount, reads themeRef per frame for colour
+  useEffect(() => {
+    const cv = canvasRef.current
+    if (!cv) return
+    const ctx = cv.getContext('2d')
+    if (!ctx) return
+
+    let W = 0, H = 0
+    const resize = () => { W = cv.width = window.innerWidth; H = cv.height = window.innerHeight }
+    resize()
+    window.addEventListener('resize', resize)
+
+    const N = 60
+    type Pt = { x: number; y: number; r: number; vx: number; vy: number; base: number; phase: number; ps: number; depth: number }
+    const pts: Pt[] = []
+    for (let i = 0; i < N; i++) {
+      const depth = Math.random()
+      pts.push({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        r: 0.8 + depth * 3.2,
+        vx: (Math.random() - 0.5) * (0.22 + depth * 0.38),
+        vy: (Math.random() - 0.5) * (0.16 + depth * 0.28),
+        base: 0.08 + depth * 0.18,
+        phase: Math.random() * Math.PI * 2,
+        ps: Math.random() * 0.0022 + 0.0006,
+        depth,
+      })
+    }
+
+    let rafId: number
+    const draw = () => {
+      ctx.clearRect(0, 0, W, H)
+      const dark = themeRef.current === 'dark'
+      for (const p of pts) {
+        p.phase += p.ps
+        p.x += p.vx + Math.sin(p.phase) * 0.04
+        p.y += p.vy + Math.cos(p.phase * 0.7) * 0.03
+        if (p.x < -4) p.x = W + 4; if (p.x > W + 4) p.x = -4
+        if (p.y < -4) p.y = H + 4; if (p.y > H + 4) p.y = -4
+        const op = p.base * (0.75 + 0.25 * Math.sin(p.phase * 1.4))
+        const g = dark
+          ? Math.round(190 + p.depth * 40)   // 190-230 bright on dark bg
+          : Math.round(155 - p.depth * 80)   // 75-155 grey on light/sunset/aurora
+        ctx.beginPath()
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
+        ctx.fillStyle = `rgba(${g},${g},${g},${op.toFixed(3)})`
+        ctx.fill()
+      }
+      rafId = requestAnimationFrame(draw)
+    }
+    draw()
+
+    return () => {
+      window.removeEventListener('resize', resize)
+      cancelAnimationFrame(rafId)
+    }
+  }, [])
 
   // Load theme
   useEffect(() => {
@@ -211,6 +275,9 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         <div className="aurora-ray-1" /><div className="aurora-ray-2" /><div className="aurora-ray-3" /><div className="aurora-ray-4" />
         <div className="aurora-blob-1" /><div className="aurora-blob-2" /><div className="aurora-blob-3" /><div className="aurora-blob-4" />
       </div>
+
+      {/* Particle canvas — above bg, below all UI */}
+      <canvas ref={canvasRef} style={{ position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none' }} />
 
       {/* ── DESKTOP: Vertical pill sidebar ── */}
       {!isMobile && (
