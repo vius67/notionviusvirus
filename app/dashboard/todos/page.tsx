@@ -64,19 +64,34 @@ export default function TodosPage() {
 
   const toggle = async (id: string, current: boolean) => {
     const newStatus = !current ? 'done' : cols[0]?.id || 'todo'
-    setTodos(prev => prev.map(t => t.id === id ? { ...t, completed: !current, status: newStatus } : t))
-    await supabase.from('todos').update({ completed: !current, status: newStatus }).eq('id', id)
+    const prev = todos.find(t => t.id === id)
+    setTodos(ps => ps.map(t => t.id === id ? { ...t, completed: !current, status: newStatus } : t))
+    const { error } = await supabase.from('todos').update({ completed: !current, status: newStatus }).eq('id', id)
+    if (error) {
+      console.error('toggle error:', error)
+      if (prev) setTodos(ps => ps.map(t => t.id === id ? prev : t))
+    }
   }
 
   const del = async (id: string) => {
-    setTodos(prev => prev.filter(t => t.id !== id))
-    await supabase.from('todos').delete().eq('id', id)
+    const prev = todos.find(t => t.id === id)
+    setTodos(ps => ps.filter(t => t.id !== id))
+    const { error } = await supabase.from('todos').delete().eq('id', id)
+    if (error) {
+      console.error('delete error:', error)
+      if (prev) setTodos(ps => [prev, ...ps])
+    }
   }
 
   const moveStatus = async (id: string, status: string) => {
     const completed = status === 'done'
-    setTodos(prev => prev.map(t => t.id === id ? { ...t, status, completed } : t))
-    await supabase.from('todos').update({ status, completed }).eq('id', id)
+    const prev = todos.find(t => t.id === id)
+    setTodos(ps => ps.map(t => t.id === id ? { ...t, status, completed } : t))
+    const { error } = await supabase.from('todos').update({ status, completed }).eq('id', id)
+    if (error) {
+      console.error('moveStatus error:', error)
+      if (prev) setTodos(ps => ps.map(t => t.id === id ? prev : t))
+    }
   }
 
   // Kanban inline add
@@ -86,8 +101,17 @@ export default function TodosPage() {
     const optimistic: Todo = { id: tempId, title: inlineTitle.trim(), description: null, subject: null, due_date: null, priority: 'medium', completed: false, status: colId, created_at: new Date().toISOString() }
     setTodos(prev => [optimistic, ...prev])
     setInlineTitle(''); setInlineColId(null)
-    const { data } = await supabase.from('todos').insert({ title: optimistic.title, user_id: user.id, completed: false, priority: 'medium', status: colId }).select().single()
-    if (data) setTodos(prev => prev.map(t => t.id === tempId ? { ...data, status: data.status || colId } : t))
+    const { data, error } = await supabase
+      .from('todos')
+      .insert({ title: optimistic.title, user_id: user.id, completed: false, priority: 'medium', status: colId })
+      .select()
+      .single()
+    if (error) {
+      console.error('addKanbanTask error:', error)
+      setTodos(prev => prev.filter(t => t.id !== tempId))
+    } else if (data) {
+      setTodos(prev => prev.map(t => t.id === tempId ? { ...data, status: data.status || colId } : t))
+    }
   }
 
   // List inline add
@@ -98,8 +122,17 @@ export default function TodosPage() {
     const optimistic: Todo = { id: tempId, title: listInlineTitle.trim(), description: null, subject: null, due_date: null, priority: 'medium', completed: false, status: firstColId, created_at: new Date().toISOString() }
     setTodos(prev => [optimistic, ...prev])
     setListInlineTitle(''); setShowListInline(false)
-    const { data } = await supabase.from('todos').insert({ title: optimistic.title, user_id: user.id, completed: false, priority: 'medium', status: firstColId }).select().single()
-    if (data) setTodos(prev => prev.map(t => t.id === tempId ? { ...data, status: data.status || firstColId } : t))
+    const { data, error } = await supabase
+      .from('todos')
+      .insert({ title: optimistic.title, user_id: user.id, completed: false, priority: 'medium', status: firstColId })
+      .select()
+      .single()
+    if (error) {
+      console.error('addListTask error:', error)
+      setTodos(prev => prev.filter(t => t.id !== tempId))
+    } else if (data) {
+      setTodos(prev => prev.map(t => t.id === tempId ? { ...data, status: data.status || firstColId } : t))
+    }
   }
 
   const addCol = () => {
