@@ -91,8 +91,6 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   const themeRef    = useRef<Theme>(theme)
   const glowRef     = useRef<HTMLDivElement>(null)
   const cmdInputRef = useRef<HTMLInputElement>(null)
-  const cursorDotRef  = useRef<HTMLDivElement>(null)
-  const cursorRingRef = useRef<HTMLDivElement>(null)
   const [nowPlaying, setNowPlaying]   = useState<{ name: string; artist: string; is_playing: boolean } | null>(null)
   const [showCmdK, setShowCmdK]   = useState(false)
   const [cmdQuery, setCmdQuery]   = useState('')
@@ -181,16 +179,19 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     return () => window.removeEventListener('mousemove', move)
   }, [])
 
-  // Custom cursor — single mousemove state machine, no bubbling issues
+  // Custom cursor — elements injected directly onto body to avoid
+  // overflow:hidden clipping and stacking-context issues inside the layout div
   useEffect(() => {
     if (typeof window === 'undefined') return
     if (window.matchMedia('(pointer: coarse)').matches) return
-    const dot  = cursorDotRef.current
-    const ring = cursorRingRef.current
-    if (!dot || !ring) return
 
-    // CSS @media (pointer: fine) already hides the native cursor globally.
-    // We just need to drive the two elements.
+    const dot  = document.createElement('div')
+    const ring = document.createElement('div')
+    dot.className  = 'cursor-dot'
+    ring.className = 'cursor-ring'
+    document.body.appendChild(dot)
+    document.body.appendChild(ring)
+
     let mx = -200, my = -200, rx = -200, ry = -200
     let rafId: number
     let curState = ''
@@ -241,6 +242,8 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       window.removeEventListener('mouseup',   onUp)
       document.documentElement.removeEventListener('mouseleave', onLeave)
       document.documentElement.removeEventListener('mouseenter', onEnter)
+      document.body.removeChild(dot)
+      document.body.removeChild(ring)
     }
   }, [])
 
@@ -400,11 +403,6 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', position: 'relative', overflowX: 'hidden' }}>
-      {/* Custom cursor elements */}
-      {!isMobile && <>
-        <div ref={cursorDotRef}  className="cursor-dot" />
-        <div ref={cursorRingRef} className="cursor-ring" />
-      </>}
       <div className="grid-bg" />
       <div className="noise-overlay" />
       {/* Aurora only visible in aurora theme */}
