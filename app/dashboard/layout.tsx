@@ -181,71 +181,66 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     return () => window.removeEventListener('mousemove', move)
   }, [])
 
-  // Custom cursor — dot follows exactly, ring lerps behind
+  // Custom cursor — single mousemove state machine, no bubbling issues
   useEffect(() => {
     if (typeof window === 'undefined') return
-    if (window.matchMedia('(pointer: coarse)').matches) return // skip touch devices
+    if (window.matchMedia('(pointer: coarse)').matches) return
     const dot  = cursorDotRef.current
     const ring = cursorRingRef.current
     if (!dot || !ring) return
 
+    // CSS @media (pointer: fine) already hides the native cursor globally.
+    // We just need to drive the two elements.
     let mx = -200, my = -200, rx = -200, ry = -200
     let rafId: number
+    let curState = ''
+
+    const setState = (s: string) => {
+      if (s === curState) return
+      curState = s
+      dot.classList.toggle('cur-hover', s === 'hover')
+      ring.classList.toggle('cur-hover', s === 'hover')
+      dot.classList.toggle('cur-text',  s === 'text')
+      ring.classList.toggle('cur-text',  s === 'text')
+    }
 
     const onMove = (e: MouseEvent) => {
       mx = e.clientX; my = e.clientY
-      dot.style.left = mx + 'px'; dot.style.top = my + 'px'
+      dot.style.left = mx + 'px'
+      dot.style.top  = my + 'px'
+      const t = e.target as HTMLElement
+      if (t.closest('input, textarea, select, [contenteditable]')) setState('text')
+      else if (t.closest('a, button, [role="button"], label'))     setState('hover')
+      else setState('default')
     }
 
     const tick = () => {
       rx += (mx - rx) * 0.11
       ry += (my - ry) * 0.11
-      ring.style.left = rx + 'px'; ring.style.top = ry + 'px'
+      ring.style.left = rx + 'px'
+      ring.style.top  = ry + 'px'
       rafId = requestAnimationFrame(tick)
     }
     tick()
 
-    const onOver = (e: MouseEvent) => {
-      if ((e.target as HTMLElement).closest('a, button, [role="button"], label')) {
-        dot.classList.add('cur-hover'); ring.classList.add('cur-hover')
-      }
-    }
-    const onOut = (e: MouseEvent) => {
-      if ((e.target as HTMLElement).closest('a, button, [role="button"], label')) {
-        dot.classList.remove('cur-hover'); ring.classList.remove('cur-hover')
-      }
-    }
-    const onInput = (e: MouseEvent) => {
-      if ((e.target as HTMLElement).closest('input, textarea, select')) {
-        ring.classList.add('cur-text'); dot.classList.add('cur-text')
-      } else {
-        ring.classList.remove('cur-text'); dot.classList.remove('cur-text')
-      }
-    }
-    const onDown = () => { dot.classList.add('cur-click'); ring.classList.add('cur-click') }
-    const onUp   = () => { dot.classList.remove('cur-click'); ring.classList.remove('cur-click') }
-    const onDocLeave = () => { dot.style.opacity = '0'; ring.style.opacity = '0' }
-    const onDocEnter = () => { dot.style.opacity = '1'; ring.style.opacity = '1' }
+    const onDown  = () => { dot.classList.add('cur-click');    ring.classList.add('cur-click') }
+    const onUp    = () => { dot.classList.remove('cur-click'); ring.classList.remove('cur-click') }
+    const onLeave = () => { dot.style.opacity = '0'; ring.style.opacity = '0' }
+    const onEnter = () => { dot.style.opacity = '1'; ring.style.opacity = '1' }
 
     window.addEventListener('mousemove', onMove, { passive: true })
-    window.addEventListener('mouseover', onOver, { passive: true })
-    window.addEventListener('mouseout',  onOut,  { passive: true })
-    window.addEventListener('mouseover', onInput, { passive: true })
     window.addEventListener('mousedown', onDown)
     window.addEventListener('mouseup',   onUp)
-    document.documentElement.addEventListener('mouseleave', onDocLeave)
-    document.documentElement.addEventListener('mouseenter', onDocEnter)
+    document.documentElement.addEventListener('mouseleave', onLeave)
+    document.documentElement.addEventListener('mouseenter', onEnter)
 
     return () => {
       cancelAnimationFrame(rafId)
       window.removeEventListener('mousemove', onMove)
-      window.removeEventListener('mouseover', onOver)
-      window.removeEventListener('mouseout',  onOut)
-      window.removeEventListener('mouseover', onInput)
       window.removeEventListener('mousedown', onDown)
       window.removeEventListener('mouseup',   onUp)
-      document.documentElement.removeEventListener('mouseleave', onDocLeave)
-      document.documentElement.removeEventListener('mouseenter', onDocEnter)
+      document.documentElement.removeEventListener('mouseleave', onLeave)
+      document.documentElement.removeEventListener('mouseenter', onEnter)
     }
   }, [])
 
@@ -404,7 +399,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   }
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', position: 'relative', overflowX: 'hidden', cursor: isMobile ? undefined : 'none' }}>
+    <div style={{ minHeight: '100vh', display: 'flex', position: 'relative', overflowX: 'hidden' }}>
       {/* Custom cursor elements */}
       {!isMobile && <>
         <div ref={cursorDotRef}  className="cursor-dot" />
