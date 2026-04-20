@@ -62,6 +62,12 @@ function IconKurt({ s }: { s: number }) {
 function IconMore({ s }: { s: number }) {
   return <svg width={s} height={s} viewBox="0 0 20 20" fill="currentColor"><circle cx="4" cy="10" r="1.6"/><circle cx="10" cy="10" r="1.6"/><circle cx="16" cy="10" r="1.6"/></svg>
 }
+function IconPalette({ s }: { s: number }) {
+  return <svg width={s} height={s} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M10 2a8 8 0 100 16 4 4 0 000-8 4 4 0 014-4"/><circle cx="7" cy="9" r="1" fill="currentColor" stroke="none"/><circle cx="11" cy="6.5" r="1" fill="currentColor" stroke="none"/><circle cx="6" cy="12.5" r="1" fill="currentColor" stroke="none"/></svg>
+}
+function IconSearch({ s }: { s: number }) {
+  return <svg width={s} height={s} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="9" cy="9" r="5.5"/><path d="M15 15l-3-3"/></svg>
+}
 
 // ── Layout ────────────────────────────────────────────────────────────────────
 export default function DashboardLayout({ children }: { children: ReactNode }) {
@@ -83,7 +89,12 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   const touchStartY = useRef(0)
   const canvasRef   = useRef<HTMLCanvasElement>(null)
   const themeRef    = useRef<Theme>(theme)
+  const glowRef     = useRef<HTMLDivElement>(null)
+  const cmdInputRef = useRef<HTMLInputElement>(null)
   const [nowPlaying, setNowPlaying]   = useState<{ name: string; artist: string; is_playing: boolean } | null>(null)
+  const [showCmdK, setShowCmdK]   = useState(false)
+  const [cmdQuery, setCmdQuery]   = useState('')
+  const [cmdIdx, setCmdIdx]       = useState(0)
 
   useEffect(() => { setMounted(true) }, [])
 
@@ -157,6 +168,30 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     }
   }, [])
 
+  // Mouse ambient glow — direct DOM update, zero re-renders
+  useEffect(() => {
+    const move = (e: MouseEvent) => {
+      if (!glowRef.current) return
+      glowRef.current.style.background =
+        `radial-gradient(700px circle at ${e.clientX}px ${e.clientY}px, rgba(99,102,241,0.06) 0%, transparent 70%)`
+    }
+    window.addEventListener('mousemove', move, { passive: true })
+    return () => window.removeEventListener('mousemove', move)
+  }, [])
+
+  // Cmd palette: focus input on open, reset on close
+  useEffect(() => {
+    if (showCmdK) {
+      setCmdIdx(0)
+      setTimeout(() => cmdInputRef.current?.focus(), 30)
+    } else {
+      setCmdQuery('')
+    }
+  }, [showCmdK])
+
+  // Reset selection index when search query changes
+  useEffect(() => { setCmdIdx(0) }, [cmdQuery])
+
   // Load theme
   useEffect(() => {
     const saved = localStorage.getItem('app-theme') as Theme | null
@@ -206,9 +241,11 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   const handleKey = useCallback((e: KeyboardEvent) => {
     const tag = (e.target as HTMLElement).tagName
     if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return
+    // ⌘K / Ctrl+K — command palette
+    if ((e.metaKey || e.ctrlKey) && e.key === 'k') { e.preventDefault(); setShowCmdK(s => !s); return }
     if (e.metaKey || e.ctrlKey || e.altKey) return
     if (e.key === '?') { setShowShortcuts(s => !s); return }
-    if (e.key === 'Escape') { setShowShortcuts(false); setShowUser(false); setGPressed(false); setShowMore(false); setShowTheme(false); return }
+    if (e.key === 'Escape') { setShowShortcuts(false); setShowUser(false); setGPressed(false); setShowMore(false); setShowTheme(false); setShowCmdK(false); return }
     if (e.key === 'g' || e.key === 'G') {
       setGPressed(true)
       if (gTimer.current) clearTimeout(gTimer.current)
@@ -273,6 +310,29 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   const currentTheme    = THEMES.find(t => t.id === theme)!
   const sidebarW        = open ? 228 : 60
 
+  // ── Command palette ───────────────────────────────────────────────────────
+  type CmdItem = { label: string; category: string; icon: ({ s }: { s: number }) => JSX.Element; href?: string; action?: () => void; swatch?: string }
+  const rawCmdItems: CmdItem[] = [
+    ...NAV_ITEMS.map(n => ({ label: n.label, category: 'Pages', icon: n.icon, href: n.href })),
+    ...THEMES.map(t => ({ label: `${t.label} Theme`, category: 'Theme', icon: IconPalette, swatch: t.swatch, action: () => { setTheme(t.id); setShowCmdK(false) } })),
+    { label: 'Keyboard Shortcuts', category: 'Misc', icon: IconSearch, action: () => { setShowShortcuts(true); setShowCmdK(false) } },
+    { label: 'Sign Out', category: 'Account', icon: IconLogout, action: () => signOut() },
+  ]
+  const filteredCmd = cmdQuery.trim()
+    ? rawCmdItems.filter(i => i.label.toLowerCase().includes(cmdQuery.toLowerCase()) || i.category.toLowerCase().includes(cmdQuery.toLowerCase()))
+    : rawCmdItems
+  const handleCmdKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'ArrowDown') { e.preventDefault(); setCmdIdx(i => Math.min(i + 1, filteredCmd.length - 1)) }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); setCmdIdx(i => Math.max(i - 1, 0)) }
+    else if (e.key === 'Enter') {
+      e.preventDefault()
+      const item = filteredCmd[cmdIdx]
+      if (!item) return
+      if (item.href) { router.push(item.href); setShowCmdK(false) }
+      else if (item.action) item.action()
+    } else if (e.key === 'Escape') { setShowCmdK(false) }
+  }
+
   return (
     <div style={{ minHeight: '100vh', display: 'flex', position: 'relative', overflowX: 'hidden' }}>
       <div className="grid-bg" />
@@ -286,6 +346,8 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
       {/* Particle canvas — above bg, below all UI */}
       <canvas ref={canvasRef} style={{ position: 'fixed', top: 0, right: 0, bottom: 0, left: 0, zIndex: 0, pointerEvents: 'none' }} />
+      {/* Mouse ambient glow */}
+      <div ref={glowRef} style={{ position: 'fixed', top: 0, right: 0, bottom: 0, left: 0, zIndex: 0, pointerEvents: 'none' }} />
 
       {/* ── DESKTOP: Vertical pill sidebar ── */}
       {!isMobile && (
@@ -313,6 +375,16 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
             </div>
             <span style={{ fontSize: 14, fontWeight: 760, letterSpacing: '-0.035em', color: 'var(--text-primary)', whiteSpace: 'nowrap', opacity: open ? 1 : 0, transform: open ? 'translateX(0)' : 'translateX(-6px)', transition: 'opacity 0.2s, transform 0.2s' }}>productivity.</span>
           </Link>
+
+          {/* ⌘K search trigger */}
+          <button onClick={() => setShowCmdK(true)} style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%', padding: '7px 10px', borderRadius: 12, border: `1px solid ${chipBorder}`, background: chipBg, cursor: 'pointer', marginBottom: 8, flexShrink: 0, overflow: 'hidden', transition: 'all 0.18s', fontFamily: 'Geist, sans-serif' }}
+            onMouseEnter={e => (e.currentTarget.style.background = hoverBg)}
+            onMouseLeave={e => (e.currentTarget.style.background = chipBg)}
+          >
+            <span style={{ flexShrink: 0, display: 'flex', color: 'var(--text-muted)' }}><IconSearch s={13} /></span>
+            <span style={{ fontSize: 12, color: 'var(--text-muted)', opacity: open ? 1 : 0, transition: 'opacity 0.15s', whiteSpace: 'nowrap', flex: 1, textAlign: 'left' }}>Search…</span>
+            <span style={{ fontSize: 10, padding: '1px 5px', borderRadius: 4, background: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)', border: `1px solid ${divider}`, color: 'var(--text-muted)', fontFamily: 'monospace', opacity: open ? 1 : 0, transition: 'opacity 0.15s', flexShrink: 0 }}>⌘K</span>
+          </button>
 
           {/* Nav items */}
           <nav style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 3, minWidth: 0 }}>
@@ -537,6 +609,71 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
       {!isMobile && showUser && <div style={{ position: 'fixed', inset: 0, zIndex: 49 }} onClick={() => setShowUser(false)} />}
 
+      {/* ── Command Palette ── */}
+      {showCmdK && (
+        <>
+          <div style={{ position: 'fixed', top: 0, right: 0, bottom: 0, left: 0, zIndex: 800, background: isDark ? 'rgba(0,0,0,0.6)' : 'rgba(4,8,32,0.38)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)' }} onClick={() => setShowCmdK(false)} />
+          <div style={{ position: 'fixed', top: '14%', left: '50%', transform: 'translateX(-50%)', zIndex: 801, width: 'min(560px, calc(100vw - 24px))', background: dropdownBg, border: `1px solid ${dropdownBorder}`, borderRadius: 22, overflow: 'hidden', boxShadow: isDark ? '0 28px 80px rgba(0,0,0,0.72), 0 0 0 0.5px rgba(255,255,255,0.06)' : '0 28px 80px rgba(60,80,180,0.26), 0 0 0 1px rgba(99,102,241,0.1)', animation: 'cmdIn 0.22s cubic-bezier(0.34,1.2,0.64,1)' }}>
+            {/* Search row */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '14px 16px', borderBottom: `1px solid ${divider}` }}>
+              <span style={{ display: 'flex', color: isDark ? 'rgba(255,255,255,0.28)' : 'rgba(100,110,150,0.5)', flexShrink: 0 }}><IconSearch s={17} /></span>
+              <input
+                ref={cmdInputRef}
+                value={cmdQuery}
+                onChange={e => setCmdQuery(e.target.value)}
+                onKeyDown={handleCmdKey}
+                placeholder="Search pages, themes, actions…"
+                style={{ flex: 1, border: 'none', background: 'none', outline: 'none', fontSize: 15, color: isDark ? 'rgba(255,255,255,0.9)' : 'var(--text-primary)', fontFamily: 'Geist, sans-serif', caretColor: 'var(--accent)' }}
+              />
+              <span style={{ fontSize: 10, padding: '2px 6px', borderRadius: 5, border: `1px solid ${divider}`, color: 'var(--text-muted)', fontFamily: 'monospace', background: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)', whiteSpace: 'nowrap', flexShrink: 0 }}>ESC</span>
+            </div>
+            {/* Results */}
+            <div style={{ maxHeight: 380, overflowY: 'auto', padding: '6px' }}>
+              {filteredCmd.length === 0
+                ? <div style={{ padding: '30px 16px', textAlign: 'center', color: 'var(--text-muted)', fontSize: 13.5 }}>No results for &ldquo;{cmdQuery}&rdquo;</div>
+                : (() => {
+                    let lastCat = ''
+                    return filteredCmd.map((item, i) => {
+                      const showCat = item.category !== lastCat
+                      lastCat = item.category
+                      const isActive = i === cmdIdx
+                      const Icon = item.icon
+                      return (
+                        <div key={item.label + i}>
+                          {showCat && <div style={{ padding: '8px 10px 2px', fontSize: 10, fontWeight: 640, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>{item.category}</div>}
+                          <div
+                            onMouseEnter={() => setCmdIdx(i)}
+                            onClick={() => { if (item.href) { router.push(item.href); setShowCmdK(false) } else if (item.action) item.action() }}
+                            style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 10px', borderRadius: 11, cursor: 'pointer', background: isActive ? (isDark ? 'rgba(255,255,255,0.08)' : 'rgba(99,102,241,0.08)') : 'transparent', transition: 'background 0.08s' }}
+                          >
+                            <div style={{ width: 32, height: 32, borderRadius: 9, background: isActive ? (isDark ? 'rgba(99,102,241,0.2)' : 'rgba(99,102,241,0.12)') : (isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)'), display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'background 0.08s' }}>
+                              {item.swatch
+                                ? <div style={{ width: 14, height: 14, borderRadius: 4, background: item.swatch, boxShadow: '0 1px 4px rgba(0,0,0,0.18)' }} />
+                                : <span style={{ color: isActive ? 'var(--accent)' : 'var(--text-muted)', transition: 'color 0.08s', display: 'flex' }}><Icon s={15} /></span>
+                              }
+                            </div>
+                            <span style={{ fontSize: 13.5, fontWeight: isActive ? 540 : 430, color: isActive ? (isDark ? '#fff' : 'var(--text-primary)') : 'var(--text-secondary)', flex: 1, transition: 'color 0.08s' }}>{item.label}</span>
+                            {item.href && <span style={{ fontSize: 12, color: 'var(--accent-mid)', opacity: isActive ? 1 : 0, transition: 'opacity 0.08s' }}>→</span>}
+                          </div>
+                        </div>
+                      )
+                    })
+                  })()
+              }
+            </div>
+            {/* Footer hints */}
+            <div style={{ display: 'flex', gap: 14, padding: '8px 14px', borderTop: `1px solid ${divider}` }}>
+              {[['↑↓', 'navigate'], ['↵', 'open'], ['esc', 'close']].map(([k, v]) => (
+                <span key={k} style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 10.5, color: 'var(--text-muted)' }}>
+                  <kbd style={{ fontFamily: 'monospace', fontSize: 10, padding: '1px 5px', borderRadius: 4, border: `1px solid ${divider}`, background: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)' }}>{k}</kbd>{v}
+                </span>
+              ))}
+              <span style={{ marginLeft: 'auto', fontSize: 10.5, color: 'var(--text-muted)', opacity: 0.6 }}>⌘K to toggle</span>
+            </div>
+          </div>
+        </>
+      )}
+
       {/* Main content */}
       <main
         style={{ flex: 1, position: 'relative', zIndex: 1, paddingLeft: isMobile ? 0 : 88, paddingTop: isMobile ? 56 : 0, paddingBottom: isMobile ? 'calc(72px + env(safe-area-inset-bottom))' : 0, minWidth: 0 }}
@@ -554,6 +691,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         @keyframes equBar3 { from { height: 3px; } to { height: 9px; } }
         @keyframes scaleIn { from { opacity: 0; transform: scale(0.94) translateY(6px); } to { opacity: 1; transform: scale(1) translateY(0); } }
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes cmdIn { from { opacity: 0; transform: translateX(-50%) translateY(-14px) scale(0.96); } to { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); } }
       `}</style>
     </div>
   )

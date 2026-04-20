@@ -367,15 +367,17 @@ textarea.glass-input { resize: vertical; min-height: 72px; }
 
 /* ── Card pop on hover ── */
 .glass-card {
-  transition: box-shadow 0.28s ease, transform 0.28s cubic-bezier(0.34,1.56,0.64,1) !important;
+  transition: box-shadow 0.28s ease, transform 0.28s cubic-bezier(0.34,1.56,0.64,1), border-color 0.28s ease !important;
 }
 .glass-card:hover {
   transform: translateY(-3px) !important;
+  border-color: rgba(99,102,241,0.22) !important;
   box-shadow:
-    0 16px 52px rgba(80,100,200,0.14),
-    0 4px 12px rgba(99,102,241,0.07),
+    0 18px 56px rgba(80,100,200,0.16),
+    0 4px 14px rgba(99,102,241,0.09),
+    0 0 0 1px rgba(99,102,241,0.12),
     inset 0 1.5px 0 rgba(255,255,255,1),
-    inset 0 0 0 0.5px rgba(200,210,255,0.3) !important;
+    inset 0 0 0 0.5px rgba(200,210,255,0.35) !important;
 }
 
 /* stagger children */

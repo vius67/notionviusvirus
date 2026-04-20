@@ -19,6 +19,25 @@ type CheckinKey = keyof Omit<Checkin, 'id' | 'date'>
 // ── Constants ─────────────────────────────────────────────────────────────────
 const TODAY = new Date().toISOString().split('T')[0]
 
+const QUOTES = [
+  { text: "An investment in knowledge pays the best interest.", author: "Benjamin Franklin" },
+  { text: "The secret of getting ahead is getting started.", author: "Mark Twain" },
+  { text: "It always seems impossible until it's done.", author: "Nelson Mandela" },
+  { text: "The beautiful thing about learning is nobody can take it away from you.", author: "B.B. King" },
+  { text: "Work hard in silence, let success be your noise.", author: "Frank Ocean" },
+  { text: "Discipline is the bridge between goals and accomplishment.", author: "Jim Rohn" },
+  { text: "The expert in anything was once a beginner.", author: "Helen Hayes" },
+  { text: "Learning never exhausts the mind.", author: "Leonardo da Vinci" },
+  { text: "Small daily improvements over time lead to stunning results.", author: "Robin Sharma" },
+  { text: "Don't watch the clock; do what it does. Keep going.", author: "Sam Levenson" },
+  { text: "Push yourself, because no one else is going to do it for you.", author: "Unknown" },
+  { text: "Success is the sum of small efforts repeated day in and day out.", author: "Robert Collier" },
+  { text: "Believe you can and you're halfway there.", author: "Theodore Roosevelt" },
+  { text: "The harder you work for something, the greater you'll feel when you achieve it.", author: "Unknown" },
+]
+const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000)
+const DAILY_QUOTE = QUOTES[dayOfYear % QUOTES.length]
+
 const ITEMS: { key: CheckinKey; label: string; sub: string; time: string; color: string }[] = [
   { key: 'maths',   label: '1h Maths',    sub: 'Polynomials · Graphs · Functions · Algebra mastery', time: '1h',  color: '#6366f1' },
   { key: 'ucat',    label: '15m UCAT',    sub: 'UCAT practice & preparation',                          time: '15m', color: '#8b5cf6' },
@@ -202,6 +221,15 @@ export default function DashboardPage() {
           {!loading && (stats.hw - stats.hwDone > 0 ? ` · ${stats.hw - stats.hwDone} homework pending` : ' · All homework done 🎉')}
           {!ciLoading && todayDone > 0 && ` · ${todayDone}/5 daily tasks done`}
         </p>
+      </div>
+
+      {/* ── Daily quote ── */}
+      <div className="fade-up" style={{ marginBottom: 22, padding: '13px 18px', borderRadius: 16, background: 'rgba(255,255,255,0.48)', border: '1px solid rgba(255,255,255,0.82)', backdropFilter: 'blur(20px)', display: 'flex', alignItems: 'center', gap: 14, animationDelay: '60ms' }}>
+        <span style={{ fontSize: 20, flexShrink: 0 }}>💡</span>
+        <div style={{ minWidth: 0 }}>
+          <p style={{ fontSize: isMobile ? 12.5 : 13, fontStyle: 'italic', color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>&ldquo;{DAILY_QUOTE.text}&rdquo;</p>
+          <p style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 3, fontWeight: 500 }}>— {DAILY_QUOTE.author}</p>
+        </div>
       </div>
 
       {/* ── Stat cards ── */}
