@@ -225,7 +225,9 @@ body {
     inset 0 1.5px 0 rgba(255,255,255,1),
     inset 0 0 0 0.5px rgba(200,210,255,0.25);
   border-radius: var(--radius);
-  transition: box-shadow 0.3s ease, transform 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  transition: box-shadow 0.3s ease;
 }
 .glass-card:hover {
   box-shadow:
@@ -233,7 +235,6 @@ body {
     0 2px 8px rgba(80,100,200,0.06),
     inset 0 1.5px 0 rgba(255,255,255,1),
     inset 0 0 0 0.5px rgba(200,210,255,0.3);
-  transform: translateY(-2px);
 }
 
 .glass-nav {
@@ -312,65 +313,6 @@ textarea.glass-input { resize: vertical; min-height: 72px; }
 .glass-button-primary:active { transform: translateY(0); box-shadow: 0 2px 8px rgba(99,102,241,0.22); }
 .glass-button-primary:disabled { opacity: 0.52; cursor: not-allowed; transform: none; }
 
-/* ── Custom cursor ── */
-/* @media (pointer: fine) targets mouse/trackpad only — browser-level,
-   overrides any per-element cursor: pointer with no JS needed */
-@media (pointer: fine) {
-  *, *::before, *::after { cursor: none !important; }
-}
-
-/* Both start at -200px so they never flash in the top-left corner */
-.cursor-dot {
-  position: fixed;
-  top: -200px; left: -200px;
-  width: 6px; height: 6px; border-radius: 50%;
-  background: var(--accent);
-  pointer-events: none; z-index: 9999;
-  transform: translate(-50%, -50%);
-  will-change: left, top;
-  box-shadow: 0 0 8px rgba(99,102,241,0.65), 0 0 18px rgba(99,102,241,0.28);
-  transition: opacity 0.2s,
-              width  0.16s cubic-bezier(0.34,1.56,0.64,1),
-              height 0.16s cubic-bezier(0.34,1.56,0.64,1),
-              border-radius 0.16s;
-}
-.cursor-ring {
-  position: fixed;
-  top: -200px; left: -200px;
-  width: 28px; height: 28px; border-radius: 50%;
-  border: 1.5px solid rgba(99,102,241,0.42);
-  pointer-events: none; z-index: 9998;
-  transform: translate(-50%, -50%);
-  will-change: left, top;
-  transition: width  0.2s cubic-bezier(0.34,1.56,0.64,1),
-              height 0.2s cubic-bezier(0.34,1.56,0.64,1),
-              border-color 0.18s, background 0.18s, opacity 0.22s;
-}
-
-/* hover links/buttons — ring expands, dot disappears */
-.cursor-dot.cur-hover  { opacity: 0; }
-.cursor-ring.cur-hover { width: 42px; height: 42px; border-color: rgba(99,102,241,0.3); background: rgba(99,102,241,0.07); }
-
-/* text inputs — dot morphs into a caret bar, ring hides */
-.cursor-dot.cur-text  { width: 2px; height: 20px; border-radius: 2px; }
-.cursor-ring.cur-text { opacity: 0; }
-
-/* click */
-.cursor-dot.cur-click  { transform: translate(-50%, -50%) scale(2.4); opacity: 0.4; }
-.cursor-ring.cur-click { width: 16px; height: 16px; border-color: rgba(99,102,241,0.8); }
-
-/* Theme colours */
-[data-theme="sunset"] .cursor-dot  { background: #f43f5e; box-shadow: 0 0 8px rgba(244,63,94,0.65), 0 0 18px rgba(244,63,94,0.28); }
-[data-theme="sunset"] .cursor-ring { border-color: rgba(244,63,94,0.42); }
-[data-theme="sunset"] .cursor-ring.cur-hover { background: rgba(244,63,94,0.07); border-color: rgba(244,63,94,0.3); }
-[data-theme="sunset"] .cursor-ring.cur-click { border-color: rgba(244,63,94,0.8); }
-[data-theme="dark"]   .cursor-dot  { background: #818cf8; box-shadow: 0 0 10px rgba(129,140,248,0.75), 0 0 22px rgba(129,140,248,0.32); }
-[data-theme="dark"]   .cursor-ring { border-color: rgba(129,140,248,0.45); }
-[data-theme="dark"]   .cursor-ring.cur-hover { background: rgba(129,140,248,0.09); border-color: rgba(129,140,248,0.38); }
-[data-theme="aurora"] .cursor-dot  { background: #22c55e; box-shadow: 0 0 8px rgba(34,197,94,0.65), 0 0 18px rgba(34,197,94,0.28); }
-[data-theme="aurora"] .cursor-ring { border-color: rgba(34,197,94,0.42); }
-[data-theme="aurora"] .cursor-ring.cur-hover { background: rgba(34,197,94,0.07); border-color: rgba(34,197,94,0.32); }
-
 /* ── Scrollbar ── */
 ::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
@@ -417,6 +359,41 @@ textarea.glass-input { resize: vertical; min-height: 72px; }
 .scale-in   { animation: scaleIn   0.34s cubic-bezier(0.22,1,0.36,1) both; }
 .slide-right { animation: slideRight 0.32s cubic-bezier(0.22,1,0.36,1) both; }
 
+/* ── Animated gradient text ── */
+.gradient-text {
+  background: linear-gradient(90deg, #6366f1 0%, #a78bfa 28%, #f43f5e 56%, #fb923c 78%, #6366f1 100%);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradientShift 5s ease-in-out infinite;
+}
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50%       { background-position: 100% 50%; }
+}
+[data-theme="dark"] .gradient-text {
+  background: linear-gradient(90deg, #818cf8 0%, #c084fc 32%, #f472b6 62%, #818cf8 100%);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: gradientShift 5s ease-in-out infinite;
+}
+[data-theme="aurora"] .gradient-text {
+  background: linear-gradient(90deg, #22c55e 0%, #818cf8 38%, #34d399 68%, #22c55e 100%);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: gradientShift 5s ease-in-out infinite;
+}
+[data-theme="sunset"] .gradient-text {
+  background: linear-gradient(90deg, #f43f5e 0%, #fb923c 38%, #fbbf24 68%, #f43f5e 100%);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: gradientShift 5s ease-in-out infinite;
+}
+
 /* ── Page transitions ── */
 @keyframes pageEnter {
   from { opacity: 0; transform: translateY(12px); }
@@ -424,12 +401,28 @@ textarea.glass-input { resize: vertical; min-height: 72px; }
 }
 .page-enter { animation: pageEnter 0.38s cubic-bezier(0.22,1,0.36,1) both; }
 
-/* ── Card pop on hover ── */
+/* ── Card pop on hover + 3-D tilt spotlight ── */
 .glass-card {
-  transition: box-shadow 0.28s ease, transform 0.28s cubic-bezier(0.34,1.56,0.64,1), border-color 0.28s ease !important;
+  transition: box-shadow 0.28s ease, border-color 0.28s ease;
+  will-change: transform;
 }
+/* Inner spotlight — follows mouse via CSS vars set by JS */
+.glass-card::before {
+  content: '';
+  position: absolute; inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    circle at var(--mx, 50%) var(--my, 50%),
+    rgba(255,255,255,0.22) 0%,
+    transparent 65%
+  );
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  z-index: 0;
+}
+.glass-card:hover::before { opacity: 1; }
 .glass-card:hover {
-  transform: translateY(-3px) !important;
   border-color: rgba(99,102,241,0.22) !important;
   box-shadow:
     0 18px 56px rgba(80,100,200,0.16),
@@ -757,6 +750,13 @@ textarea.glass-input { resize: vertical; min-height: 72px; }
     0 4px 12px rgba(0,0,0,0.5),
     inset 0 1.5px 0 rgba(255,255,255,0.08) !important;
 }
+[data-theme="dark"] .glass-card::before {
+  background: radial-gradient(
+    circle at var(--mx, 50%) var(--my, 50%),
+    rgba(255,255,255,0.10) 0%,
+    transparent 65%
+  ) !important;
+}
 [data-theme="dark"] .glass {
   background: rgba(255,255,255,0.04) !important;
   border-color: rgba(255,255,255,0.07) !important;
@@ -843,6 +843,13 @@ textarea.glass-input { resize: vertical; min-height: 72px; }
     0 2px 8px rgba(251,100,50,0.08),
     inset 0 1.5px 0 rgba(255,255,255,1) !important;
   background: rgba(255,248,240,0.88) !important;
+}
+[data-theme="sunset"] .glass-card::before {
+  background: radial-gradient(
+    circle at var(--mx, 50%) var(--my, 50%),
+    rgba(255,210,170,0.26) 0%,
+    transparent 65%
+  ) !important;
 }
 [data-theme="sunset"] .glass-input {
   background: rgba(255,245,235,0.92) !important;

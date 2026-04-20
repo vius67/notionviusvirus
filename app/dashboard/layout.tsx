@@ -179,71 +179,44 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     return () => window.removeEventListener('mousemove', move)
   }, [])
 
-  // Custom cursor — elements injected directly onto body to avoid
-  // overflow:hidden clipping and stacking-context issues inside the layout div
+  // 3-D card tilt + inner spotlight — pointer:fine only (trackpad / mouse)
   useEffect(() => {
     if (typeof window === 'undefined') return
     if (window.matchMedia('(pointer: coarse)').matches) return
 
-    const dot  = document.createElement('div')
-    const ring = document.createElement('div')
-    dot.className  = 'cursor-dot'
-    ring.className = 'cursor-ring'
-    document.body.appendChild(dot)
-    document.body.appendChild(ring)
+    let activeCard: HTMLElement | null = null
 
-    let mx = -200, my = -200, rx = -200, ry = -200
-    let rafId: number
-    let curState = ''
-
-    const setState = (s: string) => {
-      if (s === curState) return
-      curState = s
-      dot.classList.toggle('cur-hover', s === 'hover')
-      ring.classList.toggle('cur-hover', s === 'hover')
-      dot.classList.toggle('cur-text',  s === 'text')
-      ring.classList.toggle('cur-text',  s === 'text')
+    const resetCard = (card: HTMLElement) => {
+      card.style.transition = 'transform 0.55s cubic-bezier(0.23,1,0.32,1), box-shadow 0.28s ease, border-color 0.28s ease'
+      card.style.transform = ''
+      card.style.setProperty('--mx', '50%')
+      card.style.setProperty('--my', '50%')
     }
 
     const onMove = (e: MouseEvent) => {
-      mx = e.clientX; my = e.clientY
-      dot.style.left = mx + 'px'
-      dot.style.top  = my + 'px'
-      const t = e.target as HTMLElement
-      if (t.closest('input, textarea, select, [contenteditable]')) setState('text')
-      else if (t.closest('a, button, [role="button"], label'))     setState('hover')
-      else setState('default')
+      const card = (e.target as HTMLElement).closest<HTMLElement>('.glass-card')
+      if (activeCard && activeCard !== card) { resetCard(activeCard); activeCard = null }
+      if (!card) return
+      if (activeCard !== card) {
+        card.style.transition = 'box-shadow 0.28s ease, border-color 0.28s ease'
+        activeCard = card
+      }
+      const rect = card.getBoundingClientRect()
+      const dx = (e.clientX - (rect.left + rect.width  / 2)) / (rect.width  / 2)
+      const dy = (e.clientY - (rect.top  + rect.height / 2)) / (rect.height / 2)
+      card.style.transform = `perspective(900px) rotateX(${(-dy * 5).toFixed(2)}deg) rotateY(${(dx * 5).toFixed(2)}deg) translateZ(4px)`
+      card.style.setProperty('--mx', ((e.clientX - rect.left) / rect.width  * 100).toFixed(1) + '%')
+      card.style.setProperty('--my', ((e.clientY - rect.top)  / rect.height * 100).toFixed(1) + '%')
     }
 
-    const tick = () => {
-      rx += (mx - rx) * 0.11
-      ry += (my - ry) * 0.11
-      ring.style.left = rx + 'px'
-      ring.style.top  = ry + 'px'
-      rafId = requestAnimationFrame(tick)
-    }
-    tick()
-
-    const onDown  = () => { dot.classList.add('cur-click');    ring.classList.add('cur-click') }
-    const onUp    = () => { dot.classList.remove('cur-click'); ring.classList.remove('cur-click') }
-    const onLeave = () => { dot.style.opacity = '0'; ring.style.opacity = '0' }
-    const onEnter = () => { dot.style.opacity = '1'; ring.style.opacity = '1' }
+    const onDocLeave = () => { if (activeCard) { resetCard(activeCard); activeCard = null } }
 
     window.addEventListener('mousemove', onMove, { passive: true })
-    window.addEventListener('mousedown', onDown)
-    window.addEventListener('mouseup',   onUp)
-    document.documentElement.addEventListener('mouseleave', onLeave)
-    document.documentElement.addEventListener('mouseenter', onEnter)
-
+    document.documentElement.addEventListener('mouseleave', onDocLeave)
     return () => {
-      cancelAnimationFrame(rafId)
       window.removeEventListener('mousemove', onMove)
-      window.removeEventListener('mousedown', onDown)
-      window.removeEventListener('mouseup',   onUp)
-      document.documentElement.removeEventListener('mouseleave', onLeave)
-      document.documentElement.removeEventListener('mouseenter', onEnter)
-      document.body.removeChild(dot)
-      document.body.removeChild(ring)
+      document.documentElement.removeEventListener('mouseleave', onDocLeave)
+      if (activeCard) { activeCard.style.transform = ''; activeCard.style.transition = '' }
     }
   }, [])
 

@@ -19,25 +19,6 @@ type CheckinKey = keyof Omit<Checkin, 'id' | 'date'>
 // ── Constants ─────────────────────────────────────────────────────────────────
 const TODAY = new Date().toISOString().split('T')[0]
 
-const QUOTES = [
-  { text: "An investment in knowledge pays the best interest.", author: "Benjamin Franklin" },
-  { text: "The secret of getting ahead is getting started.", author: "Mark Twain" },
-  { text: "It always seems impossible until it's done.", author: "Nelson Mandela" },
-  { text: "The beautiful thing about learning is nobody can take it away from you.", author: "B.B. King" },
-  { text: "Work hard in silence, let success be your noise.", author: "Frank Ocean" },
-  { text: "Discipline is the bridge between goals and accomplishment.", author: "Jim Rohn" },
-  { text: "The expert in anything was once a beginner.", author: "Helen Hayes" },
-  { text: "Learning never exhausts the mind.", author: "Leonardo da Vinci" },
-  { text: "Small daily improvements over time lead to stunning results.", author: "Robin Sharma" },
-  { text: "Don't watch the clock; do what it does. Keep going.", author: "Sam Levenson" },
-  { text: "Push yourself, because no one else is going to do it for you.", author: "Unknown" },
-  { text: "Success is the sum of small efforts repeated day in and day out.", author: "Robert Collier" },
-  { text: "Believe you can and you're halfway there.", author: "Theodore Roosevelt" },
-  { text: "The harder you work for something, the greater you'll feel when you achieve it.", author: "Unknown" },
-]
-const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000)
-const DAILY_QUOTE = QUOTES[dayOfYear % QUOTES.length]
-
 const ITEMS: { key: CheckinKey; label: string; sub: string; time: string; color: string }[] = [
   { key: 'maths',   label: '1h Maths',    sub: 'Polynomials · Graphs · Functions · Algebra mastery', time: '1h',  color: '#6366f1' },
   { key: 'ucat',    label: '15m UCAT',    sub: 'UCAT practice & preparation',                          time: '15m', color: '#8b5cf6' },
@@ -82,6 +63,9 @@ export default function DashboardPage() {
   const [savingCI, setSavingCI]       = useState<CheckinKey | null>(null)
   const [ciLoading, setCiLoading]     = useState(true)
   const [isMobile, setIsMobile]       = useState(false)
+  const [animPct, setAnimPct]         = useState(0)
+  const animRafRef   = useRef<number | null>(null)
+  const animStartRef = useRef<number | null>(null)
 
   // ── Load ─────────────────────────────────────────────────────────────────
   useEffect(() => {
@@ -109,6 +93,22 @@ export default function DashboardPage() {
     window.addEventListener('resize', check)
     return () => window.removeEventListener('resize', check)
   }, [])
+
+  // Count-up animation — fires once when data finishes loading
+  useEffect(() => {
+    if (loading) return
+    animStartRef.current = null
+    const duration = 1100
+    const ease = (t: number) => 1 - Math.pow(1 - t, 4)
+    const run = (ts: number) => {
+      if (!animStartRef.current) animStartRef.current = ts
+      const t = Math.min((ts - animStartRef.current) / duration, 1)
+      setAnimPct(ease(t))
+      if (t < 1) animRafRef.current = requestAnimationFrame(run)
+    }
+    animRafRef.current = requestAnimationFrame(run)
+    return () => { if (animRafRef.current) cancelAnimationFrame(animRafRef.current) }
+  }, [loading])
 
   // load check-ins (last 35 days)
   useEffect(() => {
@@ -195,9 +195,9 @@ export default function DashboardPage() {
   const streak    = calcStreak(checkins)
 
   const STAT_CARDS = [
-    { label: 'Homework', href: '/dashboard/homework', pct: hwPct, done: stats.hwDone, total: stats.hw, gradient: 'linear-gradient(135deg, #6366f1, #8b5cf6)', bar: 'linear-gradient(90deg, #6366f1, #a78bfa)', icon: <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="white" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M4 3h9a2 2 0 012 2v11a2 2 0 01-2 2H4a1 1 0 01-1-1V4a1 1 0 011-1z"/><path d="M15 14h1a1 1 0 000-2h-1"/><path d="M7 7h5M7 10h5M7 13h3"/></svg> },
-    { label: 'To-do',    href: '/dashboard/todos',    pct: todoPct, done: stats.todosDone, total: stats.todos, gradient: 'linear-gradient(135deg, #a78bfa, #f87171)', bar: 'linear-gradient(90deg, #a78bfa, #f87171)', icon: <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="white" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="14" height="14" rx="3.5"/><path d="M7 10l2.5 2.5L13 8"/></svg> },
-    { label: 'Past Papers', href: '/dashboard/past-papers', pct: null, done: stats.papers, total: null, gradient: 'linear-gradient(135deg, #34d399, #06b6d4)', bar: 'linear-gradient(90deg, #34d399, #06b6d4)', icon: <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="white" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M3 17V9l4-4 4 4 4-6"/><path d="M3 17h14"/></svg> },
+    { label: 'Homework', href: '/dashboard/homework', pct: hwPct, done: Math.round(stats.hwDone * animPct), total: stats.hw, gradient: 'linear-gradient(135deg, #6366f1, #8b5cf6)', bar: 'linear-gradient(90deg, #6366f1, #a78bfa)', icon: <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="white" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M4 3h9a2 2 0 012 2v11a2 2 0 01-2 2H4a1 1 0 01-1-1V4a1 1 0 011-1z"/><path d="M15 14h1a1 1 0 000-2h-1"/><path d="M7 7h5M7 10h5M7 13h3"/></svg> },
+    { label: 'To-do',    href: '/dashboard/todos',    pct: todoPct, done: Math.round(stats.todosDone * animPct), total: stats.todos, gradient: 'linear-gradient(135deg, #a78bfa, #f87171)', bar: 'linear-gradient(90deg, #a78bfa, #f87171)', icon: <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="white" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="14" height="14" rx="3.5"/><path d="M7 10l2.5 2.5L13 8"/></svg> },
+    { label: 'Past Papers', href: '/dashboard/past-papers', pct: null, done: Math.round(stats.papers * animPct), total: null, gradient: 'linear-gradient(135deg, #34d399, #06b6d4)', bar: 'linear-gradient(90deg, #34d399, #06b6d4)', icon: <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="white" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M3 17V9l4-4 4 4 4-6"/><path d="M3 17h14"/></svg> },
   ]
 
   const QUICK_NAV = [
@@ -213,7 +213,7 @@ export default function DashboardPage() {
       {/* ── Greeting ── */}
       <div className="fade-up" style={{ marginBottom: 28 }}>
         <p className="page-eyebrow">Overview</p>
-        <h1 style={{ fontSize: isMobile ? 22 : 30, fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.04em', lineHeight: 1.1 }}>
+        <h1 className="gradient-text" style={{ fontSize: isMobile ? 22 : 30, fontWeight: 700, letterSpacing: '-0.04em', lineHeight: 1.1 }}>
           {greeting}, {name} {greetingEmoji}
         </h1>
         <p style={{ fontSize: 13.5, color: 'var(--text-muted)', marginTop: 5 }}>
@@ -221,15 +221,6 @@ export default function DashboardPage() {
           {!loading && (stats.hw - stats.hwDone > 0 ? ` · ${stats.hw - stats.hwDone} homework pending` : ' · All homework done 🎉')}
           {!ciLoading && todayDone > 0 && ` · ${todayDone}/5 daily tasks done`}
         </p>
-      </div>
-
-      {/* ── Daily quote ── */}
-      <div className="fade-up" style={{ marginBottom: 22, padding: '13px 18px', borderRadius: 16, background: 'rgba(255,255,255,0.48)', border: '1px solid rgba(255,255,255,0.82)', backdropFilter: 'blur(20px)', display: 'flex', alignItems: 'center', gap: 14, animationDelay: '60ms' }}>
-        <span style={{ fontSize: 20, flexShrink: 0 }}>💡</span>
-        <div style={{ minWidth: 0 }}>
-          <p style={{ fontSize: isMobile ? 12.5 : 13, fontStyle: 'italic', color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>&ldquo;{DAILY_QUOTE.text}&rdquo;</p>
-          <p style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 3, fontWeight: 500 }}>— {DAILY_QUOTE.author}</p>
-        </div>
       </div>
 
       {/* ── Stat cards ── */}
