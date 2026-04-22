@@ -194,7 +194,7 @@ export default function HomeworkPage() {
           {['all', ...allSubjects].map(s => (
             <button key={s} onClick={() => setSubjFilter(s)} style={{
               padding: '5px 14px', borderRadius: 999, cursor: 'pointer', whiteSpace: 'nowrap',
-              fontSize: 12.5, fontWeight: 540, fontFamily: 'Geist, sans-serif',
+              fontSize: 12.5, fontWeight: 540, fontFamily: 'Geist', sans-serif,
               background: subjFilter === s ? (s === 'all' ? '#6366f1' : subjectColor(s)) : 'rgba(255,255,255,0.7)',
               color: subjFilter === s ? 'white' : 'var(--text-secondary)',
               border: subjFilter === s ? 'none' : '1px solid rgba(200,210,240,0.5)',
@@ -229,7 +229,7 @@ export default function HomeworkPage() {
 
           <div style={{ padding: '12px 20px 0', display: 'flex', gap: 4 }}>
             {(['pending','all','done'] as const).map(f => (
-              <button key={f} onClick={() => setHwFilter(f)} style={{ padding: '4px 12px', borderRadius: 8, border: 'none', cursor: 'pointer', fontSize: 12, fontWeight: hwFilter === f ? 600 : 450, fontFamily: 'Geist, sans-serif', background: hwFilter === f ? 'rgba(99,102,241,0.1)' : 'transparent', color: hwFilter === f ? '#6366f1' : 'var(--text-muted)', transition: 'all 0.15s' }}>
+              <button key={f} onClick={() => setHwFilter(f)} style={{ padding: '4px 12px', borderRadius: 8, border: 'none', cursor: 'pointer', fontSize: 12, fontWeight: hwFilter === f ? 600 : 450, fontFamily: 'Geist', sans-serif, background: hwFilter === f ? 'rgba(99,102,241,0.1)' : 'transparent', color: hwFilter === f ? '#6366f1' : 'var(--text-muted)', transition: 'all 0.15s' }}>
                 {f.charAt(0).toUpperCase() + f.slice(1)}
               </button>
             ))}
@@ -399,7 +399,7 @@ export default function HomeworkPage() {
               const subjAvg    = subjScored.length ? Math.round(subjScored.reduce((a, p) => a + (p.score! / p.max_score!) * 100, 0) / subjScored.length) : null
               const color      = subjectColor(subj)
               return (
-                <button key={subj} onClick={() => setSubjFilter(subjFilter === subj ? 'all' : subj)} style={{ textAlign: 'left', padding: '14px', borderRadius: 14, border: `1.5px solid ${subjFilter === subj ? color : 'rgba(200,210,240,0.4)'}`, background: subjFilter === subj ? color + '10' : 'rgba(255,255,255,0.5)', cursor: 'pointer', transition: 'all 0.18s', fontFamily: 'Geist, sans-serif' }}>
+                <button key={subj} onClick={() => setSubjFilter(subjFilter === subj ? 'all' : subj)} style={{ textAlign: 'left', padding: '14px', borderRadius: 14, border: `1.5px solid ${subjFilter === subj ? color : 'rgba(200,210,240,0.4)'}`, background: subjFilter === subj ? color + '10' : 'rgba(255,255,255,0.5)', cursor: 'pointer', transition: 'all 0.18s', fontFamily: 'Geist', sans-serif }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
                     <div style={{ width: 8, height: 8, borderRadius: '50%', background: color }} />
                     <span style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--text-primary)' }}>{subj}</span>

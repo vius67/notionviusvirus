@@ -295,7 +295,7 @@ export default function DashboardPage() {
               const saving = savingCI === item.key
               return (
                 <button key={item.key} onClick={() => toggleItem(item.key)} disabled={saving}
-                  style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 12px', borderRadius: 12, border: `1px solid ${done ? item.color + '30' : 'rgba(200,210,240,0.35)'}`, background: done ? item.color + '0e' : 'rgba(255,255,255,0.5)', cursor: 'pointer', textAlign: 'left', fontFamily: 'Geist, sans-serif', transition: 'all 0.22s ease', opacity: saving ? 0.65 : 1 }}>
+                  style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 12px', borderRadius: 12, border: `1px solid ${done ? item.color + '30' : 'rgba(200,210,240,0.35)'}`, background: done ? item.color + '0e' : 'rgba(255,255,255,0.5)', cursor: 'pointer', textAlign: 'left', fontFamily: 'Geist', sans-serif, transition: 'all 0.22s ease', opacity: saving ? 0.65 : 1 }}>
                   {/* Circle checkbox */}
                   <div style={{ width: 22, height: 22, borderRadius: '50%', border: `2px solid ${done ? item.color : 'rgba(148,163,184,0.4)'}`, background: done ? item.color : 'transparent', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.22s cubic-bezier(0.34,1.56,0.64,1)', boxShadow: done ? `0 2px 10px ${item.color}44` : 'none' }}>
                     {done && (
@@ -343,7 +343,7 @@ export default function DashboardPage() {
               <div style={{ display: 'flex', gap: 8 }}>
                 {[{ v: countdown.d, l: 'd' }, { v: countdown.h, l: 'h' }, { v: countdown.m, l: 'm' }, { v: countdown.s, l: 's' }].map(({ v, l }) => (
                   <div key={l} style={{ textAlign: 'center', flex: 1, background: 'rgba(255,255,255,0.72)', borderRadius: 10, padding: '7px 6px', border: '1px solid rgba(255,255,255,0.9)', boxShadow: '0 1px 4px rgba(80,100,200,0.07)' }}>
-                    <div style={{ fontFamily: 'Geist Mono, monospace', fontSize: isMobile ? 18 : 20, fontWeight: 700, color: 'var(--accent-deep)', lineHeight: 1, fontVariantNumeric: 'tabular-nums' }}>{String(v).padStart(2, '0')}</div>
+                    <div style={{ fontFamily: 'Geist Mono', monospace, fontSize: isMobile ? 18 : 20, fontWeight: 700, color: 'var(--accent-deep)', lineHeight: 1, fontVariantNumeric: 'tabular-nums' }}>{String(v).padStart(2, '0')}</div>
                     <div style={{ fontSize: 9, color: 'var(--text-muted)', marginTop: 3, fontWeight: 600, letterSpacing: '0.06em' }}>{l}</div>
                   </div>
                 ))}

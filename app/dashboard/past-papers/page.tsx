@@ -102,7 +102,7 @@ export default function PastPapersPage() {
 
       <div className="fade-up" style={{ display: 'flex', gap: 7, marginBottom: 16, flexWrap: 'wrap' }}>
         {subjects.map(s => (
-          <button key={s} onClick={() => setSel(s)} style={{ padding: '5px 12px', borderRadius: 8, border: '1px solid', cursor: 'pointer', fontSize: 12.5, fontWeight: 500, fontFamily: 'Geist, sans-serif', transition: 'all 0.18s', background: sel === s ? 'rgba(99,102,241,0.12)' : 'rgba(255,255,255,0.6)', borderColor: sel === s ? 'rgba(99,102,241,0.3)' : 'rgba(200,210,240,0.5)', color: sel === s ? 'var(--accent-deep)' : 'var(--text-secondary)' }}>
+          <button key={s} onClick={() => setSel(s)} style={{ padding: '5px 12px', borderRadius: 8, border: '1px solid', cursor: 'pointer', fontSize: 12.5, fontWeight: 500, fontFamily: 'Geist', sans-serif, transition: 'all 0.18s', background: sel === s ? 'rgba(99,102,241,0.12)' : 'rgba(255,255,255,0.6)', borderColor: sel === s ? 'rgba(99,102,241,0.3)' : 'rgba(200,210,240,0.5)', color: sel === s ? 'var(--accent-deep)' : 'var(--text-secondary)' }}>
             {s === 'all' ? 'All subjects' : s}
           </button>
         ))}
@@ -127,7 +127,7 @@ export default function PastPapersPage() {
                       <tr key={p.id} className="fade-up" style={{ borderBottom: i < filtered.length - 1 ? '1px solid rgba(99,102,241,0.05)' : 'none', animationDelay: `${i*35}ms` }}>
                         <td style={{ padding: '11px 16px' }}><span className="subject-tag">{p.subject}</span></td>
                         <td style={{ padding: '11px 16px', color: 'var(--text-muted)', fontVariantNumeric: 'tabular-nums' }}>{p.year || '—'}</td>
-                        <td style={{ padding: '11px 16px', fontFamily: 'Geist Mono, monospace', fontSize: 13 }}>{p.score != null ? `${p.score}/${p.max_score}` : '—'}</td>
+                        <td style={{ padding: '11px 16px', fontFamily: 'Geist Mono', monospace, fontSize: 13 }}>{p.score != null ? `${p.score}/${p.max_score}` : '—'}</td>
                         <td style={{ padding: '11px 16px', minWidth: 100 }}>
                           {pct != null ? (
                             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>

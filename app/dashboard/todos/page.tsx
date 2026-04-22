@@ -176,7 +176,7 @@ export default function TodosPage() {
         <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginTop: 6 }}>
           <div style={{ display: 'flex', background: 'rgba(255,255,255,0.68)', border: '1px solid rgba(200,210,240,0.5)', borderRadius: 12, padding: 3 }}>
             {(['list','kanban'] as const).map(v => (
-              <button key={v} onClick={() => setView(v)} style={{ padding: '6px 16px', borderRadius: 9, border: 'none', cursor: 'pointer', fontFamily: 'Geist, sans-serif', fontSize: 13, fontWeight: 500, transition: 'all 0.2s', background: view === v ? 'white' : 'transparent', color: view === v ? 'var(--accent-deep)' : 'var(--text-muted)', boxShadow: view === v ? '0 2px 8px rgba(80,100,200,0.12)' : 'none' }}>
+              <button key={v} onClick={() => setView(v)} style={{ padding: '6px 16px', borderRadius: 9, border: 'none', cursor: 'pointer', fontFamily: 'Geist', sans-serif, fontSize: 13, fontWeight: 500, transition: 'all 0.2s', background: view === v ? 'white' : 'transparent', color: view === v ? 'var(--accent-deep)' : 'var(--text-muted)', boxShadow: view === v ? '0 2px 8px rgba(80,100,200,0.12)' : 'none' }}>
                 {v === 'list' ? 'List' : 'Board'}
               </button>
             ))}
@@ -189,7 +189,7 @@ export default function TodosPage() {
         <div>
           <div className="fade-up" style={{ display: 'flex', gap: 7, marginBottom: 16 }}>
             {([{k:'all',l:'All'},{k:'today',l:'Today'},{k:'high',l:'High priority'},{k:'done',l:'Done'}] as const).map(f => (
-              <button key={f.k} onClick={() => setFilter(f.k as any)} style={{ padding: '6px 16px', borderRadius: 9, border: '1px solid', cursor: 'pointer', fontSize: 13, fontWeight: 500, fontFamily: 'Geist, sans-serif', transition: 'all 0.2s', background: filter === f.k ? 'rgba(99,102,241,0.12)' : 'rgba(255,255,255,0.68)', borderColor: filter === f.k ? 'rgba(99,102,241,0.3)' : 'rgba(200,210,240,0.5)', color: filter === f.k ? 'var(--accent-deep)' : 'var(--text-secondary)' }}>
+              <button key={f.k} onClick={() => setFilter(f.k as any)} style={{ padding: '6px 16px', borderRadius: 9, border: '1px solid', cursor: 'pointer', fontSize: 13, fontWeight: 500, fontFamily: 'Geist', sans-serif, transition: 'all 0.2s', background: filter === f.k ? 'rgba(99,102,241,0.12)' : 'rgba(255,255,255,0.68)', borderColor: filter === f.k ? 'rgba(99,102,241,0.3)' : 'rgba(200,210,240,0.5)', color: filter === f.k ? 'var(--accent-deep)' : 'var(--text-secondary)' }}>
                 {f.l}
               </button>
             ))}
@@ -204,7 +204,7 @@ export default function TodosPage() {
                 <button className="glass-button" onClick={() => { setShowListInline(false); setListInlineTitle('') }} style={{ padding: '8px 12px', fontSize: 13 }}>✕</button>
               </div>
             ) : (
-              <button onClick={() => setShowListInline(true)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '11px 16px', borderRadius: 12, border: '1.5px dashed rgba(99,102,241,0.22)', background: 'transparent', cursor: 'pointer', color: 'var(--text-muted)', fontSize: 13.5, transition: 'all 0.2s', width: '100%', fontFamily: 'Geist, sans-serif' }}>
+              <button onClick={() => setShowListInline(true)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '11px 16px', borderRadius: 12, border: '1.5px dashed rgba(99,102,241,0.22)', background: 'transparent', cursor: 'pointer', color: 'var(--text-muted)', fontSize: 13.5, transition: 'all 0.2s', width: '100%', fontFamily: 'Geist', sans-serif }}>
                 <span style={{ fontSize: 18, color: 'var(--accent)', lineHeight: 1 }}>+</span> Add a task…
               </button>
             )}
@@ -256,7 +256,7 @@ export default function TodosPage() {
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
                     <div style={{ width: 9, height: 9, borderRadius: 3, background: col.color, boxShadow: `0 0 8px ${col.color}99`, flexShrink: 0 }} />
                     {editingColId === col.id ? (
-                      <input value={editingColLabel} onChange={e => setEditingColLabel(e.target.value)} onBlur={commitRename} onKeyDown={e => { if (e.key === 'Enter') commitRename(); if (e.key === 'Escape') setEditingColId(null) }} autoFocus style={{ flex: 1, fontSize: 13, fontWeight: 640, border: 'none', outline: 'none', background: 'transparent', fontFamily: 'Geist, sans-serif', color: 'var(--text-primary)', borderBottom: '1.5px solid var(--accent)' }} />
+                      <input value={editingColLabel} onChange={e => setEditingColLabel(e.target.value)} onBlur={commitRename} onKeyDown={e => { if (e.key === 'Enter') commitRename(); if (e.key === 'Escape') setEditingColId(null) }} autoFocus style={{ flex: 1, fontSize: 13, fontWeight: 640, border: 'none', outline: 'none', background: 'transparent', fontFamily: 'Geist', sans-serif, color: 'var(--text-primary)', borderBottom: '1.5px solid var(--accent)' }} />
                     ) : (
                       <span style={{ fontSize: 13, fontWeight: 640, color: 'var(--text-primary)', flex: 1, cursor: 'text' }} onDoubleClick={() => startRename(col)} >{col.label}</span>
                     )}
@@ -299,7 +299,7 @@ export default function TodosPage() {
                       </div>
                     </div>
                   ) : (
-                    <button onClick={() => { setInlineColId(col.id); setInlineTitle('') }} style={{ marginTop: 10, width: '100%', padding: '9px', border: '1.5px dashed rgba(99,102,241,0.2)', borderRadius: 11, background: 'transparent', cursor: 'pointer', fontSize: 12.5, color: 'var(--text-muted)', fontFamily: 'Geist, sans-serif', transition: 'all 0.18s' }}>
+                    <button onClick={() => { setInlineColId(col.id); setInlineTitle('') }} style={{ marginTop: 10, width: '100%', padding: '9px', border: '1.5px dashed rgba(99,102,241,0.2)', borderRadius: 11, background: 'transparent', cursor: 'pointer', fontSize: 12.5, color: 'var(--text-muted)', fontFamily: 'Geist', sans-serif, transition: 'all 0.18s' }}>
                       + Add task
                     </button>
                   )}
