@@ -176,13 +176,13 @@ export default function DrivePage() {
 
       {/* Breadcrumb */}
       <div className="fade-up" style={{ display: 'flex', alignItems: 'center', gap: 4, marginBottom: 14, fontSize: 13.5 }}>
-        <button onClick={() => setCurrentFolder('')} style={{ border: 'none', background: 'none', cursor: 'pointer', fontFamily: 'Geist', sans-serif, fontSize: 13.5, fontWeight: 600, color: currentFolder ? 'var(--accent)' : 'var(--text-primary)', padding: '3px 6px', borderRadius: 6, transition: 'background 0.15s' }}>
+        <button onClick={() => setCurrentFolder('')} style={{ border: 'none', background: 'none', cursor: 'pointer', fontFamily: 'Geist, sans-serif', fontSize: 13.5, fontWeight: 600, color: currentFolder ? 'var(--accent)' : 'var(--text-primary)', padding: '3px 6px', borderRadius: 6, transition: 'background 0.15s' }}>
           My Drive
         </button>
         {breadcrumbs.map((crumb, i) => (
           <span key={i} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2.5" strokeLinecap="round"><polyline points="9 18 15 12 9 6"/></svg>
-            <button onClick={() => setCurrentFolder(breadcrumbs.slice(0, i+1).join('/'))} style={{ border: 'none', background: 'none', cursor: 'pointer', fontFamily: 'Geist', sans-serif, fontSize: 13.5, fontWeight: 600, color: i === breadcrumbs.length-1 ? 'var(--text-primary)' : 'var(--accent)', padding: '3px 6px', borderRadius: 6, transition: 'background 0.15s' }}>
+            <button onClick={() => setCurrentFolder(breadcrumbs.slice(0, i+1).join('/'))} style={{ border: 'none', background: 'none', cursor: 'pointer', fontFamily: 'Geist, sans-serif', fontSize: 13.5, fontWeight: 600, color: i === breadcrumbs.length-1 ? 'var(--text-primary)' : 'var(--accent)', padding: '3px 6px', borderRadius: 6, transition: 'background 0.15s' }}>
               {crumb}
             </button>
           </span>
@@ -271,7 +271,7 @@ export default function DrivePage() {
                       onKeyDown={e => { if (e.key === 'Enter') commitRename(item); if (e.key === 'Escape') setRenamingId(null) }}
                       autoFocus
                       onClick={e => e.stopPropagation()}
-                      style={{ border: 'none', borderBottom: '1.5px solid var(--accent)', outline: 'none', background: 'transparent', fontSize: 13.5, fontFamily: 'Geist', sans-serif, color: 'var(--text-primary)', width: '100%' }}
+                      style={{ border: 'none', borderBottom: '1.5px solid var(--accent)', outline: 'none', background: 'transparent', fontSize: 13.5, fontFamily: 'Geist, sans-serif', color: 'var(--text-primary)', width: '100%' }}
                     />
                   ) : (
                     <span style={{ fontSize: 13.5, fontWeight: 500, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{pubName}</span>
@@ -291,9 +291,9 @@ export default function DrivePage() {
                 {/* Actions — visible on hover */}
                 <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end', flexShrink: 0, opacity: hovered ? 1 : 0, transition: 'opacity 0.15s' }}>
                   {item.isFolder ? (
-                    <button onClick={e => { e.stopPropagation(); openFolder(item.name) }} style={{ padding: '4px 10px', borderRadius: 7, border: '1px solid rgba(99,102,241,0.2)', background: 'rgba(99,102,241,0.07)', color: 'var(--accent-deep)', fontSize: 12, cursor: 'pointer', fontFamily: 'Geist', sans-serif, fontWeight: 500 }}>Open</button>
+                    <button onClick={e => { e.stopPropagation(); openFolder(item.name) }} style={{ padding: '4px 10px', borderRadius: 7, border: '1px solid rgba(99,102,241,0.2)', background: 'rgba(99,102,241,0.07)', color: 'var(--accent-deep)', fontSize: 12, cursor: 'pointer', fontFamily: 'Geist, sans-serif', fontWeight: 500 }}>Open</button>
                   ) : (
-                    <button onClick={e => { e.stopPropagation(); download(item) }} style={{ padding: '4px 10px', borderRadius: 7, border: '1px solid rgba(99,102,241,0.2)', background: 'rgba(99,102,241,0.07)', color: 'var(--accent-deep)', fontSize: 12, cursor: 'pointer', fontFamily: 'Geist', sans-serif, fontWeight: 500 }}>Download</button>
+                    <button onClick={e => { e.stopPropagation(); download(item) }} style={{ padding: '4px 10px', borderRadius: 7, border: '1px solid rgba(99,102,241,0.2)', background: 'rgba(99,102,241,0.07)', color: 'var(--accent-deep)', fontSize: 12, cursor: 'pointer', fontFamily: 'Geist, sans-serif', fontWeight: 500 }}>Download</button>
                   )}
                   <button onClick={e => { e.stopPropagation(); deleteItem(item) }} disabled={deleting === item.name} style={{ padding: '4px 8px', borderRadius: 7, border: '1px solid rgba(239,68,68,0.18)', background: 'rgba(239,68,68,0.06)', color: '#ef4444', fontSize: 12, cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
                     {deleting === item.name

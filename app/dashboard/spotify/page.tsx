@@ -134,7 +134,7 @@ export default function SpotifyPage() {
       {error && <p style={{ fontSize: 13, color: '#ef4444', marginBottom: 16 }}>{error}</p>}
       <button
         onClick={redirectToSpotify}
-        style={{ padding: '13px 32px', borderRadius: 50, background: '#1db954', border: 'none', color: 'white', fontSize: 15, fontWeight: 600, cursor: 'pointer', fontFamily: 'Geist', sans-serif, boxShadow: '0 4px 20px rgba(29,185,84,0.4)', transition: 'all 0.2s', display: 'inline-flex', alignItems: 'center', gap: 10 }}
+        style={{ padding: '13px 32px', borderRadius: 50, background: '#1db954', border: 'none', color: 'white', fontSize: 15, fontWeight: 600, cursor: 'pointer', fontFamily: 'Geist, sans-serif', boxShadow: '0 4px 20px rgba(29,185,84,0.4)', transition: 'all 0.2s', display: 'inline-flex', alignItems: 'center', gap: 10 }}
       >
         <SpotifyLogo size={20} /> Connect with Spotify
       </button>
@@ -227,7 +227,7 @@ export default function SpotifyPage() {
                       <div style={{ position: 'absolute', right: -5, top: '50%', transform: 'translateY(-50%)', width: 11, height: 11, borderRadius: '50%', background: '#1db954', boxShadow: '0 2px 8px rgba(29,185,84,0.5)' }} />
                     </div>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: 'var(--text-muted)', fontFamily: 'Geist Mono', monospace }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: 'var(--text-muted)', fontFamily: 'Geist Mono, monospace' }}>
                     <span>{msToTime(localProgress)}</span>
                     <span>{msToTime(track.duration_ms)}</span>
                   </div>

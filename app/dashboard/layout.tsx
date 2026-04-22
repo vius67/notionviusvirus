@@ -418,7 +418,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           </Link>
 
           {/* ⌘K search trigger */}
-          <button onClick={() => setShowCmdK(true)} style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%', padding: '7px 10px', borderRadius: 12, border: `1px solid ${chipBorder}`, background: chipBg, cursor: 'pointer', marginBottom: 8, flexShrink: 0, overflow: 'hidden', transition: 'all 0.18s', fontFamily: 'Geist', sans-serif }}
+          <button onClick={() => setShowCmdK(true)} style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%', padding: '7px 10px', borderRadius: 12, border: `1px solid ${chipBorder}`, background: chipBg, cursor: 'pointer', marginBottom: 8, flexShrink: 0, overflow: 'hidden', transition: 'all 0.18s', fontFamily: 'Geist, sans-serif' }}
             onMouseEnter={e => (e.currentTarget.style.background = hoverBg)}
             onMouseLeave={e => (e.currentTarget.style.background = chipBg)}
           >
@@ -462,7 +462,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
             {/* Clock */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 9, padding: '8px 10px', borderRadius: 13, background: chipBg, border: `1px solid ${chipBorder}`, overflow: 'hidden', flexShrink: 0 }}>
               <span style={{ flexShrink: 0, display: 'flex', color: 'var(--text-muted)' }}><IconClock s={14} /></span>
-              <span style={{ fontFamily: 'Geist Mono', monospace, fontSize: 12.5, color: 'var(--text-muted)', letterSpacing: '0.04em', whiteSpace: 'nowrap', opacity: open ? 1 : 0, transition: 'opacity 0.15s' }}>{time}</span>
+              <span style={{ fontFamily: 'Geist Mono, monospace', fontSize: 12.5, color: 'var(--text-muted)', letterSpacing: '0.04em', whiteSpace: 'nowrap', opacity: open ? 1 : 0, transition: 'opacity 0.15s' }}>{time}</span>
             </div>
 
             {/* Theme picker */}
@@ -504,8 +504,8 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                     <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 2 }}>Signed in as</div>
                     <div style={{ fontSize: 12.5, fontWeight: 560, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user.email}</div>
                   </div>
-                  <button onClick={() => { setShowShortcuts(true); setShowUser(false) }} style={{ width: '100%', border: 'none', background: 'none', cursor: 'pointer', color: 'var(--text-secondary)', fontSize: 13, padding: '7px 10px', borderRadius: 8, textAlign: 'left', fontFamily: 'Geist', sans-serif }}>⌨ Keyboard shortcuts</button>
-                  <button onClick={signOut} style={{ width: '100%', border: 'none', background: 'none', cursor: 'pointer', color: '#ef4444', fontSize: 13, padding: '7px 10px', borderRadius: 8, textAlign: 'left', fontFamily: 'Geist', sans-serif, display: 'flex', alignItems: 'center', gap: 7 }}><IconLogout s={13} /> Sign out</button>
+                  <button onClick={() => { setShowShortcuts(true); setShowUser(false) }} style={{ width: '100%', border: 'none', background: 'none', cursor: 'pointer', color: 'var(--text-secondary)', fontSize: 13, padding: '7px 10px', borderRadius: 8, textAlign: 'left', fontFamily: 'Geist, sans-serif' }}>⌨ Keyboard shortcuts</button>
+                  <button onClick={signOut} style={{ width: '100%', border: 'none', background: 'none', cursor: 'pointer', color: '#ef4444', fontSize: 13, padding: '7px 10px', borderRadius: 8, textAlign: 'left', fontFamily: 'Geist, sans-serif', display: 'flex', alignItems: 'center', gap: 7 }}><IconLogout s={13} /> Sign out</button>
                 </div>
               )}
             </div>
@@ -551,7 +551,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
             <p style={{ fontSize: 11, fontWeight: 640, color: 'var(--accent-mid)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>Theme</p>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
               {THEMES.map(t => (
-                <button key={t.id} onClick={() => { setTheme(t.id); setShowTheme(false) }} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 7, padding: '12px 10px', borderRadius: 12, border: `2px solid ${theme === t.id ? (isSunset ? '#f43f5e' : '#6366f1') : (isDark ? 'rgba(255,255,255,0.07)' : 'rgba(200,210,240,0.4)')}`, background: theme === t.id ? (isDark ? 'rgba(99,102,241,0.15)' : 'rgba(99,102,241,0.06)') : 'transparent', cursor: 'pointer', transition: 'all 0.18s', fontFamily: 'Geist', sans-serif }}>
+                <button key={t.id} onClick={() => { setTheme(t.id); setShowTheme(false) }} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 7, padding: '12px 10px', borderRadius: 12, border: `2px solid ${theme === t.id ? (isSunset ? '#f43f5e' : '#6366f1') : (isDark ? 'rgba(255,255,255,0.07)' : 'rgba(200,210,240,0.4)')}`, background: theme === t.id ? (isDark ? 'rgba(99,102,241,0.15)' : 'rgba(99,102,241,0.06)') : 'transparent', cursor: 'pointer', transition: 'all 0.18s', fontFamily: 'Geist, sans-serif' }}>
                   <div style={{ width: 44, height: 26, borderRadius: 8, background: t.swatch, boxShadow: '0 2px 10px rgba(0,0,0,0.18)' }} />
                   <span style={{ fontSize: 11.5, fontWeight: theme === t.id ? 640 : 460, color: theme === t.id ? 'var(--accent-deep)' : 'var(--text-secondary)' }}>{t.label}</span>
                 </button>
@@ -570,7 +570,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
               <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 2 }}>Signed in as</div>
               <div style={{ fontSize: 12.5, fontWeight: 560, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis' }}>{user.email}</div>
             </div>
-            <button onClick={signOut} style={{ width: '100%', border: 'none', background: 'none', cursor: 'pointer', color: '#ef4444', fontSize: 13, padding: '7px 10px', borderRadius: 8, textAlign: 'left', fontFamily: 'Geist', sans-serif, display: 'flex', alignItems: 'center', gap: 7 }}><IconLogout s={13} /> Sign out</button>
+            <button onClick={signOut} style={{ width: '100%', border: 'none', background: 'none', cursor: 'pointer', color: '#ef4444', fontSize: 13, padding: '7px 10px', borderRadius: 8, textAlign: 'left', fontFamily: 'Geist, sans-serif', display: 'flex', alignItems: 'center', gap: 7 }}><IconLogout s={13} /> Sign out</button>
           </div>
         </>
       )}
@@ -664,7 +664,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                 onChange={e => setCmdQuery(e.target.value)}
                 onKeyDown={handleCmdKey}
                 placeholder="Search pages, themes, actions…"
-                style={{ flex: 1, border: 'none', background: 'none', outline: 'none', fontSize: 15, color: isDark ? 'rgba(255,255,255,0.9)' : 'var(--text-primary)', fontFamily: 'Geist', sans-serif, caretColor: 'var(--accent)' }}
+                style={{ flex: 1, border: 'none', background: 'none', outline: 'none', fontSize: 15, color: isDark ? 'rgba(255,255,255,0.9)' : 'var(--text-primary)', fontFamily: 'Geist, sans-serif', caretColor: 'var(--accent)' }}
               />
               <span style={{ fontSize: 10, padding: '2px 6px', borderRadius: 5, border: `1px solid ${divider}`, color: 'var(--text-muted)', fontFamily: 'monospace', background: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)', whiteSpace: 'nowrap', flexShrink: 0 }}>ESC</span>
             </div>

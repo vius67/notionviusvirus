@@ -110,13 +110,13 @@ export default function TimerPage() {
             {PRESETS.map(p => {
               const active = totalSecs === p.mins * 60
               return (
-                <button key={p.mins} onClick={() => setPreset(p.mins)} disabled={running} style={{ padding: '8px 18px', borderRadius: 10, border: 'none', cursor: running ? 'not-allowed' : 'pointer', fontFamily: 'Geist', sans-serif, fontSize: 13, fontWeight: 600, transition: 'all 0.2s', background: active ? 'rgba(99,102,241,0.85)' : 'transparent', color: active ? 'white' : 'rgba(255,255,255,0.4)', boxShadow: active ? '0 4px 16px rgba(99,102,241,0.4)' : 'none', opacity: running && !active ? 0.4 : 1 }}>
+                <button key={p.mins} onClick={() => setPreset(p.mins)} disabled={running} style={{ padding: '8px 18px', borderRadius: 10, border: 'none', cursor: running ? 'not-allowed' : 'pointer', fontFamily: 'Geist, sans-serif', fontSize: 13, fontWeight: 600, transition: 'all 0.2s', background: active ? 'rgba(99,102,241,0.85)' : 'transparent', color: active ? 'white' : 'rgba(255,255,255,0.4)', boxShadow: active ? '0 4px 16px rgba(99,102,241,0.4)' : 'none', opacity: running && !active ? 0.4 : 1 }}>
                   <div style={{ fontSize: 14 }}>{p.label}m</div>
                   <div style={{ fontSize: 10, opacity: 0.7, fontWeight: 400 }}>{p.desc}</div>
                 </button>
               )
             })}
-            <button onClick={() => setShowCustom(s => !s)} disabled={running} style={{ padding: '8px 14px', borderRadius: 10, border: 'none', cursor: running ? 'not-allowed' : 'pointer', fontFamily: 'Geist', sans-serif, fontSize: 12, fontWeight: 500, background: 'transparent', color: 'rgba(255,255,255,0.35)', transition: 'all 0.15s', opacity: running ? 0.4 : 1 }}>
+            <button onClick={() => setShowCustom(s => !s)} disabled={running} style={{ padding: '8px 14px', borderRadius: 10, border: 'none', cursor: running ? 'not-allowed' : 'pointer', fontFamily: 'Geist, sans-serif', fontSize: 12, fontWeight: 500, background: 'transparent', color: 'rgba(255,255,255,0.35)', transition: 'all 0.15s', opacity: running ? 0.4 : 1 }}>
               ···
             </button>
           </div>
@@ -171,7 +171,7 @@ export default function TimerPage() {
                 </>
               ) : (
                 <>
-                  <div style={{ fontFamily: 'Geist Mono', monospace, fontSize: 58, fontWeight: 300, color: 'white', letterSpacing: '-0.03em', lineHeight: 1 }}>
+                  <div style={{ fontFamily: 'Geist Mono, monospace', fontSize: 58, fontWeight: 300, color: 'white', letterSpacing: '-0.03em', lineHeight: 1 }}>
                     {String(mins).padStart(2,'0')}:{String(secs).padStart(2,'0')}
                   </div>
                   {subject && (
@@ -193,7 +193,7 @@ export default function TimerPage() {
           {/* Subject selector */}
           {!running && !completed && (
             <div style={{ marginBottom: 24, width: '100%', maxWidth: 280 }}>
-              <select value={subject} onChange={e => setSubject(e.target.value)} style={{ width: '100%', padding: '10px 14px', borderRadius: 12, border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.06)', color: subject ? 'white' : 'rgba(255,255,255,0.35)', fontFamily: 'Geist', sans-serif, fontSize: 13.5, outline: 'none', cursor: 'pointer', appearance: 'none', textAlign: 'center' }}>
+              <select value={subject} onChange={e => setSubject(e.target.value)} style={{ width: '100%', padding: '10px 14px', borderRadius: 12, border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.06)', color: subject ? 'white' : 'rgba(255,255,255,0.35)', fontFamily: 'Geist, sans-serif', fontSize: 13.5, outline: 'none', cursor: 'pointer', appearance: 'none', textAlign: 'center' }}>
                 <option value="" style={{ background: '#1a1a2e', color: '#94a3b8' }}>Select subject (optional)</option>
                 {SUBJECTS.map(s => <option key={s} value={s} style={{ background: '#1a1a2e', color: 'white' }}>{s}</option>)}
               </select>
@@ -203,15 +203,15 @@ export default function TimerPage() {
           {/* Controls */}
           <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
             {!completed && (
-              <button onClick={() => setRunning(!running)} style={{ padding: '14px 44px', borderRadius: 16, border: 'none', cursor: 'pointer', fontFamily: 'Geist', sans-serif, fontSize: 15, fontWeight: 620, transition: 'all 0.22s', background: running ? 'rgba(255,255,255,0.1)' : 'linear-gradient(135deg, #6366f1, #a78bfa)', color: 'white', boxShadow: running ? 'none' : '0 6px 24px rgba(99,102,241,0.45), inset 0 1px 0 rgba(255,255,255,0.2)' }}>
+              <button onClick={() => setRunning(!running)} style={{ padding: '14px 44px', borderRadius: 16, border: 'none', cursor: 'pointer', fontFamily: 'Geist, sans-serif', fontSize: 15, fontWeight: 620, transition: 'all 0.22s', background: running ? 'rgba(255,255,255,0.1)' : 'linear-gradient(135deg, #6366f1, #a78bfa)', color: 'white', boxShadow: running ? 'none' : '0 6px 24px rgba(99,102,241,0.45), inset 0 1px 0 rgba(255,255,255,0.2)' }}>
                 {running ? '⏸ Pause' : secsLeft < totalSecs ? '▶ Resume' : '▶ Start'}
               </button>
             )}
             {(running || (secsLeft < totalSecs && !completed)) && (
-              <button onClick={stopEarly} style={{ padding: '14px 20px', borderRadius: 16, border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer', fontFamily: 'Geist', sans-serif, fontSize: 13.5, fontWeight: 500, background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.6)', transition: 'all 0.18s' }}>Stop & save</button>
+              <button onClick={stopEarly} style={{ padding: '14px 20px', borderRadius: 16, border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer', fontFamily: 'Geist, sans-serif', fontSize: 13.5, fontWeight: 500, background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.6)', transition: 'all 0.18s' }}>Stop & save</button>
             )}
             {(completed || secsLeft < totalSecs) && (
-              <button onClick={reset} style={{ padding: '14px 20px', borderRadius: 16, border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer', fontFamily: 'Geist', sans-serif, fontSize: 13.5, fontWeight: 500, background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.6)', transition: 'all 0.18s' }}>Reset</button>
+              <button onClick={reset} style={{ padding: '14px 20px', borderRadius: 16, border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer', fontFamily: 'Geist, sans-serif', fontSize: 13.5, fontWeight: 500, background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.6)', transition: 'all 0.18s' }}>Reset</button>
             )}
           </div>
         </div>
