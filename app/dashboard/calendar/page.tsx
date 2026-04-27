@@ -204,7 +204,7 @@ export default function CalendarPage() {
             <button className="glass-button" onClick={view==='week' ? nextWeek : nextMonth} style={{ padding: '6px 12px', fontSize: 15 }}>›</button>
           </div>
         </div>
-        <div style={{ display: 'flex', background: 'rgba(255,255,255,0.68)', border: '1px solid rgba(200,210,240,0.5)', borderRadius: 12, padding: 3 }}>
+        <div style={{ display: 'flex', background: 'var(--chip-bg, rgba(255,255,255,0.68))', border: '1px solid rgba(200,210,240,0.5)', borderRadius: 12, padding: 3 }}>
           {(['week','month'] as const).map(v => (
             <button key={v} onClick={() => setView(v)} style={{ padding: '6px 16px', borderRadius: 9, border: 'none', cursor: 'pointer', fontFamily: 'Geist, sans-serif', fontSize: 13, fontWeight: 500, transition: 'all 0.2s', background: view===v ? 'white' : 'transparent', color: view===v ? 'var(--accent-deep)' : 'var(--text-muted)', boxShadow: view===v ? '0 2px 8px rgba(80,100,200,0.12)' : 'none' }}>
               {v.charAt(0).toUpperCase()+v.slice(1)}
@@ -251,7 +251,7 @@ export default function CalendarPage() {
           {view === 'week' && (
             <div className="glass-card" style={{ overflow: 'hidden', padding: 0 }}>
               {/* Day headers */}
-              <div style={{ display: 'grid', gridTemplateColumns: '48px repeat(7,1fr)', borderBottom: '1px solid rgba(99,102,241,0.08)', position: 'sticky', top: 0, background: 'rgba(255,255,255,0.94)', backdropFilter: 'blur(20px)', zIndex: 10 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '48px repeat(7,1fr)', borderBottom: '1px solid rgba(99,102,241,0.08)', position: 'sticky', top: 0, background: 'color-mix(in srgb, var(--bg-base, #fff) 94%, transparent)', backdropFilter: 'blur(20px)', zIndex: 10 }}>
                 <div />
                 {weekDays.map(d => (
                   <div key={localDateStr(d)} style={{ padding: '10px 0', textAlign: 'center', borderLeft: '1px solid rgba(99,102,241,0.05)' }}>
@@ -356,6 +356,17 @@ export default function CalendarPage() {
               </div>
 
               <div>
+                <label style={{ fontSize: 11, fontWeight: 580, color: 'var(--text-muted)', display: 'block', marginBottom: 5, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Description</label>
+                <input
+                  className="glass-input"
+                  value={form.description}
+                  onChange={e => setForm(f => ({...f, description: e.target.value}))}
+                  placeholder="Optional note…"
+                  style={{ fontSize: 13 }}
+                />
+              </div>
+
+              <div>
                 <label style={{ fontSize: 11, fontWeight: 580, color: 'var(--text-muted)', display: 'block', marginBottom: 5, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Start</label>
                 <input className="glass-input" type="datetime-local" value={form.start_time} onChange={e => setForm(f => ({...f, start_time: e.target.value}))} style={{ fontSize: 12.5 }} />
               </div>
@@ -397,7 +408,7 @@ export default function CalendarPage() {
                 {upcomingEvs.map(e => {
                   const d = parseTS(e.start_time)
                   return (
-                    <div key={e.id} style={{ display: 'flex', alignItems: 'center', gap: 9, padding: '8px 10px', background: 'rgba(255,255,255,0.55)', borderRadius: 10, border: '1px solid rgba(255,255,255,0.8)', transition: 'opacity 0.15s', opacity: deletingId===e.id ? 0.3 : 1 }}>
+                    <div key={e.id} style={{ display: 'flex', alignItems: 'center', gap: 9, padding: '8px 10px', background: 'rgba(128,128,128,0.06)', borderRadius: 10, border: '1px solid rgba(128,128,128,0.12)', transition: 'opacity 0.15s', opacity: deletingId===e.id ? 0.3 : 1 }}>
                       <div style={{ width: 3.5, height: 32, borderRadius: 2, flexShrink: 0, background: e.color||'#6366f1' }} />
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ fontSize: 12.5, fontWeight: 560, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{e.title}</div>
