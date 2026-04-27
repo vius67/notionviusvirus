@@ -220,22 +220,6 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     }
   }, [])
 
-  // Global crosshair cursor — pointer:fine (mouse/trackpad) only, body-injected
-  useEffect(() => {
-    if (typeof window === 'undefined') return
-    if (window.matchMedia('(pointer: coarse)').matches) return
-    const cc = document.createElement('div')
-    cc.className = 'cc'
-    document.body.appendChild(cc)
-    let mx = -200, my = -200
-    let rafId: number
-    const onMove = (e: MouseEvent) => { mx = e.clientX; my = e.clientY }
-    window.addEventListener('mousemove', onMove, { passive: true })
-    const tick = () => { cc.style.transform = `translate(${mx}px,${my}px)`; rafId = requestAnimationFrame(tick) }
-    rafId = requestAnimationFrame(tick)
-    return () => { window.removeEventListener('mousemove', onMove); cancelAnimationFrame(rafId); cc.remove() }
-  }, [])
-
   // Cmd palette: focus input on open, reset on close
   useEffect(() => {
     if (showCmdK) {
