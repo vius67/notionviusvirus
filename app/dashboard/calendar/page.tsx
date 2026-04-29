@@ -3,7 +3,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/lib/auth-context'
 
-type Ev = { id: string; title: string; description: string|null; start_time: string; end_time: string|null; color: string|null; source?: 'notion'; url?: string }
+type Ev = { id: string; title: string; description: string|null; start_time: string; end_time: string|null; color: string|null; source?: 'notion'|'google'; url?: string }
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December']
 const COLORS = ['#6366f1','#a78bfa','#34d399','#f59e0b','#ef4444','#f87171','#3b82f6','#ec4899']
@@ -46,18 +46,19 @@ const isAllDay = (e: Ev) => {
     (en.getHours() === 0 && en.getMinutes() === 0 && localDateStr(en) !== localDateStr(s))
 }
 
-// Notion "N" badge SVG
-const NotionBadge = () => (
-  <svg width="8" height="8" viewBox="0 0 14 14" fill="currentColor" style={{ flexShrink: 0 }}>
-    <path d="M2 2.5C2 1.67 2.67 1 3.5 1h7C11.33 1 12 1.67 12 2.5v9c0 .83-.67 1.5-1.5 1.5h-7C2.67 13 2 12.33 2 11.5v-9zm2 1v7l5.5-3.5L4 3.5z"/>
-  </svg>
-)
+// Source badge shown on external calendar events
+const SourceBadge = ({ source }: { source: 'notion'|'google' }) =>
+  source === 'google'
+    ? <svg width="8" height="8" viewBox="0 0 24 24" style={{ flexShrink: 0 }}><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+    : <svg width="8" height="8" viewBox="0 0 14 14" fill="currentColor" style={{ flexShrink: 0 }}><path d="M2 2.5C2 1.67 2.67 1 3.5 1h7C11.33 1 12 1.67 12 2.5v9c0 .83-.67 1.5-1.5 1.5h-7C2.67 13 2 12.33 2 11.5v-9zm2 1v7l5.5-3.5L4 3.5z"/></svg>
 
 export default function CalendarPage() {
   const { user } = useAuth()
   const [events, setEvents]         = useState<Ev[]>([])
   const [notionEvs, setNotionEvs]   = useState<Ev[]>([])
-  const [notionOk, setNotionOk]     = useState<boolean|null>(null) // null=loading, false=not configured
+  const [notionOk, setNotionOk]     = useState<boolean|null>(null)
+  const [googleEvs, setGoogleEvs]   = useState<Ev[]>([])
+  const [googleOk, setGoogleOk]     = useState<boolean|null>(null)
   const [cur, setCur]               = useState(new Date())
   const [view, setView]             = useState<'month'|'week'>('week')
   const [saving, setSaving]         = useState(false)
@@ -101,19 +102,28 @@ export default function CalendarPage() {
 
   useEffect(() => { if (user) load() }, [user, load])
 
-  // Notion events — fetched once on mount, auto-refreshes every 5 min
+  // Notion events
   useEffect(() => {
-    const fetchNotion = async () => {
+    const fetch_ = async () => {
       try {
         const res  = await fetch('/api/notion/events')
         const json = await res.json() as { events: Ev[]; configured: boolean }
-        setNotionOk(json.configured)
-        setNotionEvs(json.events || [])
+        setNotionOk(json.configured); setNotionEvs(json.events || [])
       } catch { setNotionOk(false) }
     }
-    fetchNotion()
-    const id = setInterval(fetchNotion, 5 * 60 * 1000)
-    return () => clearInterval(id)
+    fetch_(); const id = setInterval(fetch_, 5*60*1000); return () => clearInterval(id)
+  }, [])
+
+  // Google Calendar events
+  useEffect(() => {
+    const fetch_ = async () => {
+      try {
+        const res  = await fetch('/api/google/events')
+        const json = await res.json() as { events: Ev[]; configured: boolean }
+        setGoogleOk(json.configured); setGoogleEvs(json.events || [])
+      } catch { setGoogleOk(false) }
+    }
+    fetch_(); const id = setInterval(fetch_, 5*60*1000); return () => clearInterval(id)
   }, [])
 
   const save = async () => {
@@ -160,7 +170,7 @@ export default function CalendarPage() {
   for (let i = 1; i <= lastDay.getDate(); i++) cells.push(new Date(cur.getFullYear(), cur.getMonth(), i))
 
   const isToday   = (d: Date) => localDateStr(d) === localDateStr(today)
-  const allEvents = [...events, ...notionEvs]
+  const allEvents = [...events, ...notionEvs, ...googleEvs]
   const dayEvs    = (d: Date) => allEvents.filter(e => localDateStr(parseTS(e.start_time)) === localDateStr(d))
 
   // Drag to create
@@ -308,9 +318,9 @@ export default function CalendarPage() {
                       <div key={localDateStr(d)} style={{ borderLeft: `1px solid ${BORDER}`, padding: '4px 3px', minHeight: 30, display: 'flex', flexDirection: 'column', gap: 2 }}>
                         {adByDay[i].map(e => (
                           <div key={e.id}
-                            onClick={() => e.source==='notion' ? window.open(e.url,'_blank') : del(e.id)}
+                            onClick={() => e.source ? window.open(e.url,'_blank') : del(e.id)}
                             style={{ fontSize: 10.5, fontWeight: 580, padding: '2px 8px', borderRadius: 4, background: e.color || '#6366f1', color: 'white', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', cursor: 'pointer', opacity: deletingId===e.id ? 0.3 : 1, transition: 'opacity 0.15s', boxShadow: `0 1px 4px ${e.color||'#6366f1'}44`, display: 'flex', alignItems: 'center', gap: 4 }}>
-                            {e.source==='notion' && <NotionBadge />}
+                            {e.source && <SourceBadge source={e.source} />}
                             <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{e.title}</span>
                           </div>
                         ))}
@@ -380,10 +390,10 @@ export default function CalendarPage() {
                         const height = Math.max((endHour - startHour) * HOUR_HEIGHT, HOUR_HEIGHT * 0.38)
                         return (
                           <div key={e.id}
-                            onClick={ev => { ev.stopPropagation(); e.source==='notion' ? window.open(e.url,'_blank') : del(e.id) }}
+                            onClick={ev => { ev.stopPropagation(); e.source ? window.open(e.url,'_blank') : del(e.id) }}
                             style={{ position: 'absolute', left: 3, right: 3, top, height, background: `${e.color||'#6366f1'}22`, border: `1px solid ${e.color||'#6366f1'}44`, borderLeft: `3px solid ${e.color||'#6366f1'}`, borderRadius: 7, padding: '3px 7px', fontSize: 10.5, fontWeight: 540, color: e.color||'var(--accent-deep)', overflow: 'hidden', cursor: 'pointer', zIndex: 1, transition: 'opacity 0.15s', opacity: deletingId===e.id ? 0.3 : 1, backdropFilter: 'blur(6px)' }}>
                             <div style={{ fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 11, display: 'flex', alignItems: 'center', gap: 3 }}>
-                              {e.source==='notion' && <NotionBadge />}{e.title}
+                              {e.source && <SourceBadge source={e.source} />}{e.title}
                             </div>
                             {height > 30 && <div style={{ fontSize: 9.5, opacity: 0.7, marginTop: 1 }}>{fmtTime(e.start_time)}{e.end_time ? ` – ${fmtTime(e.end_time)}` : ''}</div>}
                           </div>
@@ -406,15 +416,26 @@ export default function CalendarPage() {
         {/* Side Panel */}
         <div className="fade-up" style={{ width: 290, flexShrink: 0, animationDelay: '80ms', display: 'flex', flexDirection: 'column', gap: 14 }}>
 
-          {/* Notion connection status */}
-          {notionOk !== null && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '9px 13px', borderRadius: 12, background: notionOk ? 'rgba(0,0,0,0.04)' : 'rgba(239,68,68,0.06)', border: `1px solid ${notionOk ? 'rgba(0,0,0,0.10)' : 'rgba(239,68,68,0.18)'}` }}>
-              <svg width="13" height="13" viewBox="0 0 14 14" fill={notionOk ? 'var(--text-primary)' : '#ef4444'}><path d="M1.5 1.5h11v11h-11z" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/><path d="M4 4l6 6M4 10V4h6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/></svg>
-              <span style={{ fontSize: 11.5, color: notionOk ? 'var(--text-secondary)' : '#ef4444', fontWeight: 520 }}>
-                {notionOk ? `Notion synced · ${notionEvs.length} event${notionEvs.length!==1?'s':''}` : 'Notion not configured — add NOTION_TOKEN + NOTION_CALENDAR_DB_ID to .env'}
-              </span>
-            </div>
-          )}
+          {/* Integration status chips */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            {/* Google Calendar */}
+            {googleOk !== null && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 12px', borderRadius: 11, background: googleOk ? 'rgba(66,133,244,0.06)' : 'rgba(239,68,68,0.06)', border: `1px solid ${googleOk ? 'rgba(66,133,244,0.20)' : 'rgba(239,68,68,0.18)'}` }}>
+                {/* Google G icon */}
+                <svg width="13" height="13" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+                <span style={{ fontSize: 11.5, color: googleOk ? 'var(--text-secondary)' : '#ef4444', fontWeight: 520 }}>
+                  {googleOk ? `Google synced · ${googleEvs.length} events` : <span>Not connected — <a href="/api/google/auth" style={{ color: '#4285F4', textDecoration: 'none', fontWeight: 600 }}>Connect Google Calendar</a></span>}
+                </span>
+              </div>
+            )}
+            {/* Notion */}
+            {notionOk !== null && notionOk && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 12px', borderRadius: 11, background: 'rgba(0,0,0,0.04)', border: '1px solid rgba(0,0,0,0.10)' }}>
+                <svg width="13" height="13" viewBox="0 0 14 14" fill="var(--text-primary)"><path d="M1.5 1.5h11v11h-11z" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/><path d="M4 4l6 6M4 10V4h6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/></svg>
+                <span style={{ fontSize: 11.5, color: 'var(--text-secondary)', fontWeight: 520 }}>Notion synced · {notionEvs.length} event{notionEvs.length!==1?'s':''}</span>
+              </div>
+            )}
+          </div>
 
           {/* Create event form */}
           <div className="glass-card" style={{ padding: '20px 18px' }}>
@@ -505,14 +526,14 @@ export default function CalendarPage() {
                       <div style={{ width: 3.5, height: 32, borderRadius: 2, flexShrink: 0, background: e.color||'#6366f1' }} />
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ fontSize: 12.5, fontWeight: 560, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: 5 }}>
-                          {e.source==='notion' && <span style={{ fontSize: 9, fontWeight: 700, padding: '1px 4px', borderRadius: 3, background: 'rgba(0,0,0,0.08)', color: 'var(--text-muted)', letterSpacing: '0.04em', flexShrink: 0 }}>N</span>}
+                          {e.source && <span style={{ fontSize: 9, fontWeight: 700, padding: '1px 4px', borderRadius: 3, background: e.source==='google' ? 'rgba(66,133,244,0.12)' : 'rgba(0,0,0,0.08)', color: e.source==='google' ? '#4285F4' : 'var(--text-muted)', letterSpacing: '0.04em', flexShrink: 0 }}>{e.source==='google' ? 'G' : 'N'}</span>}
                           {e.title}
                         </div>
                         <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 1 }}>
                           {d.toLocaleDateString('en-AU', { weekday: 'short', month: 'short', day: 'numeric' })} · {ad ? 'All day' : fmtTime(e.start_time)}
                         </div>
                       </div>
-                      {e.source==='notion'
+                      {e.source
                         ? <a href={e.url} target="_blank" rel="noreferrer" onClick={ev => ev.stopPropagation()} style={{ border: 'none', background: 'none', cursor: 'pointer', color: 'var(--text-muted)', fontSize: 11, padding: '2px 5px', borderRadius: 5, textDecoration: 'none', opacity: 0.55 }}>↗</a>
                         : <button onClick={() => del(e.id)} style={{ border: 'none', background: 'none', cursor: 'pointer', color: 'var(--text-muted)', fontSize: 14, padding: '2px 4px', borderRadius: 5, lineHeight: 1, opacity: 0.5 }}>✕</button>
                       }
