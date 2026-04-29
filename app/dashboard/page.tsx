@@ -8,11 +8,12 @@ import Link from 'next/link'
 type Checkin = {
   id: string
   date: string
-  maths:   boolean
-  ucat:    boolean
-  science: boolean
-  kurt:    boolean
-  beam:    boolean
+  maths:      boolean
+  ucat:       boolean
+  science:    boolean
+  kurt:       boolean
+  beam:       boolean
+  enterprise: boolean
 }
 type CheckinKey = keyof Omit<Checkin, 'id' | 'date'>
 
@@ -20,11 +21,12 @@ type CheckinKey = keyof Omit<Checkin, 'id' | 'date'>
 const TODAY = new Date().toISOString().split('T')[0]
 
 const ITEMS: { key: CheckinKey; label: string; sub: string; time: string; color: string }[] = [
-  { key: 'maths',   label: '1h Maths',    sub: 'Polynomials · Graphs · Functions · Algebra mastery', time: '1h',  color: '#6366f1' },
-  { key: 'ucat',    label: '15m UCAT',    sub: 'UCAT practice & preparation',                          time: '15m', color: '#8b5cf6' },
-  { key: 'science', label: '30m Science', sub: 'Science study session',                                time: '30m', color: '#14b8a6' },
-  { key: 'kurt',    label: '30m Kurt',    sub: 'Kurt tutoring centre work',                            time: '30m', color: '#a855f7' },
-  { key: 'beam',    label: '30m BEAM',    sub: 'BEAM study session',                                   time: '30m', color: '#f59e0b' },
+  { key: 'maths',      label: '1h Maths',          sub: 'Polynomials · Graphs · Functions · Algebra mastery', time: '1h',  color: '#6366f1' },
+  { key: 'ucat',       label: '15m UCAT',          sub: 'UCAT practice & preparation',                          time: '15m', color: '#8b5cf6' },
+  { key: 'science',    label: '30m Science',        sub: 'Science study session',                                time: '30m', color: '#14b8a6' },
+  { key: 'kurt',       label: '30m Kurt',           sub: 'Kurt tutoring centre work',                            time: '30m', color: '#a855f7' },
+  { key: 'beam',       label: '30m BEAM',           sub: 'BEAM study session',                                   time: '30m', color: '#f59e0b' },
+  { key: 'enterprise', label: '1 Enterprise dot pt',sub: 'Take 1 Enterprise Computing syllabus dot point',       time: '~20m',color: '#0ea5e9' },
 ]
 
 const countDone = (c: Checkin | null) =>
@@ -138,7 +140,7 @@ export default function DashboardPage() {
     // optimistic update
     const optimistic: Checkin = todayCI
       ? { ...todayCI, [key]: newVal }
-      : { id: '', date: TODAY, maths: false, ucat: false, science: false, kurt: false, beam: false, [key]: newVal }
+      : { id: '', date: TODAY, maths: false, ucat: false, science: false, kurt: false, beam: false, enterprise: false, [key]: newVal }
     setTodayCI(optimistic)
     setCheckins(prev => {
       const without = prev.filter(c => c.date !== TODAY)
@@ -150,7 +152,7 @@ export default function DashboardPage() {
     } else {
       const { data } = await supabase.from('daily_checkins').insert({
         user_id: user.id, date: TODAY,
-        maths: false, ucat: false, science: false, kurt: false, beam: false, [key]: newVal,
+        maths: false, ucat: false, science: false, kurt: false, beam: false, enterprise: false, [key]: newVal,
       }).select().single()
       if (data) {
         setTodayCI(data as Checkin)
@@ -191,7 +193,7 @@ export default function DashboardPage() {
   const hwPct   = stats.hw   > 0 ? Math.round((stats.hwDone   / stats.hw)   * 100) : 0
   const todoPct = stats.todos > 0 ? Math.round((stats.todosDone / stats.todos) * 100) : 0
   const todayDone = countDone(todayCI)
-  const todayPct  = Math.round((todayDone / 5) * 100)
+  const todayPct  = Math.round((todayDone / 6) * 100)
   const streak    = calcStreak(checkins)
 
   const STAT_CARDS = [
@@ -219,7 +221,7 @@ export default function DashboardPage() {
         <p style={{ fontSize: 13.5, color: 'var(--text-muted)', marginTop: 5 }}>
           {new Date().toLocaleDateString('en-AU', { weekday: 'long', month: 'long', day: 'numeric' })}
           {!loading && (stats.hw - stats.hwDone > 0 ? ` · ${stats.hw - stats.hwDone} homework pending` : ' · All homework done 🎉')}
-          {!ciLoading && todayDone > 0 && ` · ${todayDone}/5 daily tasks done`}
+          {!ciLoading && todayDone > 0 && ` · ${todayDone}/6 daily tasks done`}
         </p>
       </div>
 
@@ -266,7 +268,7 @@ export default function DashboardPage() {
               <svg width="52" height="52" viewBox="0 0 52 52">
                 <circle cx="26" cy="26" r="21" fill="none" stroke="rgba(148,163,184,0.15)" strokeWidth="5" />
                 <circle cx="26" cy="26" r="21" fill="none"
-                  stroke={todayDone === 5 ? '#22c55e' : todayDone >= 3 ? '#6366f1' : '#a78bfa'}
+                  stroke={todayDone === 6 ? '#22c55e' : todayDone >= 4 ? '#6366f1' : '#a78bfa'}
                   strokeWidth="5" strokeLinecap="round"
                   strokeDasharray={`${2 * Math.PI * 21}`}
                   strokeDashoffset={`${2 * Math.PI * 21 * (1 - todayPct / 100)}`}
@@ -275,7 +277,7 @@ export default function DashboardPage() {
                 />
               </svg>
               <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <span style={{ fontSize: 13, fontWeight: 720, color: 'var(--text-primary)', fontVariantNumeric: 'tabular-nums' }}>{todayDone}/5</span>
+                <span style={{ fontSize: 13, fontWeight: 720, color: 'var(--text-primary)', fontVariantNumeric: 'tabular-nums' }}>{todayDone}/6</span>
               </div>
             </div>
           </div>
@@ -295,31 +297,31 @@ export default function DashboardPage() {
               const saving = savingCI === item.key
               return (
                 <button key={item.key} onClick={() => toggleItem(item.key)} disabled={saving}
-                  style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 12px', borderRadius: 12, border: `1px solid ${done ? item.color + '30' : 'rgba(200,210,240,0.35)'}`, background: done ? item.color + '0e' : 'rgba(255,255,255,0.5)', cursor: 'pointer', textAlign: 'left', fontFamily: 'Geist, sans-serif', transition: 'all 0.22s ease', opacity: saving ? 0.65 : 1 }}>
+                  style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '13px 15px', borderRadius: 14, border: `1px solid ${done ? item.color + '30' : 'rgba(200,210,240,0.35)'}`, background: done ? item.color + '0e' : 'rgba(255,255,255,0.5)', cursor: 'pointer', textAlign: 'left', fontFamily: 'Geist, sans-serif', transition: 'all 0.22s ease', opacity: saving ? 0.65 : 1 }}>
                   {/* Circle checkbox */}
-                  <div style={{ width: 22, height: 22, borderRadius: '50%', border: `2px solid ${done ? item.color : 'rgba(148,163,184,0.4)'}`, background: done ? item.color : 'transparent', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.22s cubic-bezier(0.34,1.56,0.64,1)', boxShadow: done ? `0 2px 10px ${item.color}44` : 'none' }}>
+                  <div style={{ width: 26, height: 26, borderRadius: '50%', border: `2px solid ${done ? item.color : 'rgba(148,163,184,0.4)'}`, background: done ? item.color : 'transparent', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.22s cubic-bezier(0.34,1.56,0.64,1)', boxShadow: done ? `0 2px 10px ${item.color}44` : 'none' }}>
                     {done && (
-                      <svg width="11" height="11" viewBox="0 0 10 8" fill="none">
+                      <svg width="13" height="13" viewBox="0 0 10 8" fill="none">
                         <path d="M1 4l2.5 2.5L9 1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                       </svg>
                     )}
                   </div>
                   {/* Text */}
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 13, fontWeight: done ? 600 : 500, color: done ? 'var(--text-primary)' : 'var(--text-secondary)', textDecoration: done ? 'none' : 'none', transition: 'color 0.18s' }}>{item.label}</div>
-                    <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.sub}</div>
+                    <div style={{ fontSize: 14.5, fontWeight: done ? 600 : 500, color: done ? 'var(--text-primary)' : 'var(--text-secondary)', transition: 'color 0.18s' }}>{item.label}</div>
+                    <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.sub}</div>
                   </div>
                   {/* Time badge */}
-                  <span style={{ fontSize: 10.5, fontWeight: 600, color: done ? item.color : 'var(--text-muted)', background: done ? item.color + '18' : 'rgba(148,163,184,0.12)', padding: '2px 7px', borderRadius: 5, flexShrink: 0, transition: 'all 0.18s' }}>{item.time}</span>
+                  <span style={{ fontSize: 11.5, fontWeight: 600, color: done ? item.color : 'var(--text-muted)', background: done ? item.color + '18' : 'rgba(148,163,184,0.12)', padding: '3px 9px', borderRadius: 6, flexShrink: 0, transition: 'all 0.18s' }}>{item.time}</span>
                 </button>
               )
             })}
           </div>
 
           {/* All done celebration */}
-          {todayDone === 5 && (
+          {todayDone === 6 && (
             <div style={{ marginTop: 14, padding: '12px 14px', borderRadius: 12, background: 'linear-gradient(135deg, rgba(34,197,94,0.10), rgba(99,102,241,0.07))', border: '1px solid rgba(34,197,94,0.22)', textAlign: 'center' }}>
-              <p style={{ fontSize: 13, fontWeight: 620, color: '#22c55e' }}>🎉 Perfect day! All 5 tasks done.</p>
+              <p style={{ fontSize: 13, fontWeight: 620, color: '#22c55e' }}>🎉 Perfect day! All 6 tasks done.</p>
             </div>
           )}
         </div>
