@@ -5,8 +5,9 @@ import { useAuth } from '@/lib/auth-context'
 import Modal from '@/components/Modal'
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar, CartesianGrid } from 'recharts'
 
-type Paper = { id: string; subject: string; year: number|null; score: number|null; max_score: number|null; notes: string|null; completed_at: string|null; created_at: string }
+type Paper = { id: string; name: string|null; subject: string; year: number|null; score: number|null; max_score: number|null; notes: string|null; completed_at: string|null; created_at: string; attachment_path: string|null }
 const SUBJECTS = ['Mathematics','English','Science','Physics','Chemistry','Biology','History','Geography','German','Enterprise Computing','PDHPE','Other']
+const BUCKET = 'past-papers'
 
 export default function PastPapersPage() {
   const { user } = useAuth()
@@ -14,7 +15,8 @@ export default function PastPapersPage() {
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
   const [sel, setSel] = useState('all')
-  const [form, setForm] = useState({ subject: '', year: new Date().getFullYear().toString(), score: '', max_score: '100', notes: '', completed_at: new Date().toISOString().split('T')[0] })
+  const [form, setForm] = useState({ name: '', subject: '', year: new Date().getFullYear().toString(), score: '', max_score: '100', notes: '', completed_at: new Date().toISOString().split('T')[0] })
+  const [attachFile, setAttachFile] = useState<File | null>(null)
   const [saving, setSaving] = useState(false)
 
   const load = async () => {
@@ -27,12 +29,45 @@ export default function PastPapersPage() {
   const save = async () => {
     if (!user || !form.subject) return
     setSaving(true)
-    await supabase.from('past_papers').insert({ subject: form.subject, year: form.year ? parseInt(form.year) : null, score: form.score ? parseFloat(form.score) : null, max_score: form.max_score ? parseFloat(form.max_score) : null, notes: form.notes, completed_at: form.completed_at, user_id: user.id })
-    setForm({ subject: '', year: new Date().getFullYear().toString(), score: '', max_score: '100', notes: '', completed_at: new Date().toISOString().split('T')[0] })
+
+    // Insert paper first to get the ID
+    const { data: inserted } = await supabase.from('past_papers').insert({
+      name: form.name.trim() || null,
+      subject: form.subject,
+      year: form.year ? parseInt(form.year) : null,
+      score: form.score ? parseFloat(form.score) : null,
+      max_score: form.max_score ? parseFloat(form.max_score) : null,
+      notes: form.notes,
+      completed_at: form.completed_at,
+      user_id: user.id,
+    }).select().single()
+
+    // Upload attachment if provided
+    if (inserted && attachFile) {
+      const ext = attachFile.name.split('.').pop()
+      const path = `${user.id}/${inserted.id}.${ext}`
+      const { error } = await supabase.storage.from(BUCKET).upload(path, attachFile, { upsert: true })
+      if (!error) {
+        await supabase.from('past_papers').update({ attachment_path: path }).eq('id', inserted.id)
+      }
+    }
+
+    setForm({ name: '', subject: '', year: new Date().getFullYear().toString(), score: '', max_score: '100', notes: '', completed_at: new Date().toISOString().split('T')[0] })
+    setAttachFile(null)
     setShowModal(false); setSaving(false); load()
   }
 
-  const del = async (id: string) => {
+  const download = async (path: string, paperName: string) => {
+    const { data } = await supabase.storage.from(BUCKET).download(path)
+    if (!data) return
+    const url = URL.createObjectURL(data)
+    const a = document.createElement('a')
+    a.href = url; a.download = paperName || path.split('/').pop() || 'paper'
+    a.click(); URL.revokeObjectURL(url)
+  }
+
+  const del = async (id: string, attachmentPath: string | null) => {
+    if (attachmentPath) await supabase.storage.from(BUCKET).remove([attachmentPath])
     await supabase.from('past_papers').delete().eq('id', id)
     setPapers(papers.filter(p => p.id !== id))
   }
@@ -115,7 +150,7 @@ export default function PastPapersPage() {
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13.5 }}>
                 <thead>
                   <tr style={{ background: 'rgba(99,102,241,0.04)' }}>
-                    {['Subject','Year','Score','%','Date','Notes',''].map(h => (
+                    {['Name','Subject','Year','Score','%','Date','Notes',''].map(h => (
                       <th key={h} style={{ padding: '11px 16px', textAlign: 'left', fontSize: 11, fontWeight: 650, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', borderBottom: '1px solid rgba(99,102,241,0.07)' }}>{h}</th>
                     ))}
                   </tr>
@@ -125,6 +160,7 @@ export default function PastPapersPage() {
                     const pct = getPct(p)
                     return (
                       <tr key={p.id} className="fade-up" style={{ borderBottom: i < filtered.length - 1 ? '1px solid rgba(99,102,241,0.05)' : 'none', animationDelay: `${i*35}ms` }}>
+                        <td style={{ padding: '11px 16px', fontSize: 13, fontWeight: 520, color: 'var(--text-primary)', maxWidth: 140, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.name || '—'}</td>
                         <td style={{ padding: '11px 16px' }}><span className="subject-tag">{p.subject}</span></td>
                         <td style={{ padding: '11px 16px', color: 'var(--text-muted)', fontVariantNumeric: 'tabular-nums' }}>{p.year || '—'}</td>
                         <td style={{ padding: '11px 16px', fontFamily: 'Geist Mono, monospace', fontSize: 13 }}>{p.score != null ? `${p.score}/${p.max_score}` : '—'}</td>
@@ -141,7 +177,14 @@ export default function PastPapersPage() {
                         <td style={{ padding: '11px 16px', color: 'var(--text-muted)', fontSize: 12 }}>{p.completed_at ? new Date(p.completed_at).toLocaleDateString('en-AU', { month: 'short', day: 'numeric', year: '2-digit' }) : '—'}</td>
                         <td style={{ padding: '11px 16px', color: 'var(--text-muted)', fontSize: 12, maxWidth: 140, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.notes || '—'}</td>
                         <td style={{ padding: '11px 16px' }}>
-                          <button onClick={() => del(p.id)} style={{ border: 'none', background: 'none', cursor: 'pointer', color: 'var(--text-muted)', fontSize: 13, opacity: 0.5 }}>✕</button>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                            {p.attachment_path && (
+                              <button onClick={() => download(p.attachment_path!, p.name || p.subject)} title="Download attachment" style={{ border: 'none', background: 'rgba(99,102,241,0.08)', cursor: 'pointer', color: 'var(--accent)', borderRadius: 6, width: 26, height: 26, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                                <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M7 2v7M4 6l3 3 3-3"/><path d="M2 11h10"/></svg>
+                              </button>
+                            )}
+                            <button onClick={() => del(p.id, p.attachment_path)} style={{ border: 'none', background: 'none', cursor: 'pointer', color: 'var(--text-muted)', fontSize: 13, opacity: 0.5 }}>✕</button>
+                          </div>
                         </td>
                       </tr>
                     )
@@ -153,6 +196,10 @@ export default function PastPapersPage() {
 
       <Modal open={showModal} onClose={() => setShowModal(false)} title="Log Past Paper">
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+          <div>
+            <label style={{ fontSize: 12, fontWeight: 550, color: 'var(--text-secondary)', display: 'block', marginBottom: 6 }}>Test name</label>
+            <input className="glass-input" value={form.name} onChange={e => setForm({...form, name: e.target.value})} placeholder="e.g. 2023 HSC Trial" />
+          </div>
           <div>
             <label style={{ fontSize: 12, fontWeight: 550, color: 'var(--text-secondary)', display: 'block', marginBottom: 6 }}>Subject *</label>
             <select className="glass-input" value={form.subject} onChange={e => setForm({...form, subject: e.target.value})}>
@@ -182,8 +229,16 @@ export default function PastPapersPage() {
             <label style={{ fontSize: 12, fontWeight: 550, color: 'var(--text-secondary)', display: 'block', marginBottom: 6 }}>Notes</label>
             <textarea className="glass-input" value={form.notes} onChange={e => setForm({...form, notes: e.target.value})} placeholder="Areas to revise…" rows={2} />
           </div>
+          <div>
+            <label style={{ fontSize: 12, fontWeight: 550, color: 'var(--text-secondary)', display: 'block', marginBottom: 6 }}>Attach paper <span style={{ fontWeight: 400, color: 'var(--text-muted)' }}>(PDF, image, etc.)</span></label>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '9px 13px', borderRadius: 10, border: '1px dashed rgba(99,102,241,0.3)', background: 'rgba(99,102,241,0.03)', cursor: 'pointer' }}>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--accent)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M8 2v8M5 7l3 3 3-3"/><path d="M2 12h12"/></svg>
+              <span style={{ fontSize: 12.5, color: attachFile ? 'var(--text-primary)' : 'var(--text-muted)' }}>{attachFile ? attachFile.name : 'Choose file…'}</span>
+              <input type="file" style={{ display: 'none' }} onChange={e => setAttachFile(e.target.files?.[0] ?? null)} />
+            </label>
+          </div>
           <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', paddingTop: 4 }}>
-            <button className="glass-button" onClick={() => setShowModal(false)}>Cancel</button>
+            <button className="glass-button" onClick={() => { setShowModal(false); setAttachFile(null) }}>Cancel</button>
             <button className="glass-button-primary" onClick={save} disabled={saving || !form.subject}>{saving ? 'Saving…' : 'Log paper'}</button>
           </div>
         </div>
