@@ -24,9 +24,7 @@ export default function Modal({ open, onClose, title, children, width = 480 }: P
     <div
       style={{
         position: 'fixed', inset: 0,
-        background: 'rgba(8,12,36,0.22)',
-        backdropFilter: 'blur(10px)',
-        WebkitBackdropFilter: 'blur(10px)',
+        background: 'rgba(8,12,36,0.36)',
         zIndex: 200,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         padding: 20,
