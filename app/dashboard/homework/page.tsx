@@ -151,13 +151,16 @@ export default function HomeworkPage() {
   const allSubjects = Array.from(new Set([
     ...hw.map(h => h.subject).filter(Boolean),
     ...papers.map(p => p.subject),
-  ])) as string[]
+  ])).filter(s => s !== 'Kurt') as string[]
 
   const filteredHw = hw
+    .filter(h => h.subject !== 'Kurt')
     .filter(h => subjFilter === 'all' || h.subject === subjFilter)
     .filter(h => hwFilter === 'all' ? true : hwFilter === 'pending' ? !h.completed : h.completed)
 
-  const filteredPapers = papers.filter(p => subjFilter === 'all' || p.subject === subjFilter)
+  const filteredPapers = papers
+    .filter(p => p.subject !== 'Kurt')
+    .filter(p => subjFilter === 'all' || p.subject === subjFilter)
 
   if (loading) return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 300 }}>
