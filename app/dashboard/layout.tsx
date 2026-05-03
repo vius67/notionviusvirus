@@ -7,10 +7,12 @@ import { isConnected, getPlayer } from '@/lib/spotify'
 
 // ── Theme system ──────────────────────────────────────────────────────────────
 const THEMES = [
-  { id: 'light',  label: 'Light',  swatch: 'linear-gradient(135deg, #e8eaff, #eef5ff)' },
-  { id: 'aurora', label: 'Aurora', swatch: 'linear-gradient(135deg, #22c55e 0%, #8b5cf6 100%)' },
-  { id: 'dark',   label: 'Dark',   swatch: 'linear-gradient(135deg, #1e1b4b, #0f172a)' },
-  { id: 'sunset', label: 'Sunset', swatch: 'linear-gradient(135deg, #fb923c 0%, #f43f5e 100%)' },
+  { id: 'light',     label: 'Light',      swatch: 'linear-gradient(135deg, #f0f1f8, #eef0ff)' },
+  { id: 'dark',      label: 'Dark',       swatch: 'linear-gradient(135deg, #1e1b4b, #0f172a)' },
+  { id: 'aurora',    label: 'Aurora',     swatch: 'linear-gradient(135deg, #22c55e 0%, #34d399 100%)' },
+  { id: 'sunset',    label: 'Sunset',     swatch: 'linear-gradient(135deg, #fb923c 0%, #f43f5e 100%)' },
+  { id: 'beige',     label: 'Playfair',   swatch: 'linear-gradient(135deg, #f5f0e8, #e8dcc8)' },
+  { id: 'visionpro', label: 'Vision Pro', swatch: 'linear-gradient(135deg, #f5f5f7, #e8e8ed)' },
 ] as const
 type Theme = typeof THEMES[number]['id']
 
@@ -149,7 +151,11 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         } else if (t === 'sunset') {
           r = 255; g = Math.round(200 - p.depth * 60); b = Math.round(180 - p.depth * 80)
         } else if (t === 'aurora') {
-          r = Math.round(160 - p.depth * 40); g = Math.round(220 - p.depth * 30); b = Math.round(200 - p.depth * 40)
+          r = Math.round(80 - p.depth * 20); g = Math.round(200 - p.depth * 30); b = Math.round(140 - p.depth * 40)
+        } else if (t === 'beige') {
+          r = Math.round(180 - p.depth * 40); g = Math.round(140 - p.depth * 30); b = Math.round(100 - p.depth * 30)
+        } else if (t === 'visionpro') {
+          const v = Math.round(140 - p.depth * 60); r = v; g = v; b = v
         } else {
           const v = Math.round(120 - p.depth * 60); r = v; g = v; b = v + 20
         }
@@ -326,8 +332,14 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   )
 
   // ── Theme-derived inline styles ───────────────────────────────────────────
-  const isDark   = theme === 'dark'
-  const isSunset = theme === 'sunset'
+  const isDark     = theme === 'dark'
+  const isSunset   = theme === 'sunset'
+  const isBeige    = theme === 'beige'
+  const isVisionPro = theme === 'visionpro'
+
+  const themeIdx  = THEMES.findIndex(t => t.id === theme)
+  const prevTheme = () => setTheme(THEMES[(themeIdx - 1 + THEMES.length) % THEMES.length].id)
+  const nextTheme = () => setTheme(THEMES[(themeIdx + 1) % THEMES.length].id)
 
   const navBg      = isDark   ? 'rgba(8,10,20,0.95)'     : 'rgba(255,255,255,0.80)'
   const navBorder  = isDark   ? 'rgba(255,255,255,0.07)'  : 'rgba(255,255,255,0.94)'
@@ -342,8 +354,20 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     ? 'linear-gradient(135deg, rgba(99,102,241,0.22), rgba(139,92,246,0.16))'
     : isSunset
       ? 'linear-gradient(135deg, rgba(244,63,94,0.15), rgba(251,146,60,0.10))'
-      : 'linear-gradient(135deg, rgba(99,102,241,0.14), rgba(139,92,246,0.08))'
-  const activeNavBorder = isDark ? 'rgba(99,102,241,0.28)' : isSunset ? 'rgba(244,63,94,0.22)' : 'rgba(99,102,241,0.13)'
+      : isBeige
+        ? 'linear-gradient(135deg, rgba(156,107,60,0.12), rgba(184,120,64,0.08))'
+        : isVisionPro
+          ? 'linear-gradient(135deg, rgba(0,113,227,0.10), rgba(59,143,232,0.06))'
+          : 'linear-gradient(135deg, rgba(99,102,241,0.14), rgba(139,92,246,0.08))'
+  const activeNavBorder = isDark
+    ? 'rgba(99,102,241,0.28)'
+    : isSunset
+      ? 'rgba(244,63,94,0.22)'
+      : isBeige
+        ? 'rgba(156,107,60,0.22)'
+        : isVisionPro
+          ? 'rgba(0,113,227,0.18)'
+          : 'rgba(99,102,241,0.13)'
   const mobileBarBg     = isDark ? 'rgba(8,10,20,0.96)'    : 'rgba(255,255,255,0.90)'
   const mobileBarBorder = isDark ? 'rgba(255,255,255,0.07)' : 'rgba(255,255,255,0.92)'
   const dropdownBg      = isDark ? 'rgba(10,11,22,0.98)'   : 'rgba(255,255,255,0.97)'
@@ -438,7 +462,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                   onMouseEnter={e => { if (!active) (e.currentTarget as HTMLElement).style.background = hoverBg }}
                   onMouseLeave={e => { if (!active) (e.currentTarget as HTMLElement).style.background = 'transparent' }}
                 >
-                  {active && <span style={{ position: 'absolute', left: 0, top: '50%', transform: 'translateY(-50%)', width: 3, height: 18, borderRadius: 3, background: isSunset ? 'linear-gradient(to bottom, #f43f5e, #fb923c)' : 'linear-gradient(to bottom, #6366f1, #a78bfa)' }} />}
+                  {active && <span style={{ position: 'absolute', left: 0, top: '50%', transform: 'translateY(-50%)', width: 3, height: 18, borderRadius: 3, background: isSunset ? 'linear-gradient(to bottom, #f43f5e, #fb923c)' : isBeige ? 'linear-gradient(to bottom, #9c6b3c, #c8945a)' : isVisionPro ? 'linear-gradient(to bottom, #0071e3, #3b8fe8)' : 'linear-gradient(to bottom, #6366f1, #a78bfa)' }} />}
                   <span style={{ flexShrink: 0, display: 'flex', color: active ? 'var(--accent)' : 'currentColor', opacity: active ? 1 : 0.68 }}><Icon s={17} /></span>
                   <span style={{ opacity: open ? 1 : 0, transform: open ? 'translateX(0)' : 'translateX(-4px)', transition: 'opacity 0.18s 0.04s, transform 0.18s 0.04s', overflow: 'hidden' }}>{item.label}</span>
                 </Link>
@@ -465,24 +489,16 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
               <span style={{ fontFamily: 'Geist Mono, monospace', fontSize: 12.5, color: 'var(--text-muted)', letterSpacing: '0.04em', whiteSpace: 'nowrap', opacity: open ? 1 : 0, transition: 'opacity 0.15s' }}>{time}</span>
             </div>
 
-            {/* Theme picker */}
+            {/* Theme picker — carousel */}
             <div style={{ borderRadius: 13, background: chipBg, border: `1px solid ${chipBorder}`, flexShrink: 0, overflow: 'hidden', padding: '8px 10px' }}>
-              {/* Always-visible row: small swatch + label */}
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <div style={{ width: 14, height: 14, borderRadius: 4, flexShrink: 0, background: currentTheme.swatch, boxShadow: '0 1px 5px rgba(0,0,0,0.22)' }} />
+                <span style={{ flexShrink: 0, display: 'flex', color: 'var(--text-muted)' }}><IconPalette s={14} /></span>
                 <span style={{ fontSize: 11.5, fontWeight: 540, color: 'var(--text-muted)', opacity: open ? 1 : 0, transition: 'opacity 0.15s', whiteSpace: 'nowrap' }}>Theme</span>
               </div>
-              {/* Swatches — fade in when open */}
-              <div style={{ display: 'flex', gap: 5, marginTop: open ? 8 : 0, maxHeight: open ? 24 : 0, opacity: open ? 1 : 0, overflow: 'hidden', transition: 'opacity 0.18s, max-height 0.22s, margin-top 0.18s' }}>
-                {THEMES.map(t => (
-                  <button key={t.id} onClick={() => setTheme(t.id)} title={t.label} style={{
-                    flex: 1, height: 18, borderRadius: 5, background: t.swatch,
-                    border: theme === t.id ? '2px solid rgba(255,255,255,0.92)' : '2px solid transparent',
-                    cursor: 'pointer', transition: 'all 0.22s',
-                    boxShadow: theme === t.id ? '0 2px 10px rgba(0,0,0,0.32)' : '0 1px 3px rgba(0,0,0,0.14)',
-                    outline: 'none',
-                  }} />
-                ))}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: open ? 8 : 0, maxHeight: open ? 28 : 0, opacity: open ? 1 : 0, overflow: 'hidden', transition: 'opacity 0.18s, max-height 0.22s, margin-top 0.18s' }}>
+                <button onClick={prevTheme} style={{ width: 20, height: 20, borderRadius: 6, border: `1px solid ${chipBorder}`, background: 'none', cursor: 'pointer', fontSize: 14, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0, flexShrink: 0, lineHeight: 1 }}>‹</button>
+                <span style={{ flex: 1, fontSize: 11.5, fontWeight: 580, color: 'var(--text-secondary)', whiteSpace: 'nowrap', textAlign: 'center' }}>{currentTheme.label}</span>
+                <button onClick={nextTheme} style={{ width: 20, height: 20, borderRadius: 6, border: `1px solid ${chipBorder}`, background: 'none', cursor: 'pointer', fontSize: 14, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0, flexShrink: 0, lineHeight: 1 }}>›</button>
               </div>
             </div>
 
@@ -547,15 +563,12 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       {isMobile && showTheme && (
         <>
           <div style={{ position: 'fixed', inset: 0, zIndex: 98 }} onClick={() => setShowTheme(false)} />
-          <div style={{ position: 'fixed', top: 64, right: 12, zIndex: 99, background: dropdownBg, backdropFilter: 'blur(48px)', border: `1px solid ${dropdownBorder}`, borderRadius: 16, padding: '14px 16px', boxShadow: '0 12px 40px rgba(80,100,200,0.2)', animation: 'scaleIn 0.18s ease', minWidth: 210 }}>
+          <div style={{ position: 'fixed', top: 64, right: 12, zIndex: 99, background: dropdownBg, backdropFilter: 'blur(48px)', border: `1px solid ${dropdownBorder}`, borderRadius: 16, padding: '14px 16px', boxShadow: '0 12px 40px rgba(80,100,200,0.2)', animation: 'scaleIn 0.18s ease', minWidth: 190 }}>
             <p style={{ fontSize: 11, fontWeight: 640, color: 'var(--accent-mid)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>Theme</p>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-              {THEMES.map(t => (
-                <button key={t.id} onClick={() => { setTheme(t.id); setShowTheme(false) }} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 7, padding: '12px 10px', borderRadius: 12, border: `2px solid ${theme === t.id ? (isSunset ? '#f43f5e' : '#6366f1') : (isDark ? 'rgba(255,255,255,0.07)' : 'rgba(200,210,240,0.4)')}`, background: theme === t.id ? (isDark ? 'rgba(99,102,241,0.15)' : 'rgba(99,102,241,0.06)') : 'transparent', cursor: 'pointer', transition: 'all 0.18s', fontFamily: 'Geist, sans-serif' }}>
-                  <div style={{ width: 44, height: 26, borderRadius: 8, background: t.swatch, boxShadow: '0 2px 10px rgba(0,0,0,0.18)' }} />
-                  <span style={{ fontSize: 11.5, fontWeight: theme === t.id ? 640 : 460, color: theme === t.id ? 'var(--accent-deep)' : 'var(--text-secondary)' }}>{t.label}</span>
-                </button>
-              ))}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <button onClick={prevTheme} style={{ width: 30, height: 30, borderRadius: 8, border: `1px solid ${isDark ? 'rgba(255,255,255,0.10)' : 'rgba(200,210,240,0.4)'}`, background: 'none', cursor: 'pointer', fontSize: 18, color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, lineHeight: 1 }}>‹</button>
+              <span style={{ flex: 1, textAlign: 'center', fontSize: 13.5, fontWeight: 600, color: 'var(--text-primary)' }}>{currentTheme.label}</span>
+              <button onClick={nextTheme} style={{ width: 30, height: 30, borderRadius: 8, border: `1px solid ${isDark ? 'rgba(255,255,255,0.10)' : 'rgba(200,210,240,0.4)'}`, background: 'none', cursor: 'pointer', fontSize: 18, color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, lineHeight: 1 }}>›</button>
             </div>
           </div>
         </>
@@ -584,7 +597,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
               const Icon   = item.icon
               return (
                 <Link key={item.href} href={item.href} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 3, padding: '10px 4px 8px', textDecoration: 'none', color: active ? 'var(--accent)' : 'var(--text-muted)', position: 'relative' }}>
-                  {active && <span style={{ position: 'absolute', top: 0, left: '25%', right: '25%', height: 2.5, borderRadius: 2, background: isSunset ? 'linear-gradient(90deg, #f43f5e, #fb923c)' : 'linear-gradient(90deg, #6366f1, #a78bfa)' }} />}
+                  {active && <span style={{ position: 'absolute', top: 0, left: '25%', right: '25%', height: 2.5, borderRadius: 2, background: isSunset ? 'linear-gradient(90deg, #f43f5e, #fb923c)' : isBeige ? 'linear-gradient(90deg, #9c6b3c, #c8945a)' : isVisionPro ? '#0071e3' : 'linear-gradient(90deg, #6366f1, #a78bfa)' }} />}
                   <span style={{ opacity: active ? 1 : 0.6, transition: 'all 0.18s', transform: active ? 'scale(1.12)' : 'scale(1)' }}><Icon s={20} /></span>
                   <span style={{ fontSize: 9.5, fontWeight: active ? 640 : 450, letterSpacing: '0.01em', whiteSpace: 'nowrap' }}>{item.label}</span>
                 </Link>
