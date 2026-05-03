@@ -9,10 +9,11 @@ type HW = {
   completed: boolean; created_at: string
 }
 type Paper = {
-  id: string; subject: string; year: number | null
+  id: string; name: string | null; subject: string; year: number | null
   score: number | null; max_score: number | null
-  notes: string | null; completed_at: string | null
+  notes: string | null; completed_at: string | null; attachment_path: string | null
 }
+const BUCKET = 'past-papers'
 
 const SUBJECTS = [
   'Kurt',
@@ -77,7 +78,8 @@ export default function KurtPage() {
 
   // paper form
   const [showPForm, setShowPForm]     = useState(false)
-  const [pForm, setPForm] = useState({ subject: 'Kurt', year: String(new Date().getFullYear()), score: '', max_score: '100', notes: '', completed_at: TODAY })
+  const [pForm, setPForm] = useState({ name: '', subject: 'Kurt', year: String(new Date().getFullYear()), score: '', max_score: '100', notes: '', completed_at: TODAY })
+  const [pAttachFile, setPAttachFile] = useState<File | null>(null)
   const [savingP, setSavingP]         = useState(false)
   const [deletingP, setDeletingP]     = useState<string | null>(null)
 
@@ -132,18 +134,37 @@ export default function KurtPage() {
     if (!pForm.score || !pForm.max_score || !user) return
     setSavingP(true)
     const { data } = await supabase.from('past_papers').insert({
-      user_id: user.id, subject: pForm.subject,
+      user_id: user.id, name: pForm.name.trim() || null, subject: pForm.subject,
       year: pForm.year ? parseInt(pForm.year) : null,
       score: parseFloat(pForm.score), max_score: parseFloat(pForm.max_score),
       notes: pForm.notes || null, completed_at: pForm.completed_at || TODAY,
     }).select().single()
+    if (data && pAttachFile) {
+      const ext = pAttachFile.name.split('.').pop()
+      const path = `${user.id}/${data.id}.${ext}`
+      const { error } = await supabase.storage.from(BUCKET).upload(path, pAttachFile, { upsert: true })
+      if (!error) {
+        await supabase.from('past_papers').update({ attachment_path: path }).eq('id', data.id)
+        data.attachment_path = path
+      }
+    }
     if (data) setPapers(p => [data, ...p])
-    setPForm({ subject: 'Kurt', year: String(new Date().getFullYear()), score: '', max_score: '100', notes: '', completed_at: TODAY })
+    setPForm({ name: '', subject: 'Kurt', year: String(new Date().getFullYear()), score: '', max_score: '100', notes: '', completed_at: TODAY })
+    setPAttachFile(null)
     setSavingP(false); setShowPForm(false)
   }
 
-  const deletePaper = async (id: string) => {
+  const downloadPaper = async (path: string, name: string) => {
+    const { data } = await supabase.storage.from(BUCKET).download(path)
+    if (!data) return
+    const url = URL.createObjectURL(data)
+    const a = document.createElement('a'); a.href = url; a.download = name || path.split('/').pop() || 'paper'
+    a.click(); URL.revokeObjectURL(url)
+  }
+
+  const deletePaper = async (id: string, attachmentPath?: string | null) => {
     setDeletingP(id)
+    if (attachmentPath) await supabase.storage.from(BUCKET).remove([attachmentPath])
     await supabase.from('past_papers').delete().eq('id', id)
     setPapers(p => p.filter(x => x.id !== id))
     setDeletingP(null)
@@ -338,6 +359,7 @@ export default function KurtPage() {
           {/* Add Paper form */}
           {showPForm && (
             <div style={{ margin: '12px 20px 0', padding: '14px', background: 'rgba(245,158,11,0.04)', border: '1px solid rgba(245,158,11,0.14)', borderRadius: 14, display: 'flex', flexDirection: 'column', gap: 10 }}>
+              <input className="glass-input" placeholder="Test name (e.g. Kurt Mock Exam 1)" value={pForm.name} onChange={e => setPForm(f => ({ ...f, name: e.target.value }))} style={{ padding: '9px 12px', fontSize: 13 }} />
               <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 8 }}>
                 <select className="glass-input" value={pForm.subject} onChange={e => setPForm(f => ({ ...f, subject: e.target.value }))} style={{ padding: '9px 12px', fontSize: 13 }}>
                   {SUBJECTS.map(s => <option key={s}>{s}</option>)}
@@ -345,14 +367,9 @@ export default function KurtPage() {
                 <input className="glass-input" placeholder="Year (e.g. 2024)" value={pForm.year} onChange={e => setPForm(f => ({ ...f, year: e.target.value }))} style={{ padding: '9px 12px', fontSize: 13 }} />
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-                <div style={{ position: 'relative' }}>
-                  <input className="glass-input" type="number" placeholder="Score *" value={pForm.score} onChange={e => setPForm(f => ({ ...f, score: e.target.value }))} style={{ padding: '9px 12px', fontSize: 13 }} />
-                </div>
-                <div style={{ position: 'relative' }}>
-                  <input className="glass-input" type="number" placeholder="Out of *" value={pForm.max_score} onChange={e => setPForm(f => ({ ...f, max_score: e.target.value }))} style={{ padding: '9px 12px', fontSize: 13 }} />
-                </div>
+                <input className="glass-input" type="number" placeholder="Score *" value={pForm.score} onChange={e => setPForm(f => ({ ...f, score: e.target.value }))} style={{ padding: '9px 12px', fontSize: 13 }} />
+                <input className="glass-input" type="number" placeholder="Out of *" value={pForm.max_score} onChange={e => setPForm(f => ({ ...f, max_score: e.target.value }))} style={{ padding: '9px 12px', fontSize: 13 }} />
               </div>
-              {/* Live pct preview */}
               {pForm.score && pForm.max_score && Number(pForm.max_score) > 0 && (
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   <div style={{ flex: 1, height: 6, borderRadius: 3, background: 'rgba(0,0,0,0.06)', overflow: 'hidden' }}>
@@ -367,6 +384,11 @@ export default function KurtPage() {
                 <input className="glass-input" type="date" value={pForm.completed_at} onChange={e => setPForm(f => ({ ...f, completed_at: e.target.value }))} style={{ padding: '9px 12px', fontSize: 13 }} />
                 <input className="glass-input" placeholder="Notes (optional)" value={pForm.notes} onChange={e => setPForm(f => ({ ...f, notes: e.target.value }))} style={{ padding: '9px 12px', fontSize: 13 }} />
               </div>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 12px', borderRadius: 10, border: '1px dashed rgba(245,158,11,0.35)', background: 'rgba(245,158,11,0.03)', cursor: 'pointer' }}>
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="#f59e0b" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M8 2v8M5 7l3 3 3-3"/><path d="M2 12h12"/></svg>
+                <span style={{ fontSize: 12, color: pAttachFile ? 'var(--text-primary)' : 'var(--text-muted)' }}>{pAttachFile ? pAttachFile.name : 'Attach file (optional)'}</span>
+                <input type="file" style={{ display: 'none' }} onChange={e => setPAttachFile(e.target.files?.[0] ?? null)} />
+              </label>
               <button className="glass-button-primary" onClick={addPaper} disabled={savingP || !pForm.score || !pForm.max_score} style={{ padding: '9px', fontSize: 13, borderRadius: 10, background: 'linear-gradient(135deg, #f59e0b, #fb923c)', boxShadow: '0 4px 14px rgba(245,158,11,0.32)' }}>
                 {savingP ? 'Saving…' : 'Log paper'}
               </button>
@@ -397,6 +419,7 @@ export default function KurtPage() {
 
                   {/* Info */}
                   <div style={{ flex: 1, minWidth: 0 }}>
+                    {paper.name && <div style={{ fontSize: 12.5, fontWeight: 580, color: 'var(--text-primary)', marginBottom: 3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{paper.name}</div>}
                     <div style={{ display: 'flex', alignItems: 'center', gap: 5, flexWrap: 'wrap' }}>
                       <span style={{ fontSize: 10.5, fontWeight: 560, padding: '2px 7px', borderRadius: 5, background: color + '18', color }}>{paper.subject}</span>
                       {paper.year && <span style={{ fontSize: 10.5, color: 'var(--text-muted)', fontWeight: 500 }}>{paper.year}</span>}
@@ -419,13 +442,20 @@ export default function KurtPage() {
                     )}
                   </div>
 
-                  {/* Delete */}
-                  <button onClick={() => deletePaper(paper.id)} style={{ flexShrink: 0, width: 28, height: 28, borderRadius: 7, border: 'none', background: 'rgba(239,68,68,0.08)', color: '#ef4444', cursor: 'pointer', fontSize: 15, display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: isMobile ? 0.7 : 0, transition: 'opacity 0.15s' }}
-                    onMouseEnter={e => (e.currentTarget.style.opacity = '1')}
-                    onMouseLeave={e => (e.currentTarget.style.opacity = isMobile ? '0.7' : '0')}
-                    onFocus={e => (e.currentTarget.style.opacity = '1')}
-                    onBlur={e => (e.currentTarget.style.opacity = isMobile ? '0.7' : '0')}
-                  >×</button>
+                  {/* Actions */}
+                  <div style={{ display: 'flex', gap: 4, flexShrink: 0 }}>
+                    {paper.attachment_path && (
+                      <button onClick={() => downloadPaper(paper.attachment_path!, paper.name || paper.subject)} title="Download" style={{ width: 28, height: 28, borderRadius: 7, border: 'none', background: 'rgba(99,102,241,0.08)', color: 'var(--accent)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M7 2v7M4 6l3 3 3-3"/><path d="M2 11h10"/></svg>
+                      </button>
+                    )}
+                    <button onClick={() => deletePaper(paper.id, paper.attachment_path)} style={{ width: 28, height: 28, borderRadius: 7, border: 'none', background: 'rgba(239,68,68,0.08)', color: '#ef4444', cursor: 'pointer', fontSize: 15, display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: isMobile ? 0.7 : 0, transition: 'opacity 0.15s' }}
+                      onMouseEnter={e => (e.currentTarget.style.opacity = '1')}
+                      onMouseLeave={e => (e.currentTarget.style.opacity = isMobile ? '0.7' : '0')}
+                      onFocus={e => (e.currentTarget.style.opacity = '1')}
+                      onBlur={e => (e.currentTarget.style.opacity = isMobile ? '0.7' : '0')}
+                    >×</button>
+                  </div>
                 </div>
               )
             })}
