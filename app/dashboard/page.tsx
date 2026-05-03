@@ -244,7 +244,6 @@ export default function DashboardPage() {
                   <div style={{ height: 5, background: 'rgba(0,0,0,0.06)', borderRadius: 6, overflow: 'hidden' }}>
                     <div style={{ height: '100%', width: loading ? '0%' : `${card.pct}%`, background: card.bar, borderRadius: 6, transition: 'width 0.7s cubic-bezier(0.22,1,0.36,1)' }} />
                   </div>
-                  <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 5 }}>{loading ? '—' : `${card.pct}% complete`}</div>
                 </div>
               )}
             </div>
