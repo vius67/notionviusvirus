@@ -216,7 +216,7 @@ export default function DashboardPage() {
       <div className="fade-up" style={{ marginBottom: 28 }}>
         <p className="page-eyebrow">Overview</p>
         <h1 className="gradient-text" style={{ fontSize: isMobile ? 22 : 30, fontWeight: 700, letterSpacing: '-0.04em', lineHeight: 1.1 }}>
-          {greeting}, {name} {greetingEmoji}
+          {greeting}
         </h1>
         <p style={{ fontSize: 13.5, color: 'var(--text-muted)', marginTop: 5 }}>
           {new Date().toLocaleDateString('en-AU', { weekday: 'long', month: 'long', day: 'numeric' })}

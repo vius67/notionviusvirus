@@ -1043,3 +1043,79 @@ html[data-theme="visionpro"] textarea {
 }
 [data-theme="visionpro"] ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.14) !important; }
 [data-theme="visionpro"] ::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.22) !important; }
+
+/* ── MONO ── */
+[data-theme="mono"] {
+  --text-primary:   #0a0a0a;
+  --text-secondary: #404040;
+  --text-muted:     #909090;
+  --accent:         #0a0a0a;
+  --accent-soft:    #f0f0f0;
+  --accent-deep:    #000000;
+  --accent-mid:     #525252;
+  --bg-grid:        rgba(0,0,0,0.04);
+}
+html[data-theme="mono"],
+html[data-theme="mono"] body,
+html[data-theme="mono"] button,
+html[data-theme="mono"] input,
+html[data-theme="mono"] select,
+html[data-theme="mono"] textarea,
+html[data-theme="mono"] p,
+html[data-theme="mono"] span,
+html[data-theme="mono"] a,
+html[data-theme="mono"] div,
+html[data-theme="mono"] li,
+html[data-theme="mono"] td,
+html[data-theme="mono"] th,
+html[data-theme="mono"] label {
+  font-family: 'Geist Mono', 'Courier New', monospace !important;
+}
+[data-theme="mono"] body {
+  background: #ffffff;
+  background-attachment: fixed !important;
+}
+[data-theme="mono"] .gradient-text {
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
+  -webkit-text-fill-color: #0a0a0a !important;
+  color: #0a0a0a !important;
+  font-family: 'Geist Mono', 'Courier New', monospace !important;
+  font-style: normal !important;
+  animation: none !important;
+}
+[data-theme="mono"] .glass-card {
+  background: #ffffff !important;
+  border: 1.5px solid #e0e0e0 !important;
+  box-shadow: none !important;
+}
+[data-theme="mono"] .glass-card:hover {
+  background: #fafafa !important;
+  border-color: #c0c0c0 !important;
+  box-shadow: none !important;
+}
+[data-theme="mono"] .glass-card::before { display: none !important; }
+[data-theme="mono"] .glass-input {
+  background: #ffffff !important;
+  border-color: #d0d0d0 !important;
+}
+[data-theme="mono"] .glass-input:focus {
+  border-color: #0a0a0a !important;
+  box-shadow: 0 0 0 2px rgba(0,0,0,0.10) !important;
+}
+[data-theme="mono"] .glass-button-primary {
+  background: #0a0a0a !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+[data-theme="mono"] .glass-button-primary:hover {
+  background: #262626 !important;
+  box-shadow: none !important;
+}
+[data-theme="mono"] .file-card {
+  background: #fafafa !important;
+  border-color: #e0e0e0 !important;
+}
+[data-theme="mono"] ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.16) !important; }
+[data-theme="mono"] ::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.28) !important; }

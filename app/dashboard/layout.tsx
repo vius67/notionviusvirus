@@ -13,6 +13,7 @@ const THEMES = [
   { id: 'sunset',    label: 'Sunset',     swatch: 'linear-gradient(135deg, #fb923c 0%, #f43f5e 100%)' },
   { id: 'beige',     label: 'Playfair',   swatch: 'linear-gradient(135deg, #f5f0e8, #e8dcc8)' },
   { id: 'visionpro', label: 'Vision Pro', swatch: 'linear-gradient(135deg, #f5f5f7, #e8e8ed)' },
+  { id: 'mono',      label: 'Mono',       swatch: 'linear-gradient(135deg, #0a0a0a, #404040)' },
 ] as const
 type Theme = typeof THEMES[number]['id']
 
@@ -156,6 +157,8 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           r = Math.round(180 - p.depth * 40); g = Math.round(140 - p.depth * 30); b = Math.round(100 - p.depth * 30)
         } else if (t === 'visionpro') {
           const v = Math.round(140 - p.depth * 60); r = v; g = v; b = v
+        } else if (t === 'mono') {
+          const v = Math.round(60 + p.depth * 60); r = v; g = v; b = v
         } else {
           const v = Math.round(120 - p.depth * 60); r = v; g = v; b = v + 20
         }
@@ -336,6 +339,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   const isSunset   = theme === 'sunset'
   const isBeige    = theme === 'beige'
   const isVisionPro = theme === 'visionpro'
+  const isMono     = theme === 'mono'
 
   const themeIdx  = THEMES.findIndex(t => t.id === theme)
   const prevTheme = () => setTheme(THEMES[(themeIdx - 1 + THEMES.length) % THEMES.length].id)
@@ -358,7 +362,9 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         ? 'linear-gradient(135deg, rgba(156,107,60,0.12), rgba(184,120,64,0.08))'
         : isVisionPro
           ? 'linear-gradient(135deg, rgba(0,113,227,0.10), rgba(59,143,232,0.06))'
-          : 'linear-gradient(135deg, rgba(99,102,241,0.14), rgba(139,92,246,0.08))'
+          : isMono
+            ? 'rgba(0,0,0,0.08)'
+            : 'linear-gradient(135deg, rgba(99,102,241,0.14), rgba(139,92,246,0.08))'
   const activeNavBorder = isDark
     ? 'rgba(99,102,241,0.28)'
     : isSunset
@@ -367,7 +373,9 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         ? 'rgba(156,107,60,0.22)'
         : isVisionPro
           ? 'rgba(0,113,227,0.18)'
-          : 'rgba(99,102,241,0.13)'
+          : isMono
+            ? 'rgba(0,0,0,0.18)'
+            : 'rgba(99,102,241,0.13)'
   const mobileBarBg     = isDark ? 'rgba(8,10,20,0.96)'    : 'rgba(255,255,255,0.90)'
   const mobileBarBorder = isDark ? 'rgba(255,255,255,0.07)' : 'rgba(255,255,255,0.92)'
   const dropdownBg      = isDark ? 'rgba(10,11,22,0.98)'   : 'rgba(255,255,255,0.97)'
@@ -462,7 +470,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                   onMouseEnter={e => { if (!active) (e.currentTarget as HTMLElement).style.background = hoverBg }}
                   onMouseLeave={e => { if (!active) (e.currentTarget as HTMLElement).style.background = 'transparent' }}
                 >
-                  {active && <span style={{ position: 'absolute', left: 0, top: '50%', transform: 'translateY(-50%)', width: 3, height: 18, borderRadius: 3, background: isSunset ? 'linear-gradient(to bottom, #f43f5e, #fb923c)' : isBeige ? 'linear-gradient(to bottom, #9c6b3c, #c8945a)' : isVisionPro ? 'linear-gradient(to bottom, #0071e3, #3b8fe8)' : 'linear-gradient(to bottom, #6366f1, #a78bfa)' }} />}
+                  {active && <span style={{ position: 'absolute', left: 0, top: '50%', transform: 'translateY(-50%)', width: 3, height: 18, borderRadius: 3, background: isSunset ? 'linear-gradient(to bottom, #f43f5e, #fb923c)' : isBeige ? 'linear-gradient(to bottom, #9c6b3c, #c8945a)' : isVisionPro ? 'linear-gradient(to bottom, #0071e3, #3b8fe8)' : isMono ? '#0a0a0a' : 'linear-gradient(to bottom, #6366f1, #a78bfa)' }} />}
                   <span style={{ flexShrink: 0, display: 'flex', color: active ? 'var(--accent)' : 'currentColor', opacity: active ? 1 : 0.68 }}><Icon s={17} /></span>
                   <span style={{ opacity: open ? 1 : 0, transform: open ? 'translateX(0)' : 'translateX(-4px)', transition: 'opacity 0.18s 0.04s, transform 0.18s 0.04s', overflow: 'hidden' }}>{item.label}</span>
                 </Link>
@@ -597,7 +605,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
               const Icon   = item.icon
               return (
                 <Link key={item.href} href={item.href} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 3, padding: '10px 4px 8px', textDecoration: 'none', color: active ? 'var(--accent)' : 'var(--text-muted)', position: 'relative' }}>
-                  {active && <span style={{ position: 'absolute', top: 0, left: '25%', right: '25%', height: 2.5, borderRadius: 2, background: isSunset ? 'linear-gradient(90deg, #f43f5e, #fb923c)' : isBeige ? 'linear-gradient(90deg, #9c6b3c, #c8945a)' : isVisionPro ? '#0071e3' : 'linear-gradient(90deg, #6366f1, #a78bfa)' }} />}
+                  {active && <span style={{ position: 'absolute', top: 0, left: '25%', right: '25%', height: 2.5, borderRadius: 2, background: isSunset ? 'linear-gradient(90deg, #f43f5e, #fb923c)' : isBeige ? 'linear-gradient(90deg, #9c6b3c, #c8945a)' : isVisionPro ? '#0071e3' : isMono ? '#0a0a0a' : 'linear-gradient(90deg, #6366f1, #a78bfa)' }} />}
                   <span style={{ opacity: active ? 1 : 0.6, transition: 'all 0.18s', transform: active ? 'scale(1.12)' : 'scale(1)' }}><Icon s={20} /></span>
                   <span style={{ fontSize: 9.5, fontWeight: active ? 640 : 450, letterSpacing: '0.01em', whiteSpace: 'nowrap' }}>{item.label}</span>
                 </Link>
