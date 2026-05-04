@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -893,6 +891,19 @@ textarea.glass-input { resize: vertical; min-height: 72px; }
     radial-gradient(ellipse 60% 50% at 90% 100%,  rgba(190,152,100,0.14) 0%, transparent 50%),
     linear-gradient(155deg, #faf7f2 0%, #f5ede0 45%, #faf4ec 100%);
   background-attachment: fixed !important;
+}
+/* Lock Geist everywhere in beige — only .gradient-text gets Playfair */
+[data-theme="beige"] button,
+[data-theme="beige"] input,
+[data-theme="beige"] select,
+[data-theme="beige"] textarea,
+[data-theme="beige"] p,
+[data-theme="beige"] a,
+[data-theme="beige"] label,
+[data-theme="beige"] li,
+[data-theme="beige"] td,
+[data-theme="beige"] th {
+  font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
 }
 [data-theme="beige"] .gradient-text {
   font-family: 'Playfair Display', Georgia, 'Times New Roman', serif !important;
