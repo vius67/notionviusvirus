@@ -26,10 +26,11 @@ const NAV_ITEMS = [
   { href: '/dashboard/calendar',    label: 'Calendar',    icon: IconCal,     key: 'c' },
   { href: '/dashboard/kurt',        label: 'Kurt',        icon: IconKurt,    key: 'k' },
   { href: '/dashboard/drive',       label: 'Drive',       icon: IconDrive,   key: 'd' },
-  { href: '/dashboard/spotify',     label: 'Spotify',     icon: IconSpotify, key: 'm' },
+  { href: '/dashboard/spotify',     label: 'Spotify',     icon: IconSpotify,   key: 'm' },
+  { href: '/dashboard/timetable',   label: 'Timetable',   icon: IconTimetable, key: 'i' },
 ]
 const MOBILE_PRIMARY = [NAV_ITEMS[0], NAV_ITEMS[1], NAV_ITEMS[2], NAV_ITEMS[4], NAV_ITEMS[5]]
-const MOBILE_MORE    = [NAV_ITEMS[3], NAV_ITEMS[6], NAV_ITEMS[7]]
+const MOBILE_MORE    = [NAV_ITEMS[3], NAV_ITEMS[6], NAV_ITEMS[7], NAV_ITEMS[8]]
 
 // ── Icons ─────────────────────────────────────────────────────────────────────
 function IconDash({ s }: { s: number }) {
@@ -70,6 +71,9 @@ function IconPalette({ s }: { s: number }) {
 }
 function IconSearch({ s }: { s: number }) {
   return <svg width={s} height={s} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="9" cy="9" r="5.5"/><path d="M15 15l-3-3"/></svg>
+}
+function IconTimetable({ s }: { s: number }) {
+  return <svg width={s} height={s} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="3" width="16" height="15" rx="3"/><path d="M2 8h16M7 3v5M13 3v5M5 12h2M9 12h2M13 12h2M5 15.5h2M9 15.5h2"/></svg>
 }
 
 // ── Layout ────────────────────────────────────────────────────────────────────
