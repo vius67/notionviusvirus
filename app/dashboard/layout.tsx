@@ -152,7 +152,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         // Colour per theme so dots are always visible against the bg
         let r: number, g: number, b: number
         if (t === 'dark') {
-          const v = Math.round(190 + p.depth * 50); r = v; g = v; b = v + 15
+          r = Math.round(0  + p.depth * 30); g = Math.round(160 + p.depth * 60); b = Math.round(40 + p.depth * 30)
         } else if (t === 'sunset') {
           r = 255; g = Math.round(200 - p.depth * 60); b = Math.round(180 - p.depth * 80)
         } else if (t === 'aurora') {
@@ -185,8 +185,16 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   useEffect(() => {
     const move = (e: MouseEvent) => {
       if (!glowRef.current) return
+      const t = themeRef.current
+      const col = t === 'dark'      ? 'rgba(48,209,88,0.05)'
+                : t === 'sunset'    ? 'rgba(244,63,94,0.05)'
+                : t === 'aurora'    ? 'rgba(34,197,94,0.05)'
+                : t === 'beige'     ? 'rgba(156,107,60,0.04)'
+                : t === 'visionpro' ? 'rgba(0,113,227,0.04)'
+                : t === 'mono'      ? 'rgba(0,0,0,0.03)'
+                :                     'rgba(99,102,241,0.06)'
       glowRef.current.style.background =
-        `radial-gradient(700px circle at ${e.clientX}px ${e.clientY}px, rgba(99,102,241,0.06) 0%, transparent 70%)`
+        `radial-gradient(700px circle at ${e.clientX}px ${e.clientY}px, ${col} 0%, transparent 70%)`
     }
     window.addEventListener('mousemove', move, { passive: true })
     return () => window.removeEventListener('mousemove', move)
@@ -359,7 +367,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   const chipBorder = isDark   ? 'rgba(255,255,255,0.08)'  : 'rgba(200,210,240,0.45)'
   const hoverBg    = isDark   ? 'rgba(255,255,255,0.07)'  : 'rgba(99,102,241,0.06)'
   const activeNavBg = isDark
-    ? 'linear-gradient(135deg, rgba(99,102,241,0.22), rgba(139,92,246,0.16))'
+    ? 'linear-gradient(135deg, rgba(48,209,88,0.14), rgba(0,220,80,0.07))'
     : isSunset
       ? 'linear-gradient(135deg, rgba(244,63,94,0.15), rgba(251,146,60,0.10))'
       : isBeige
@@ -370,7 +378,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
             ? 'rgba(0,0,0,0.08)'
             : 'linear-gradient(135deg, rgba(99,102,241,0.14), rgba(139,92,246,0.08))'
   const activeNavBorder = isDark
-    ? 'rgba(99,102,241,0.28)'
+    ? 'rgba(48,209,88,0.35)'
     : isSunset
       ? 'rgba(244,63,94,0.22)'
       : isBeige
@@ -470,11 +478,11 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
               const Icon   = item.icon
               return (
                 <Link key={item.href} href={item.href}
-                  style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 10px', borderRadius: 14, textDecoration: 'none', fontSize: 13.5, fontWeight: active ? 620 : 450, color: active ? 'var(--accent-deep)' : 'var(--text-secondary)', background: active ? activeNavBg : 'transparent', border: `1px solid ${active ? activeNavBorder : 'transparent'}`, boxShadow: active ? `0 2px 10px rgba(99,102,241,${isDark ? '0.28' : '0.13'}), inset 0 1px 0 rgba(255,255,255,${isDark ? '0.08' : '0.92'})` : 'none', transition: 'all 0.18s ease', whiteSpace: 'nowrap', flexShrink: 0, position: 'relative', overflow: 'hidden' }}
+                  style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 10px', borderRadius: 14, textDecoration: 'none', fontSize: 13.5, fontWeight: active ? 620 : 450, color: active ? 'var(--accent-deep)' : 'var(--text-secondary)', background: active ? activeNavBg : 'transparent', border: `1px solid ${active ? activeNavBorder : 'transparent'}`, boxShadow: active ? (isDark ? '0 2px 12px rgba(48,209,88,0.20), inset 0 1px 0 rgba(255,255,255,0.06)' : '0 2px 10px rgba(99,102,241,0.13), inset 0 1px 0 rgba(255,255,255,0.92)') : 'none', transition: 'all 0.18s ease', whiteSpace: 'nowrap', flexShrink: 0, position: 'relative', overflow: 'hidden' }}
                   onMouseEnter={e => { if (!active) (e.currentTarget as HTMLElement).style.background = hoverBg }}
                   onMouseLeave={e => { if (!active) (e.currentTarget as HTMLElement).style.background = 'transparent' }}
                 >
-                  {active && <span style={{ position: 'absolute', left: 0, top: '50%', transform: 'translateY(-50%)', width: 3, height: 18, borderRadius: 3, background: isSunset ? 'linear-gradient(to bottom, #f43f5e, #fb923c)' : isBeige ? 'linear-gradient(to bottom, #9c6b3c, #c8945a)' : isVisionPro ? 'linear-gradient(to bottom, #0071e3, #3b8fe8)' : isMono ? '#0a0a0a' : 'linear-gradient(to bottom, #6366f1, #a78bfa)' }} />}
+                  {active && <span style={{ position: 'absolute', left: 0, top: '50%', transform: 'translateY(-50%)', width: 3, height: 18, borderRadius: 3, background: isDark ? 'linear-gradient(to bottom, #30d158, #00ff88)' : isSunset ? 'linear-gradient(to bottom, #f43f5e, #fb923c)' : isBeige ? 'linear-gradient(to bottom, #9c6b3c, #c8945a)' : isVisionPro ? 'linear-gradient(to bottom, #0071e3, #3b8fe8)' : isMono ? '#0a0a0a' : 'linear-gradient(to bottom, #6366f1, #a78bfa)' }} />}
                   <span style={{ flexShrink: 0, display: 'flex', color: active ? 'var(--accent)' : 'currentColor', opacity: active ? 1 : 0.68 }}><Icon s={17} /></span>
                   <span style={{ opacity: open ? 1 : 0, transform: open ? 'translateX(0)' : 'translateX(-4px)', transition: 'opacity 0.18s 0.04s, transform 0.18s 0.04s', overflow: 'hidden' }}>{item.label}</span>
                 </Link>
