@@ -1,0 +1,3052 @@
+[
+  {
+    "date": "2026-07-20",
+    "period": "1",
+    "start": "08:50",
+    "end": "09:45",
+    "subject": "Geography Yr10",
+    "className": "10GEOE",
+    "room": "C11",
+    "teacher": "Miss Ruipu Sun"
+  },
+  {
+    "date": "2026-07-20",
+    "period": "2",
+    "start": "09:45",
+    "end": "10:40",
+    "subject": "PDHPE Yr10",
+    "className": "10PDHE",
+    "room": "GYM1",
+    "teacher": "Mr Christopher Murphy"
+  },
+  {
+    "date": "2026-07-20",
+    "period": "3",
+    "start": "11:00",
+    "end": "11:55",
+    "subject": "Mathematics Yr10",
+    "className": "10MATE",
+    "room": "A3",
+    "teacher": "Mr Stephen Ireland"
+  },
+  {
+    "date": "2026-07-20",
+    "period": "4",
+    "start": "11:55",
+    "end": "12:50",
+    "subject": "Science Yr10",
+    "className": "10SCIE",
+    "room": "LA1",
+    "teacher": "Miss Laura Sacchetta"
+  },
+  {
+    "date": "2026-07-20",
+    "period": "5",
+    "start": "13:30",
+    "end": "14:25",
+    "subject": "English Yr10",
+    "className": "10ENGE",
+    "room": "C4",
+    "teacher": "Mr Elias Kwiet"
+  },
+  {
+    "date": "2026-07-20",
+    "period": "6",
+    "start": "14:25",
+    "end": "15:15",
+    "subject": "Enterprise Computing Yr10",
+    "className": "10ENTB3",
+    "room": "A1",
+    "teacher": "Mr Yugendran Pillay"
+  },
+  {
+    "date": "2026-07-21",
+    "period": "0",
+    "start": "08:00",
+    "end": "08:50",
+    "subject": "Enterprise Computing Yr10",
+    "className": "10ENTB3",
+    "room": "A1",
+    "teacher": "Mr Yugendran Pillay"
+  },
+  {
+    "date": "2026-07-21",
+    "period": "1",
+    "start": "08:50",
+    "end": "09:45",
+    "subject": "German Yr10",
+    "className": "10GERA1",
+    "room": "C14",
+    "teacher": "Ms Johanna KURATH"
+  },
+  {
+    "date": "2026-07-21",
+    "period": "2",
+    "start": "09:45",
+    "end": "10:30",
+    "subject": "Mathematics Yr10",
+    "className": "10MATE",
+    "room": "A3",
+    "teacher": "Mr Stephen Ireland"
+  },
+  {
+    "date": "2026-07-21",
+    "period": "3",
+    "start": "10:50",
+    "end": "11:35",
+    "subject": "Science Yr10",
+    "className": "10SCIE",
+    "room": "LA1",
+    "teacher": "Miss Laura Sacchetta"
+  },
+  {
+    "date": "2026-07-21",
+    "period": "4",
+    "start": "11:35",
+    "end": "12:20",
+    "subject": "Geography Yr10",
+    "className": "10GEOE",
+    "room": "C11",
+    "teacher": "Miss Ruipu Sun"
+  },
+  {
+    "date": "2026-07-21",
+    "period": "5",
+    "start": "13:00",
+    "end": "13:45",
+    "subject": "Enterprise Computing Yr10",
+    "className": "10ENTB3",
+    "room": "A1",
+    "teacher": "Mr Yugendran Pillay"
+  },
+  {
+    "date": "2026-07-21",
+    "period": "6",
+    "start": "13:45",
+    "end": "14:30",
+    "subject": "History Yr10",
+    "className": "10HISE",
+    "room": "C13",
+    "teacher": "Ms Anastasia Kapetas"
+  },
+  {
+    "date": "2026-07-22",
+    "period": "1",
+    "start": "08:50",
+    "end": "09:45",
+    "subject": "English Yr10",
+    "className": "10ENGE",
+    "room": "C4",
+    "teacher": "Mr Elias Kwiet"
+  },
+  {
+    "date": "2026-07-22",
+    "period": "2",
+    "start": "09:45",
+    "end": "10:40",
+    "subject": "Enterprise Computing Yr10",
+    "className": "10ENTB3",
+    "room": "A1",
+    "teacher": "Mr Yugendran Pillay"
+  },
+  {
+    "date": "2026-07-22",
+    "period": "3",
+    "start": "10:55",
+    "end": "11:45",
+    "subject": "iSTEM Yr10",
+    "className": "10STMA2",
+    "room": "B4",
+    "teacher": "Dr Vladimir Tosic"
+  },
+  {
+    "date": "2026-07-22",
+    "period": "5",
+    "start": "12:30",
+    "end": "14:30",
+    "subject": ".Sport Sport",
+    "className": "SSRECPICKLE1",
+    "room": "",
+    "teacher": "Mr Dean Smith"
+  },
+  {
+    "date": "2026-07-22",
+    "period": "5",
+    "start": "12:30",
+    "end": "14:30",
+    "subject": ".Sport Sport",
+    "className": "SSRECPICKLE1",
+    "room": "",
+    "teacher": "Kate McNamara"
+  },
+  {
+    "date": "2026-07-23",
+    "period": "0",
+    "start": "08:00",
+    "end": "08:50",
+    "subject": "Enterprise Computing Yr10",
+    "className": "10ENTB3",
+    "room": "A1",
+    "teacher": "Mr Yugendran Pillay"
+  },
+  {
+    "date": "2026-07-23",
+    "period": "1",
+    "start": "08:50",
+    "end": "09:45",
+    "subject": "German Yr10",
+    "className": "10GERA1",
+    "room": "C14",
+    "teacher": "Ms Johanna KURATH"
+  },
+  {
+    "date": "2026-07-23",
+    "period": "2",
+    "start": "09:45",
+    "end": "10:40",
+    "subject": "English Yr10",
+    "className": "10ENGE",
+    "room": "C4",
+    "teacher": "Mr Elias Kwiet"
+  },
+  {
+    "date": "2026-07-23",
+    "period": "3",
+    "start": "11:00",
+    "end": "11:55",
+    "subject": "Mathematics Yr10",
+    "className": "10MATE",
+    "room": "A3",
+    "teacher": "Mr Stephen Ireland"
+  },
+  {
+    "date": "2026-07-23",
+    "period": "4",
+    "start": "11:55",
+    "end": "12:50",
+    "subject": "Science Yr10",
+    "className": "10SCIE",
+    "room": "LA1",
+    "teacher": "Miss Laura Sacchetta"
+  },
+  {
+    "date": "2026-07-23",
+    "period": "5",
+    "start": "13:30",
+    "end": "14:25",
+    "subject": "iSTEM Yr10",
+    "className": "10STMA2",
+    "room": "B4",
+    "teacher": "Dr Vladimir Tosic"
+  },
+  {
+    "date": "2026-07-23",
+    "period": "6",
+    "start": "14:25",
+    "end": "15:15",
+    "subject": "History Yr10",
+    "className": "10HISE",
+    "room": "C13",
+    "teacher": "Ms Anastasia Kapetas"
+  },
+  {
+    "date": "2026-07-24",
+    "period": "1",
+    "start": "08:50",
+    "end": "09:45",
+    "subject": "Enterprise Computing Yr10",
+    "className": "10ENTB3",
+    "room": "A1",
+    "teacher": "Mr Yugendran Pillay"
+  },
+  {
+    "date": "2026-07-24",
+    "period": "2",
+    "start": "09:45",
+    "end": "10:40",
+    "subject": "Science Yr10",
+    "className": "10SCIE",
+    "room": "LA1",
+    "teacher": "Miss Laura Sacchetta"
+  },
+  {
+    "date": "2026-07-24",
+    "period": "3",
+    "start": "11:00",
+    "end": "11:55",
+    "subject": "iSTEM Yr10",
+    "className": "10STMA2",
+    "room": "B4",
+    "teacher": "Dr Vladimir Tosic"
+  },
+  {
+    "date": "2026-07-24",
+    "period": "4",
+    "start": "11:55",
+    "end": "12:50",
+    "subject": "German Yr10",
+    "className": "10GERA1",
+    "room": "C14",
+    "teacher": "Ms Johanna KURATH"
+  },
+  {
+    "date": "2026-07-24",
+    "period": "5",
+    "start": "13:30",
+    "end": "14:25",
+    "subject": "Mathematics Yr10",
+    "className": "10MATE",
+    "room": "A3",
+    "teacher": "Mr Stephen Ireland"
+  },
+  {
+    "date": "2026-07-24",
+    "period": "6",
+    "start": "14:25",
+    "end": "15:15",
+    "subject": "English Yr10",
+    "className": "10ENGE",
+    "room": "C4",
+    "teacher": "Mr Elias Kwiet"
+  },
+  {
+    "date": "2026-07-27",
+    "period": "1",
+    "start": "08:50",
+    "end": "09:45",
+    "subject": "German Yr10",
+    "className": "10GERA1",
+    "room": "C14",
+    "teacher": "Ms Johanna KURATH"
+  },
+  {
+    "date": "2026-07-27",
+    "period": "2",
+    "start": "09:45",
+    "end": "10:40",
+    "subject": "Geography Yr10",
+    "className": "10GEOE",
+    "room": "C11",
+    "teacher": "Miss Ruipu Sun"
+  },
+  {
+    "date": "2026-07-27",
+    "period": "3",
+    "start": "11:00",
+    "end": "11:55",
+    "subject": "Mathematics Yr10",
+    "className": "10MATE",
+    "room": "A3",
+    "teacher": "Mr Stephen Ireland"
+  },
+  {
+    "date": "2026-07-27",
+    "period": "4",
+    "start": "11:55",
+    "end": "12:50",
+    "subject": "Enterprise Computing Yr10",
+    "className": "10ENTB3",
+    "room": "A1",
+    "teacher": "Mr Yugendran Pillay"
+  },
+  {
+    "date": "2026-07-27",
+    "period": "5",
+    "start": "13:30",
+    "end": "14:25",
+    "subject": "English Yr10",
+    "className": "10ENGE",
+    "room": "C4",
+    "teacher": "Mr Elias Kwiet"
+  },
+  {
+    "date": "2026-07-27",
+    "period": "6",
+    "start": "14:25",
+    "end": "15:15",
+    "subject": "Science Yr10",
+    "className": "10SCIE",
+    "room": "LA1",
+    "teacher": "Miss Laura Sacchetta"
+  },
+  {
+    "date": "2026-07-28",
+    "period": "0",
+    "start": "08:00",
+    "end": "08:50",
+    "subject": "Enterprise Computing Yr10",
+    "className": "10ENTB3",
+    "room": "A1",
+    "teacher": "Mr Yugendran Pillay"
+  },
+  {
+    "date": "2026-07-28",
+    "period": "1",
+    "start": "08:50",
+    "end": "09:45",
+    "subject": "English Yr10",
+    "className": "10ENGE",
+    "room": "C4",
+    "teacher": "Mr Elias Kwiet"
+  },
+  {
+    "date": "2026-07-28",
+    "period": "2",
+    "start": "09:45",
+    "end": "10:30",
+    "subject": "Science Yr10",
+    "className": "10SCIE",
+    "room": "LA1",
+    "teacher": "Miss Laura Sacchetta"
+  },
+  {
+    "date": "2026-07-28",
+    "period": "3",
+    "start": "10:50",
+    "end": "11:35",
+    "subject": "History Yr10",
+    "className": "10HISE",
+    "room": "C13",
+    "teacher": "Ms Anastasia Kapetas"
+  },
+  {
+    "date": "2026-07-28",
+    "period": "4",
+    "start": "11:35",
+    "end": "12:20",
+    "subject": "iSTEM Yr10",
+    "className": "10STMA2",
+    "room": "B4",
+    "teacher": "Dr Vladimir Tosic"
+  },
+  {
+    "date": "2026-07-28",
+    "period": "5",
+    "start": "13:00",
+    "end": "13:45",
+    "subject": "Careers Yr10",
+    "className": "10CARE",
+    "room": "B1",
+    "teacher": "Mr Robert L Miller"
+  },
+  {
+    "date": "2026-07-28",
+    "period": "6",
+    "start": "13:45",
+    "end": "14:30",
+    "subject": "Geography Yr10",
+    "className": "10GEOE",
+    "room": "C11",
+    "teacher": "Miss Ruipu Sun"
+  },
+  {
+    "date": "2026-07-29",
+    "period": "1",
+    "start": "08:50",
+    "end": "09:45",
+    "subject": "iSTEM Yr10",
+    "className": "10STMA2",
+    "room": "B4",
+    "teacher": "Dr Vladimir Tosic"
+  },
+  {
+    "date": "2026-07-29",
+    "period": "2",
+    "start": "09:45",
+    "end": "10:40",
+    "subject": "Science Yr10",
+    "className": "10SCIE",
+    "room": "LA1",
+    "teacher": "Miss Laura Sacchetta"
+  },
+  {
+    "date": "2026-07-29",
+    "period": "3",
+    "start": "10:55",
+    "end": "11:45",
+    "subject": "Mathematics Yr10",
+    "className": "10MATE",
+    "room": "A3",
+    "teacher": "Mr Stephen Ireland"
+  },
+  {
+    "date": "2026-07-29",
+    "period": "5",
+    "start": "12:30",
+    "end": "14:30",
+    "subject": ".Sport Sport",
+    "className": "SSRECPICKLE1",
+    "room": "",
+    "teacher": "Mr Dean Smith"
+  },
+  {
+    "date": "2026-07-29",
+    "period": "5",
+    "start": "12:30",
+    "end": "14:30",
+    "subject": ".Sport Sport",
+    "className": "SSRECPICKLE1",
+    "room": "",
+    "teacher": "Kate McNamara"
+  },
+  {
+    "date": "2026-07-30",
+    "period": "1",
+    "start": "08:50",
+    "end": "09:45",
+    "subject": "Mathematics Yr10",
+    "className": "10MATE",
+    "room": "A3",
+    "teacher": "Mr Stephen Ireland"
+  },
+  {
+    "date": "2026-07-30",
+    "period": "2",
+    "start": "09:45",
+    "end": "10:40",
+    "subject": "English Yr10",
+    "className": "10ENGE",
+    "room": "C4",
+    "teacher": "Mr Elias Kwiet"
+  },
+  {
+    "date": "2026-07-30",
+    "period": "3",
+    "start": "11:00",
+    "end": "11:55",
+    "subject": "German Yr10",
+    "className": "10GERA1",
+    "room": "C14",
+    "teacher": "Ms Johanna KURATH"
+  },
+  {
+    "date": "2026-07-30",
+    "period": "4",
+    "start": "11:55",
+    "end": "12:50",
+    "subject": "PDHPE Yr10",
+    "className": "10PDHE",
+    "room": "GYM1",
+    "teacher": "Mr Christopher Murphy"
+  },
+  {
+    "date": "2026-07-30",
+    "period": "5",
+    "start": "13:30",
+    "end": "14:25",
+    "subject": "iSTEM Yr10",
+    "className": "10STMA2",
+    "room": "B4",
+    "teacher": "Dr Vladimir Tosic"
+  },
+  {
+    "date": "2026-07-30",
+    "period": "6",
+    "start": "14:25",
+    "end": "15:15",
+    "subject": "Science Yr10",
+    "className": "10SCIE",
+    "room": "LA1",
+    "teacher": "Miss Laura Sacchetta"
+  },
+  {
+    "date": "2026-07-31",
+    "period": "1",
+    "start": "08:50",
+    "end": "09:45",
+    "subject": "Enterprise Computing Yr10",
+    "className": "10ENTB3",
+    "room": "A1",
+    "teacher": "Mr Yugendran Pillay"
+  },
+  {
+    "date": "2026-07-31",
+    "period": "2",
+    "start": "09:45",
+    "end": "10:40",
+    "subject": "History Yr10",
+    "className": "10HISE",
+    "room": "C13",
+    "teacher": "Ms Anastasia Kapetas"
+  },
+  {
+    "date": "2026-07-31",
+    "period": "3",
+    "start": "11:00",
+    "end": "11:55",
+    "subject": "English Yr10",
+    "className": "10ENGE",
+    "room": "C4",
+    "teacher": "Mr Elias Kwiet"
+  },
+  {
+    "date": "2026-07-31",
+    "period": "4",
+    "start": "11:55",
+    "end": "12:50",
+    "subject": "German Yr10",
+    "className": "10GERA1",
+    "room": "C14",
+    "teacher": "Ms Johanna KURATH"
+  },
+  {
+    "date": "2026-07-31",
+    "period": "5",
+    "start": "13:30",
+    "end": "14:25",
+    "subject": "Mathematics Yr10",
+    "className": "10MATE",
+    "room": "A3",
+    "teacher": "Mr Stephen Ireland"
+  },
+  {
+    "date": "2026-07-31",
+    "period": "6",
+    "start": "14:25",
+    "end": "15:15",
+    "subject": "PDHPE Yr10",
+    "className": "10PDHE",
+    "room": "GYM1",
+    "teacher": "Mr Christopher Murphy"
+  },
+  {
+    "date": "2026-08-03",
+    "period": "1",
+    "start": "08:50",
+    "end": "09:45",
+    "subject": "Geography Yr10",
+    "className": "10GEOE",
+    "room": "C11",
+    "teacher": "Miss Ruipu Sun"
+  },
+  {
+    "date": "2026-08-03",
+    "period": "2",
+    "start": "09:45",
+    "end": "10:40",
+    "subject": "PDHPE Yr10",
+    "className": "10PDHE",
+    "room": "GYM1",
+    "teacher": "Mr Christopher Murphy"
+  },
+  {
+    "date": "2026-08-03",
+    "period": "3",
+    "start": "11:00",
+    "end": "11:55",
+    "subject": "Mathematics Yr10",
+    "className": "10MATE",
+    "room": "A3",
+    "teacher": "Mr Stephen Ireland"
+  },
+  {
+    "date": "2026-08-03",
+    "period": "4",
+    "start": "11:55",
+    "end": "12:50",
+    "subject": "Science Yr10",
+    "className": "10SCIE",
+    "room": "LA1",
+    "teacher": "Miss Laura Sacchetta"
+  },
+  {
+    "date": "2026-08-03",
+    "period": "5",
+    "start": "13:30",
+    "end": "14:25",
+    "subject": "English Yr10",
+    "className": "10ENGE",
+    "room": "C4",
+    "teacher": "Mr Elias Kwiet"
+  },
+  {
+    "date": "2026-08-03",
+    "period": "6",
+    "start": "14:25",
+    "end": "15:15",
+    "subject": "Enterprise Computing Yr10",
+    "className": "10ENTB3",
+    "room": "A1",
+    "teacher": "Mr Yugendran Pillay"
+  },
+  {
+    "date": "2026-08-04",
+    "period": "0",
+    "start": "08:00",
+    "end": "08:50",
+    "subject": "Enterprise Computing Yr10",
+    "className": "10ENTB3",
+    "room": "A1",
+    "teacher": "Mr Yugendran Pillay"
+  },
+  {
+    "date": "2026-08-04",
+    "period": "1",
+    "start": "08:50",
+    "end": "09:45",
+    "subject": "German Yr10",
+    "className": "10GERA1",
+    "room": "C14",
+    "teacher": "Ms Johanna KURATH"
+  },
+  {
+    "date": "2026-08-04",
+    "period": "2",
+    "start": "09:45",
+    "end": "10:30",
+    "subject": "Mathematics Yr10",
+    "className": "10MATE",
+    "room": "A3",
+    "teacher": "Mr Stephen Ireland"
+  },
+  {
+    "date": "2026-08-04",
+    "period": "3",
+    "start": "10:50",
+    "end": "11:35",
+    "subject": "Science Yr10",
+    "className": "10SCIE",
+    "room": "LA1",
+    "teacher": "Miss Laura Sacchetta"
+  },
+  {
+    "date": "2026-08-04",
+    "period": "4",
+    "start": "11:35",
+    "end": "12:20",
+    "subject": "Geography Yr10",
+    "className": "10GEOE",
+    "room": "C11",
+    "teacher": "Miss Ruipu Sun"
+  },
+  {
+    "date": "2026-08-04",
+    "period": "5",
+    "start": "13:00",
+    "end": "13:45",
+    "subject": "Enterprise Computing Yr10",
+    "className": "10ENTB3",
+    "room": "A1",
+    "teacher": "Mr Yugendran Pillay"
+  },
+  {
+    "date": "2026-08-04",
+    "period": "6",
+    "start": "13:45",
+    "end": "14:30",
+    "subject": "History Yr10",
+    "className": "10HISE",
+    "room": "C13",
+    "teacher": "Ms Anastasia Kapetas"
+  },
+  {
+    "date": "2026-08-05",
+    "period": "1",
+    "start": "08:50",
+    "end": "09:45",
+    "subject": "English Yr10",
+    "className": "10ENGE",
+    "room": "C4",
+    "teacher": "Mr Elias Kwiet"
+  },
+  {
+    "date": "2026-08-05",
+    "period": "2",
+    "start": "09:45",
+    "end": "10:40",
+    "subject": "Enterprise Computing Yr10",
+    "className": "10ENTB3",
+    "room": "A1",
+    "teacher": "Mr Yugendran Pillay"
+  },
+  {
+    "date": "2026-08-05",
+    "period": "3",
+    "start": "10:55",
+    "end": "11:45",
+    "subject": "iSTEM Yr10",
+    "className": "10STMA2",
+    "room": "B4",
+    "teacher": "Dr Vladimir Tosic"
+  },
+  {
+    "date": "2026-08-05",
+    "period": "5",
+    "start": "12:30",
+    "end": "14:30",
+    "subject": ".Sport Sport",
+    "className": "SSRECPICKLE1",
+    "room": "",
+    "teacher": "Mr Dean Smith"
+  },
+  {
+    "date": "2026-08-05",
+    "period": "5",
+    "start": "12:30",
+    "end": "14:30",
+    "subject": ".Sport Sport",
+    "className": "SSRECPICKLE1",
+    "room": "",
+    "teacher": "Kate McNamara"
+  },
+  {
+    "date": "2026-08-06",
+    "period": "0",
+    "start": "08:00",
+    "end": "08:50",
+    "subject": "Enterprise Computing Yr10",
+    "className": "10ENTB3",
+    "room": "A1",
+    "teacher": "Mr Yugendran Pillay"
+  },
+  {
+    "date": "2026-08-06",
+    "period": "1",
+    "start": "08:50",
+    "end": "09:45",
+    "subject": "German Yr10",
+    "className": "10GERA1",
+    "room": "C14",
+    "teacher": "Ms Johanna KURATH"
+  },
+  {
+    "date": "2026-08-06",
+    "period": "2",
+    "start": "09:45",
+    "end": "10:40",
+    "subject": "English Yr10",
+    "className": "10ENGE",
+    "room": "C4",
+    "teacher": "Mr Elias Kwiet"
+  },
+  {
+    "date": "2026-08-06",
+    "period": "3",
+    "start": "11:00",
+    "end": "11:55",
+    "subject": "Mathematics Yr10",
+    "className": "10MATE",
+    "room": "A3",
+    "teacher": "Mr Stephen Ireland"
+  },
+  {
+    "date": "2026-08-06",
+    "period": "4",
+    "start": "11:55",
+    "end": "12:50",
+    "subject": "Science Yr10",
+    "className": "10SCIE",
+    "room": "LA1",
+    "teacher": "Miss Laura Sacchetta"
+  },
+  {
+    "date": "2026-08-06",
+    "period": "5",
+    "start": "13:30",
+    "end": "14:25",
+    "subject": "iSTEM Yr10",
+    "className": "10STMA2",
+    "room": "B4",
+    "teacher": "Dr Vladimir Tosic"
+  },
+  {
+    "date": "2026-08-06",
+    "period": "6",
+    "start": "14:25",
+    "end": "15:15",
+    "subject": "History Yr10",
+    "className": "10HISE",
+    "room": "C13",
+    "teacher": "Ms Anastasia Kapetas"
+  },
+  {
+    "date": "2026-08-07",
+    "period": "1",
+    "start": "08:50",
+    "end": "09:45",
+    "subject": "Enterprise Computing Yr10",
+    "className": "10ENTB3",
+    "room": "A1",
+    "teacher": "Mr Yugendran Pillay"
+  },
+  {
+    "date": "2026-08-07",
+    "period": "2",
+    "start": "09:45",
+    "end": "10:40",
+    "subject": "Science Yr10",
+    "className": "10SCIE",
+    "room": "LA1",
+    "teacher": "Miss Laura Sacchetta"
+  },
+  {
+    "date": "2026-08-07",
+    "period": "3",
+    "start": "11:00",
+    "end": "11:55",
+    "subject": "iSTEM Yr10",
+    "className": "10STMA2",
+    "room": "B4",
+    "teacher": "Dr Vladimir Tosic"
+  },
+  {
+    "date": "2026-08-07",
+    "period": "4",
+    "start": "11:55",
+    "end": "12:50",
+    "subject": "German Yr10",
+    "className": "10GERA1",
+    "room": "C14",
+    "teacher": "Ms Johanna KURATH"
+  },
+  {
+    "date": "2026-08-07",
+    "period": "5",
+    "start": "13:30",
+    "end": "14:25",
+    "subject": "Mathematics Yr10",
+    "className": "10MATE",
+    "room": "A3",
+    "teacher": "Mr Stephen Ireland"
+  },
+  {
+    "date": "2026-08-07",
+    "period": "6",
+    "start": "14:25",
+    "end": "15:15",
+    "subject": "English Yr10",
+    "className": "10ENGE",
+    "room": "C4",
+    "teacher": "Mr Elias Kwiet"
+  },
+  {
+    "date": "2026-08-10",
+    "period": "1",
+    "start": "08:50",
+    "end": "09:45",
+    "subject": "German Yr10",
+    "className": "10GERA1",
+    "room": "C14",
+    "teacher": "Ms Johanna KURATH"
+  },
+  {
+    "date": "2026-08-10",
+    "period": "2",
+    "start": "09:45",
+    "end": "10:40",
+    "subject": "Geography Yr10",
+    "className": "10GEOE",
+    "room": "C11",
+    "teacher": "Miss Ruipu Sun"
+  },
+  {
+    "date": "2026-08-10",
+    "period": "3",
+    "start": "11:00",
+    "end": "11:55",
+    "subject": "Mathematics Yr10",
+    "className": "10MATE",
+    "room": "A3",
+    "teacher": "Mr Stephen Ireland"
+  },
+  {
+    "date": "2026-08-10",
+    "period": "4",
+    "start": "11:55",
+    "end": "12:50",
+    "subject": "Enterprise Computing Yr10",
+    "className": "10ENTB3",
+    "room": "A1",
+    "teacher": "Mr Yugendran Pillay"
+  },
+  {
+    "date": "2026-08-10",
+    "period": "5",
+    "start": "13:30",
+    "end": "14:25",
+    "subject": "English Yr10",
+    "className": "10ENGE",
+    "room": "C4",
+    "teacher": "Mr Elias Kwiet"
+  },
+  {
+    "date": "2026-08-10",
+    "period": "6",
+    "start": "14:25",
+    "end": "15:15",
+    "subject": "Science Yr10",
+    "className": "10SCIE",
+    "room": "LA1",
+    "teacher": "Miss Laura Sacchetta"
+  },
+  {
+    "date": "2026-08-11",
+    "period": "0",
+    "start": "08:00",
+    "end": "08:50",
+    "subject": "Enterprise Computing Yr10",
+    "className": "10ENTB3",
+    "room": "A1",
+    "teacher": "Mr Yugendran Pillay"
+  },
+  {
+    "date": "2026-08-11",
+    "period": "1",
+    "start": "08:50",
+    "end": "09:45",
+    "subject": "English Yr10",
+    "className": "10ENGE",
+    "room": "C4",
+    "teacher": "Mr Elias Kwiet"
+  },
+  {
+    "date": "2026-08-11",
+    "period": "2",
+    "start": "09:45",
+    "end": "10:30",
+    "subject": "Science Yr10",
+    "className": "10SCIE",
+    "room": "LA1",
+    "teacher": "Miss Laura Sacchetta"
+  },
+  {
+    "date": "2026-08-11",
+    "period": "3",
+    "start": "10:50",
+    "end": "11:35",
+    "subject": "History Yr10",
+    "className": "10HISE",
+    "room": "C13",
+    "teacher": "Ms Anastasia Kapetas"
+  },
+  {
+    "date": "2026-08-11",
+    "period": "4",
+    "start": "11:35",
+    "end": "12:20",
+    "subject": "iSTEM Yr10",
+    "className": "10STMA2",
+    "room": "B4",
+    "teacher": "Dr Vladimir Tosic"
+  },
+  {
+    "date": "2026-08-11",
+    "period": "5",
+    "start": "13:00",
+    "end": "13:45",
+    "subject": "Careers Yr10",
+    "className": "10CARE",
+    "room": "B1",
+    "teacher": "Mr Robert L Miller"
+  },
+  {
+    "date": "2026-08-11",
+    "period": "6",
+    "start": "13:45",
+    "end": "14:30",
+    "subject": "Geography Yr10",
+    "className": "10GEOE",
+    "room": "C11",
+    "teacher": "Miss Ruipu Sun"
+  },
+  {
+    "date": "2026-08-12",
+    "period": "1",
+    "start": "08:50",
+    "end": "09:45",
+    "subject": "iSTEM Yr10",
+    "className": "10STMA2",
+    "room": "B4",
+    "teacher": "Dr Vladimir Tosic"
+  },
+  {
+    "date": "2026-08-12",
+    "period": "2",
+    "start": "09:45",
+    "end": "10:40",
+    "subject": "Science Yr10",
+    "className": "10SCIE",
+    "room": "LA1",
+    "teacher": "Miss Laura Sacchetta"
+  },
+  {
+    "date": "2026-08-12",
+    "period": "3",
+    "start": "10:55",
+    "end": "11:45",
+    "subject": "Mathematics Yr10",
+    "className": "10MATE",
+    "room": "A3",
+    "teacher": "Mr Stephen Ireland"
+  },
+  {
+    "date": "2026-08-12",
+    "period": "5",
+    "start": "12:30",
+    "end": "14:30",
+    "subject": ".Sport Sport",
+    "className": "SSRECPICKLE1",
+    "room": "",
+    "teacher": "Mr Dean Smith"
+  },
+  {
+    "date": "2026-08-12",
+    "period": "5",
+    "start": "12:30",
+    "end": "14:30",
+    "subject": ".Sport Sport",
+    "className": "SSRECPICKLE1",
+    "room": "",
+    "teacher": "Kate McNamara"
+  },
+  {
+    "date": "2026-08-13",
+    "period": "1",
+    "start": "08:50",
+    "end": "09:45",
+    "subject": "Mathematics Yr10",
+    "className": "10MATE",
+    "room": "A3",
+    "teacher": "Mr Stephen Ireland"
+  },
+  {
+    "date": "2026-08-13",
+    "period": "2",
+    "start": "09:45",
+    "end": "10:40",
+    "subject": "English Yr10",
+    "className": "10ENGE",
+    "room": "C4",
+    "teacher": "Mr Elias Kwiet"
+  },
+  {
+    "date": "2026-08-13",
+    "period": "3",
+    "start": "11:00",
+    "end": "11:55",
+    "subject": "German Yr10",
+    "className": "10GERA1",
+    "room": "C14",
+    "teacher": "Ms Johanna KURATH"
+  },
+  {
+    "date": "2026-08-13",
+    "period": "4",
+    "start": "11:55",
+    "end": "12:50",
+    "subject": "PDHPE Yr10",
+    "className": "10PDHE",
+    "room": "GYM1",
+    "teacher": "Mr Christopher Murphy"
+  },
+  {
+    "date": "2026-08-13",
+    "period": "5",
+    "start": "13:30",
+    "end": "14:25",
+    "subject": "iSTEM Yr10",
+    "className": "10STMA2",
+    "room": "B4",
+    "teacher": "Dr Vladimir Tosic"
+  },
+  {
+    "date": "2026-08-13",
+    "period": "6",
+    "start": "14:25",
+    "end": "15:15",
+    "subject": "Science Yr10",
+    "className": "10SCIE",
+    "room": "LA1",
+    "teacher": "Miss Laura Sacchetta"
+  },
+  {
+    "date": "2026-08-14",
+    "period": "1",
+    "start": "08:50",
+    "end": "09:45",
+    "subject": "Enterprise Computing Yr10",
+    "className": "10ENTB3",
+    "room": "A1",
+    "teacher": "Mr Yugendran Pillay"
+  },
+  {
+    "date": "2026-08-14",
+    "period": "2",
+    "start": "09:45",
+    "end": "10:40",
+    "subject": "History Yr10",
+    "className": "10HISE",
+    "room": "C13",
+    "teacher": "Ms Anastasia Kapetas"
+  },
+  {
+    "date": "2026-08-14",
+    "period": "3",
+    "start": "11:00",
+    "end": "11:55",
+    "subject": "English Yr10",
+    "className": "10ENGE",
+    "room": "C4",
+    "teacher": "Mr Elias Kwiet"
+  },
+  {
+    "date": "2026-08-14",
+    "period": "4",
+    "start": "11:55",
+    "end": "12:50",
+    "subject": "German Yr10",
+    "className": "10GERA1",
+    "room": "C14",
+    "teacher": "Ms Johanna KURATH"
+  },
+  {
+    "date": "2026-08-14",
+    "period": "5",
+    "start": "13:30",
+    "end": "14:25",
+    "subject": "Mathematics Yr10",
+    "className": "10MATE",
+    "room": "A3",
+    "teacher": "Mr Stephen Ireland"
+  },
+  {
+    "date": "2026-08-14",
+    "period": "6",
+    "start": "14:25",
+    "end": "15:15",
+    "subject": "PDHPE Yr10",
+    "className": "10PDHE",
+    "room": "GYM1",
+    "teacher": "Mr Christopher Murphy"
+  },
+  {
+    "date": "2026-08-17",
+    "period": "1",
+    "start": "08:50",
+    "end": "09:45",
+    "subject": "Geography Yr10",
+    "className": "10GEOE",
+    "room": "C11",
+    "teacher": "Miss Ruipu Sun"
+  },
+  {
+    "date": "2026-08-17",
+    "period": "2",
+    "start": "09:45",
+    "end": "10:40",
+    "subject": "PDHPE Yr10",
+    "className": "10PDHE",
+    "room": "GYM1",
+    "teacher": "Mr Christopher Murphy"
+  },
+  {
+    "date": "2026-08-17",
+    "period": "3",
+    "start": "11:00",
+    "end": "11:55",
+    "subject": "Mathematics Yr10",
+    "className": "10MATE",
+    "room": "A3",
+    "teacher": "Mr Stephen Ireland"
+  },
+  {
+    "date": "2026-08-17",
+    "period": "4",
+    "start": "11:55",
+    "end": "12:50",
+    "subject": "Science Yr10",
+    "className": "10SCIE",
+    "room": "LA1",
+    "teacher": "Miss Laura Sacchetta"
+  },
+  {
+    "date": "2026-08-17",
+    "period": "5",
+    "start": "13:30",
+    "end": "14:25",
+    "subject": "English Yr10",
+    "className": "10ENGE",
+    "room": "C4",
+    "teacher": "Mr Elias Kwiet"
+  },
+  {
+    "date": "2026-08-17",
+    "period": "6",
+    "start": "14:25",
+    "end": "15:15",
+    "subject": "Enterprise Computing Yr10",
+    "className": "10ENTB3",
+    "room": "A1",
+    "teacher": "Mr Yugendran Pillay"
+  },
+  {
+    "date": "2026-08-18",
+    "period": "0",
+    "start": "08:00",
+    "end": "08:50",
+    "subject": "Enterprise Computing Yr10",
+    "className": "10ENTB3",
+    "room": "A1",
+    "teacher": "Mr Yugendran Pillay"
+  },
+  {
+    "date": "2026-08-18",
+    "period": "1",
+    "start": "08:50",
+    "end": "09:45",
+    "subject": "German Yr10",
+    "className": "10GERA1",
+    "room": "C14",
+    "teacher": "Ms Johanna KURATH"
+  },
+  {
+    "date": "2026-08-18",
+    "period": "2",
+    "start": "09:45",
+    "end": "10:30",
+    "subject": "Mathematics Yr10",
+    "className": "10MATE",
+    "room": "A3",
+    "teacher": "Mr Stephen Ireland"
+  },
+  {
+    "date": "2026-08-18",
+    "period": "3",
+    "start": "10:50",
+    "end": "11:35",
+    "subject": "Science Yr10",
+    "className": "10SCIE",
+    "room": "LA1",
+    "teacher": "Miss Laura Sacchetta"
+  },
+  {
+    "date": "2026-08-18",
+    "period": "4",
+    "start": "11:35",
+    "end": "12:20",
+    "subject": "Geography Yr10",
+    "className": "10GEOE",
+    "room": "C11",
+    "teacher": "Miss Ruipu Sun"
+  },
+  {
+    "date": "2026-08-18",
+    "period": "5",
+    "start": "13:00",
+    "end": "13:45",
+    "subject": "Enterprise Computing Yr10",
+    "className": "10ENTB3",
+    "room": "A1",
+    "teacher": "Mr Yugendran Pillay"
+  },
+  {
+    "date": "2026-08-18",
+    "period": "6",
+    "start": "13:45",
+    "end": "14:30",
+    "subject": "History Yr10",
+    "className": "10HISE",
+    "room": "C13",
+    "teacher": "Ms Anastasia Kapetas"
+  },
+  {
+    "date": "2026-08-19",
+    "period": "1",
+    "start": "08:50",
+    "end": "09:45",
+    "subject": "English Yr10",
+    "className": "10ENGE",
+    "room": "C4",
+    "teacher": "Mr Elias Kwiet"
+  },
+  {
+    "date": "2026-08-19",
+    "period": "2",
+    "start": "09:45",
+    "end": "10:40",
+    "subject": "Enterprise Computing Yr10",
+    "className": "10ENTB3",
+    "room": "A1",
+    "teacher": "Mr Yugendran Pillay"
+  },
+  {
+    "date": "2026-08-19",
+    "period": "3",
+    "start": "10:55",
+    "end": "11:45",
+    "subject": "iSTEM Yr10",
+    "className": "10STMA2",
+    "room": "B4",
+    "teacher": "Dr Vladimir Tosic"
+  },
+  {
+    "date": "2026-08-19",
+    "period": "5",
+    "start": "12:30",
+    "end": "14:30",
+    "subject": ".Sport Sport",
+    "className": "SSRECPICKLE1",
+    "room": "",
+    "teacher": "Mr Dean Smith"
+  },
+  {
+    "date": "2026-08-19",
+    "period": "5",
+    "start": "12:30",
+    "end": "14:30",
+    "subject": ".Sport Sport",
+    "className": "SSRECPICKLE1",
+    "room": "",
+    "teacher": "Kate McNamara"
+  },
+  {
+    "date": "2026-08-20",
+    "period": "0",
+    "start": "08:00",
+    "end": "08:50",
+    "subject": "Enterprise Computing Yr10",
+    "className": "10ENTB3",
+    "room": "A1",
+    "teacher": "Mr Yugendran Pillay"
+  },
+  {
+    "date": "2026-08-20",
+    "period": "1",
+    "start": "08:50",
+    "end": "09:45",
+    "subject": "German Yr10",
+    "className": "10GERA1",
+    "room": "C14",
+    "teacher": "Ms Johanna KURATH"
+  },
+  {
+    "date": "2026-08-20",
+    "period": "2",
+    "start": "09:45",
+    "end": "10:40",
+    "subject": "English Yr10",
+    "className": "10ENGE",
+    "room": "C4",
+    "teacher": "Mr Elias Kwiet"
+  },
+  {
+    "date": "2026-08-20",
+    "period": "3",
+    "start": "11:00",
+    "end": "11:55",
+    "subject": "Mathematics Yr10",
+    "className": "10MATE",
+    "room": "A3",
+    "teacher": "Mr Stephen Ireland"
+  },
+  {
+    "date": "2026-08-20",
+    "period": "4",
+    "start": "11:55",
+    "end": "12:50",
+    "subject": "Science Yr10",
+    "className": "10SCIE",
+    "room": "LA1",
+    "teacher": "Miss Laura Sacchetta"
+  },
+  {
+    "date": "2026-08-20",
+    "period": "5",
+    "start": "13:30",
+    "end": "14:25",
+    "subject": "iSTEM Yr10",
+    "className": "10STMA2",
+    "room": "B4",
+    "teacher": "Dr Vladimir Tosic"
+  },
+  {
+    "date": "2026-08-20",
+    "period": "6",
+    "start": "14:25",
+    "end": "15:15",
+    "subject": "History Yr10",
+    "className": "10HISE",
+    "room": "C13",
+    "teacher": "Ms Anastasia Kapetas"
+  },
+  {
+    "date": "2026-08-21",
+    "period": "1",
+    "start": "08:50",
+    "end": "09:45",
+    "subject": "Enterprise Computing Yr10",
+    "className": "10ENTB3",
+    "room": "A1",
+    "teacher": "Mr Yugendran Pillay"
+  },
+  {
+    "date": "2026-08-21",
+    "period": "2",
+    "start": "09:45",
+    "end": "10:40",
+    "subject": "Science Yr10",
+    "className": "10SCIE",
+    "room": "LA1",
+    "teacher": "Miss Laura Sacchetta"
+  },
+  {
+    "date": "2026-08-21",
+    "period": "3",
+    "start": "11:00",
+    "end": "11:55",
+    "subject": "iSTEM Yr10",
+    "className": "10STMA2",
+    "room": "B4",
+    "teacher": "Dr Vladimir Tosic"
+  },
+  {
+    "date": "2026-08-21",
+    "period": "4",
+    "start": "11:55",
+    "end": "12:50",
+    "subject": "German Yr10",
+    "className": "10GERA1",
+    "room": "C14",
+    "teacher": "Ms Johanna KURATH"
+  },
+  {
+    "date": "2026-08-21",
+    "period": "5",
+    "start": "13:30",
+    "end": "14:25",
+    "subject": "Mathematics Yr10",
+    "className": "10MATE",
+    "room": "A3",
+    "teacher": "Mr Stephen Ireland"
+  },
+  {
+    "date": "2026-08-21",
+    "period": "6",
+    "start": "14:25",
+    "end": "15:15",
+    "subject": "English Yr10",
+    "className": "10ENGE",
+    "room": "C4",
+    "teacher": "Mr Elias Kwiet"
+  },
+  {
+    "date": "2026-08-24",
+    "period": "1",
+    "start": "08:50",
+    "end": "09:45",
+    "subject": "German Yr10",
+    "className": "10GERA1",
+    "room": "C14",
+    "teacher": "Ms Johanna KURATH"
+  },
+  {
+    "date": "2026-08-24",
+    "period": "2",
+    "start": "09:45",
+    "end": "10:40",
+    "subject": "Geography Yr10",
+    "className": "10GEOE",
+    "room": "C11",
+    "teacher": "Miss Ruipu Sun"
+  },
+  {
+    "date": "2026-08-24",
+    "period": "3",
+    "start": "11:00",
+    "end": "11:55",
+    "subject": "Mathematics Yr10",
+    "className": "10MATE",
+    "room": "A3",
+    "teacher": "Mr Stephen Ireland"
+  },
+  {
+    "date": "2026-08-24",
+    "period": "4",
+    "start": "11:55",
+    "end": "12:50",
+    "subject": "Enterprise Computing Yr10",
+    "className": "10ENTB3",
+    "room": "A1",
+    "teacher": "Mr Yugendran Pillay"
+  },
+  {
+    "date": "2026-08-24",
+    "period": "5",
+    "start": "13:30",
+    "end": "14:25",
+    "subject": "English Yr10",
+    "className": "10ENGE",
+    "room": "C4",
+    "teacher": "Mr Elias Kwiet"
+  },
+  {
+    "date": "2026-08-24",
+    "period": "6",
+    "start": "14:25",
+    "end": "15:15",
+    "subject": "Science Yr10",
+    "className": "10SCIE",
+    "room": "LA1",
+    "teacher": "Miss Laura Sacchetta"
+  },
+  {
+    "date": "2026-08-25",
+    "period": "0",
+    "start": "08:00",
+    "end": "08:50",
+    "subject": "Enterprise Computing Yr10",
+    "className": "10ENTB3",
+    "room": "A1",
+    "teacher": "Mr Yugendran Pillay"
+  },
+  {
+    "date": "2026-08-25",
+    "period": "1",
+    "start": "08:50",
+    "end": "09:45",
+    "subject": "English Yr10",
+    "className": "10ENGE",
+    "room": "C4",
+    "teacher": "Mr Elias Kwiet"
+  },
+  {
+    "date": "2026-08-25",
+    "period": "2",
+    "start": "09:45",
+    "end": "10:30",
+    "subject": "Science Yr10",
+    "className": "10SCIE",
+    "room": "LA1",
+    "teacher": "Miss Laura Sacchetta"
+  },
+  {
+    "date": "2026-08-25",
+    "period": "3",
+    "start": "10:50",
+    "end": "11:35",
+    "subject": "History Yr10",
+    "className": "10HISE",
+    "room": "C13",
+    "teacher": "Ms Anastasia Kapetas"
+  },
+  {
+    "date": "2026-08-25",
+    "period": "4",
+    "start": "11:35",
+    "end": "12:20",
+    "subject": "iSTEM Yr10",
+    "className": "10STMA2",
+    "room": "B4",
+    "teacher": "Dr Vladimir Tosic"
+  },
+  {
+    "date": "2026-08-25",
+    "period": "5",
+    "start": "13:00",
+    "end": "13:45",
+    "subject": "Careers Yr10",
+    "className": "10CARE",
+    "room": "B1",
+    "teacher": "Mr Robert L Miller"
+  },
+  {
+    "date": "2026-08-25",
+    "period": "6",
+    "start": "13:45",
+    "end": "14:30",
+    "subject": "Geography Yr10",
+    "className": "10GEOE",
+    "room": "C11",
+    "teacher": "Miss Ruipu Sun"
+  },
+  {
+    "date": "2026-08-26",
+    "period": "1",
+    "start": "08:50",
+    "end": "09:45",
+    "subject": "iSTEM Yr10",
+    "className": "10STMA2",
+    "room": "B4",
+    "teacher": "Dr Vladimir Tosic"
+  },
+  {
+    "date": "2026-08-26",
+    "period": "2",
+    "start": "09:45",
+    "end": "10:40",
+    "subject": "Science Yr10",
+    "className": "10SCIE",
+    "room": "LA1",
+    "teacher": "Miss Laura Sacchetta"
+  },
+  {
+    "date": "2026-08-26",
+    "period": "3",
+    "start": "10:55",
+    "end": "11:45",
+    "subject": "Mathematics Yr10",
+    "className": "10MATE",
+    "room": "A3",
+    "teacher": "Mr Stephen Ireland"
+  },
+  {
+    "date": "2026-08-26",
+    "period": "5",
+    "start": "12:30",
+    "end": "14:30",
+    "subject": ".Sport Sport",
+    "className": "SSRECPICKLE1",
+    "room": "",
+    "teacher": "Mr Dean Smith"
+  },
+  {
+    "date": "2026-08-26",
+    "period": "5",
+    "start": "12:30",
+    "end": "14:30",
+    "subject": ".Sport Sport",
+    "className": "SSRECPICKLE1",
+    "room": "",
+    "teacher": "Kate McNamara"
+  },
+  {
+    "date": "2026-08-27",
+    "period": "1",
+    "start": "08:50",
+    "end": "09:45",
+    "subject": "Mathematics Yr10",
+    "className": "10MATE",
+    "room": "A3",
+    "teacher": "Mr Stephen Ireland"
+  },
+  {
+    "date": "2026-08-27",
+    "period": "2",
+    "start": "09:45",
+    "end": "10:40",
+    "subject": "English Yr10",
+    "className": "10ENGE",
+    "room": "C4",
+    "teacher": "Mr Elias Kwiet"
+  },
+  {
+    "date": "2026-08-27",
+    "period": "3",
+    "start": "11:00",
+    "end": "11:55",
+    "subject": "German Yr10",
+    "className": "10GERA1",
+    "room": "C14",
+    "teacher": "Ms Johanna KURATH"
+  },
+  {
+    "date": "2026-08-27",
+    "period": "4",
+    "start": "11:55",
+    "end": "12:50",
+    "subject": "PDHPE Yr10",
+    "className": "10PDHE",
+    "room": "GYM1",
+    "teacher": "Mr Christopher Murphy"
+  },
+  {
+    "date": "2026-08-27",
+    "period": "5",
+    "start": "13:30",
+    "end": "14:25",
+    "subject": "iSTEM Yr10",
+    "className": "10STMA2",
+    "room": "B4",
+    "teacher": "Dr Vladimir Tosic"
+  },
+  {
+    "date": "2026-08-27",
+    "period": "6",
+    "start": "14:25",
+    "end": "15:15",
+    "subject": "Science Yr10",
+    "className": "10SCIE",
+    "room": "LA1",
+    "teacher": "Miss Laura Sacchetta"
+  },
+  {
+    "date": "2026-08-28",
+    "period": "1",
+    "start": "08:50",
+    "end": "09:45",
+    "subject": "Enterprise Computing Yr10",
+    "className": "10ENTB3",
+    "room": "A1",
+    "teacher": "Mr Yugendran Pillay"
+  },
+  {
+    "date": "2026-08-28",
+    "period": "2",
+    "start": "09:45",
+    "end": "10:40",
+    "subject": "History Yr10",
+    "className": "10HISE",
+    "room": "C13",
+    "teacher": "Ms Anastasia Kapetas"
+  },
+  {
+    "date": "2026-08-28",
+    "period": "3",
+    "start": "11:00",
+    "end": "11:55",
+    "subject": "English Yr10",
+    "className": "10ENGE",
+    "room": "C4",
+    "teacher": "Mr Elias Kwiet"
+  },
+  {
+    "date": "2026-08-28",
+    "period": "4",
+    "start": "11:55",
+    "end": "12:50",
+    "subject": "German Yr10",
+    "className": "10GERA1",
+    "room": "C14",
+    "teacher": "Ms Johanna KURATH"
+  },
+  {
+    "date": "2026-08-28",
+    "period": "5",
+    "start": "13:30",
+    "end": "14:25",
+    "subject": "Mathematics Yr10",
+    "className": "10MATE",
+    "room": "A3",
+    "teacher": "Mr Stephen Ireland"
+  },
+  {
+    "date": "2026-08-28",
+    "period": "6",
+    "start": "14:25",
+    "end": "15:15",
+    "subject": "PDHPE Yr10",
+    "className": "10PDHE",
+    "room": "GYM1",
+    "teacher": "Mr Christopher Murphy"
+  },
+  {
+    "date": "2026-08-31",
+    "period": "1",
+    "start": "08:50",
+    "end": "09:45",
+    "subject": "Geography Yr10",
+    "className": "10GEOE",
+    "room": "C11",
+    "teacher": "Miss Ruipu Sun"
+  },
+  {
+    "date": "2026-08-31",
+    "period": "2",
+    "start": "09:45",
+    "end": "10:40",
+    "subject": "PDHPE Yr10",
+    "className": "10PDHE",
+    "room": "GYM1",
+    "teacher": "Mr Christopher Murphy"
+  },
+  {
+    "date": "2026-08-31",
+    "period": "3",
+    "start": "11:00",
+    "end": "11:55",
+    "subject": "Mathematics Yr10",
+    "className": "10MATE",
+    "room": "A3",
+    "teacher": "Mr Stephen Ireland"
+  },
+  {
+    "date": "2026-08-31",
+    "period": "4",
+    "start": "11:55",
+    "end": "12:50",
+    "subject": "Science Yr10",
+    "className": "10SCIE",
+    "room": "LA1",
+    "teacher": "Miss Laura Sacchetta"
+  },
+  {
+    "date": "2026-08-31",
+    "period": "5",
+    "start": "13:30",
+    "end": "14:25",
+    "subject": "English Yr10",
+    "className": "10ENGE",
+    "room": "C4",
+    "teacher": "Mr Elias Kwiet"
+  },
+  {
+    "date": "2026-08-31",
+    "period": "6",
+    "start": "14:25",
+    "end": "15:15",
+    "subject": "Enterprise Computing Yr10",
+    "className": "10ENTB3",
+    "room": "A1",
+    "teacher": "Mr Yugendran Pillay"
+  },
+  {
+    "date": "2026-09-01",
+    "period": "0",
+    "start": "08:00",
+    "end": "08:50",
+    "subject": "Enterprise Computing Yr10",
+    "className": "10ENTB3",
+    "room": "A1",
+    "teacher": "Mr Yugendran Pillay"
+  },
+  {
+    "date": "2026-09-01",
+    "period": "1",
+    "start": "08:50",
+    "end": "09:45",
+    "subject": "German Yr10",
+    "className": "10GERA1",
+    "room": "C14",
+    "teacher": "Ms Johanna KURATH"
+  },
+  {
+    "date": "2026-09-01",
+    "period": "2",
+    "start": "09:45",
+    "end": "10:30",
+    "subject": "Mathematics Yr10",
+    "className": "10MATE",
+    "room": "A3",
+    "teacher": "Mr Stephen Ireland"
+  },
+  {
+    "date": "2026-09-01",
+    "period": "3",
+    "start": "10:50",
+    "end": "11:35",
+    "subject": "Science Yr10",
+    "className": "10SCIE",
+    "room": "LA1",
+    "teacher": "Miss Laura Sacchetta"
+  },
+  {
+    "date": "2026-09-01",
+    "period": "4",
+    "start": "11:35",
+    "end": "12:20",
+    "subject": "Geography Yr10",
+    "className": "10GEOE",
+    "room": "C11",
+    "teacher": "Miss Ruipu Sun"
+  },
+  {
+    "date": "2026-09-01",
+    "period": "5",
+    "start": "13:00",
+    "end": "13:45",
+    "subject": "Enterprise Computing Yr10",
+    "className": "10ENTB3",
+    "room": "A1",
+    "teacher": "Mr Yugendran Pillay"
+  },
+  {
+    "date": "2026-09-01",
+    "period": "6",
+    "start": "13:45",
+    "end": "14:30",
+    "subject": "History Yr10",
+    "className": "10HISE",
+    "room": "C13",
+    "teacher": "Ms Anastasia Kapetas"
+  },
+  {
+    "date": "2026-09-02",
+    "period": "1",
+    "start": "08:50",
+    "end": "09:45",
+    "subject": "English Yr10",
+    "className": "10ENGE",
+    "room": "C4",
+    "teacher": "Mr Elias Kwiet"
+  },
+  {
+    "date": "2026-09-02",
+    "period": "2",
+    "start": "09:45",
+    "end": "10:40",
+    "subject": "Enterprise Computing Yr10",
+    "className": "10ENTB3",
+    "room": "A1",
+    "teacher": "Mr Yugendran Pillay"
+  },
+  {
+    "date": "2026-09-02",
+    "period": "3",
+    "start": "10:55",
+    "end": "11:45",
+    "subject": "iSTEM Yr10",
+    "className": "10STMA2",
+    "room": "B4",
+    "teacher": "Dr Vladimir Tosic"
+  },
+  {
+    "date": "2026-09-02",
+    "period": "5",
+    "start": "12:30",
+    "end": "14:30",
+    "subject": ".Sport Sport",
+    "className": "SSRECPICKLE1",
+    "room": "",
+    "teacher": "Mr Dean Smith"
+  },
+  {
+    "date": "2026-09-02",
+    "period": "5",
+    "start": "12:30",
+    "end": "14:30",
+    "subject": ".Sport Sport",
+    "className": "SSRECPICKLE1",
+    "room": "",
+    "teacher": "Kate McNamara"
+  },
+  {
+    "date": "2026-09-03",
+    "period": "0",
+    "start": "08:00",
+    "end": "08:50",
+    "subject": "Enterprise Computing Yr10",
+    "className": "10ENTB3",
+    "room": "A1",
+    "teacher": "Mr Yugendran Pillay"
+  },
+  {
+    "date": "2026-09-03",
+    "period": "1",
+    "start": "08:50",
+    "end": "09:45",
+    "subject": "German Yr10",
+    "className": "10GERA1",
+    "room": "C14",
+    "teacher": "Ms Johanna KURATH"
+  },
+  {
+    "date": "2026-09-03",
+    "period": "2",
+    "start": "09:45",
+    "end": "10:40",
+    "subject": "English Yr10",
+    "className": "10ENGE",
+    "room": "C4",
+    "teacher": "Mr Elias Kwiet"
+  },
+  {
+    "date": "2026-09-03",
+    "period": "3",
+    "start": "11:00",
+    "end": "11:55",
+    "subject": "Mathematics Yr10",
+    "className": "10MATE",
+    "room": "A3",
+    "teacher": "Mr Stephen Ireland"
+  },
+  {
+    "date": "2026-09-03",
+    "period": "4",
+    "start": "11:55",
+    "end": "12:50",
+    "subject": "Science Yr10",
+    "className": "10SCIE",
+    "room": "LA1",
+    "teacher": "Miss Laura Sacchetta"
+  },
+  {
+    "date": "2026-09-03",
+    "period": "5",
+    "start": "13:30",
+    "end": "14:25",
+    "subject": "iSTEM Yr10",
+    "className": "10STMA2",
+    "room": "B4",
+    "teacher": "Dr Vladimir Tosic"
+  },
+  {
+    "date": "2026-09-03",
+    "period": "6",
+    "start": "14:25",
+    "end": "15:15",
+    "subject": "History Yr10",
+    "className": "10HISE",
+    "room": "C13",
+    "teacher": "Ms Anastasia Kapetas"
+  },
+  {
+    "date": "2026-09-04",
+    "period": "1",
+    "start": "08:50",
+    "end": "09:45",
+    "subject": "Enterprise Computing Yr10",
+    "className": "10ENTB3",
+    "room": "A1",
+    "teacher": "Mr Yugendran Pillay"
+  },
+  {
+    "date": "2026-09-04",
+    "period": "2",
+    "start": "09:45",
+    "end": "10:40",
+    "subject": "Science Yr10",
+    "className": "10SCIE",
+    "room": "LA1",
+    "teacher": "Miss Laura Sacchetta"
+  },
+  {
+    "date": "2026-09-04",
+    "period": "3",
+    "start": "11:00",
+    "end": "11:55",
+    "subject": "iSTEM Yr10",
+    "className": "10STMA2",
+    "room": "B4",
+    "teacher": "Dr Vladimir Tosic"
+  },
+  {
+    "date": "2026-09-04",
+    "period": "4",
+    "start": "11:55",
+    "end": "12:50",
+    "subject": "German Yr10",
+    "className": "10GERA1",
+    "room": "C14",
+    "teacher": "Ms Johanna KURATH"
+  },
+  {
+    "date": "2026-09-04",
+    "period": "5",
+    "start": "13:30",
+    "end": "14:25",
+    "subject": "Mathematics Yr10",
+    "className": "10MATE",
+    "room": "A3",
+    "teacher": "Mr Stephen Ireland"
+  },
+  {
+    "date": "2026-09-04",
+    "period": "6",
+    "start": "14:25",
+    "end": "15:15",
+    "subject": "English Yr10",
+    "className": "10ENGE",
+    "room": "C4",
+    "teacher": "Mr Elias Kwiet"
+  },
+  {
+    "date": "2026-09-07",
+    "period": "1",
+    "start": "08:50",
+    "end": "09:45",
+    "subject": "German Yr10",
+    "className": "10GERA1",
+    "room": "C14",
+    "teacher": "Ms Johanna KURATH"
+  },
+  {
+    "date": "2026-09-07",
+    "period": "2",
+    "start": "09:45",
+    "end": "10:40",
+    "subject": "Geography Yr10",
+    "className": "10GEOE",
+    "room": "C11",
+    "teacher": "Miss Ruipu Sun"
+  },
+  {
+    "date": "2026-09-07",
+    "period": "3",
+    "start": "11:00",
+    "end": "11:55",
+    "subject": "Mathematics Yr10",
+    "className": "10MATE",
+    "room": "A3",
+    "teacher": "Mr Stephen Ireland"
+  },
+  {
+    "date": "2026-09-07",
+    "period": "4",
+    "start": "11:55",
+    "end": "12:50",
+    "subject": "Enterprise Computing Yr10",
+    "className": "10ENTB3",
+    "room": "A1",
+    "teacher": "Mr Yugendran Pillay"
+  },
+  {
+    "date": "2026-09-07",
+    "period": "5",
+    "start": "13:30",
+    "end": "14:25",
+    "subject": "English Yr10",
+    "className": "10ENGE",
+    "room": "C4",
+    "teacher": "Mr Elias Kwiet"
+  },
+  {
+    "date": "2026-09-07",
+    "period": "6",
+    "start": "14:25",
+    "end": "15:15",
+    "subject": "Science Yr10",
+    "className": "10SCIE",
+    "room": "LA1",
+    "teacher": "Miss Laura Sacchetta"
+  },
+  {
+    "date": "2026-09-08",
+    "period": "0",
+    "start": "08:00",
+    "end": "08:50",
+    "subject": "Enterprise Computing Yr10",
+    "className": "10ENTB3",
+    "room": "A1",
+    "teacher": "Mr Yugendran Pillay"
+  },
+  {
+    "date": "2026-09-08",
+    "period": "1",
+    "start": "08:50",
+    "end": "09:45",
+    "subject": "English Yr10",
+    "className": "10ENGE",
+    "room": "C4",
+    "teacher": "Mr Elias Kwiet"
+  },
+  {
+    "date": "2026-09-08",
+    "period": "2",
+    "start": "09:45",
+    "end": "10:30",
+    "subject": "Science Yr10",
+    "className": "10SCIE",
+    "room": "LA1",
+    "teacher": "Miss Laura Sacchetta"
+  },
+  {
+    "date": "2026-09-08",
+    "period": "3",
+    "start": "10:50",
+    "end": "11:35",
+    "subject": "History Yr10",
+    "className": "10HISE",
+    "room": "C13",
+    "teacher": "Ms Anastasia Kapetas"
+  },
+  {
+    "date": "2026-09-08",
+    "period": "4",
+    "start": "11:35",
+    "end": "12:20",
+    "subject": "iSTEM Yr10",
+    "className": "10STMA2",
+    "room": "B4",
+    "teacher": "Dr Vladimir Tosic"
+  },
+  {
+    "date": "2026-09-08",
+    "period": "5",
+    "start": "13:00",
+    "end": "13:45",
+    "subject": "Careers Yr10",
+    "className": "10CARE",
+    "room": "B1",
+    "teacher": "Mr Robert L Miller"
+  },
+  {
+    "date": "2026-09-08",
+    "period": "6",
+    "start": "13:45",
+    "end": "14:30",
+    "subject": "Geography Yr10",
+    "className": "10GEOE",
+    "room": "C11",
+    "teacher": "Miss Ruipu Sun"
+  },
+  {
+    "date": "2026-09-09",
+    "period": "1",
+    "start": "08:50",
+    "end": "09:45",
+    "subject": "iSTEM Yr10",
+    "className": "10STMA2",
+    "room": "B4",
+    "teacher": "Dr Vladimir Tosic"
+  },
+  {
+    "date": "2026-09-09",
+    "period": "2",
+    "start": "09:45",
+    "end": "10:40",
+    "subject": "Science Yr10",
+    "className": "10SCIE",
+    "room": "LA1",
+    "teacher": "Miss Laura Sacchetta"
+  },
+  {
+    "date": "2026-09-09",
+    "period": "3",
+    "start": "10:55",
+    "end": "11:45",
+    "subject": "Mathematics Yr10",
+    "className": "10MATE",
+    "room": "A3",
+    "teacher": "Mr Stephen Ireland"
+  },
+  {
+    "date": "2026-09-09",
+    "period": "5",
+    "start": "12:30",
+    "end": "14:30",
+    "subject": ".Sport Sport",
+    "className": "SSRECPICKLE1",
+    "room": "",
+    "teacher": "Mr Dean Smith"
+  },
+  {
+    "date": "2026-09-09",
+    "period": "5",
+    "start": "12:30",
+    "end": "14:30",
+    "subject": ".Sport Sport",
+    "className": "SSRECPICKLE1",
+    "room": "",
+    "teacher": "Kate McNamara"
+  },
+  {
+    "date": "2026-09-10",
+    "period": "1",
+    "start": "08:50",
+    "end": "09:45",
+    "subject": "Mathematics Yr10",
+    "className": "10MATE",
+    "room": "A3",
+    "teacher": "Mr Stephen Ireland"
+  },
+  {
+    "date": "2026-09-10",
+    "period": "2",
+    "start": "09:45",
+    "end": "10:40",
+    "subject": "English Yr10",
+    "className": "10ENGE",
+    "room": "C4",
+    "teacher": "Mr Elias Kwiet"
+  },
+  {
+    "date": "2026-09-10",
+    "period": "3",
+    "start": "11:00",
+    "end": "11:55",
+    "subject": "German Yr10",
+    "className": "10GERA1",
+    "room": "C14",
+    "teacher": "Ms Johanna KURATH"
+  },
+  {
+    "date": "2026-09-10",
+    "period": "4",
+    "start": "11:55",
+    "end": "12:50",
+    "subject": "PDHPE Yr10",
+    "className": "10PDHE",
+    "room": "GYM1",
+    "teacher": "Mr Christopher Murphy"
+  },
+  {
+    "date": "2026-09-10",
+    "period": "5",
+    "start": "13:30",
+    "end": "14:25",
+    "subject": "iSTEM Yr10",
+    "className": "10STMA2",
+    "room": "B4",
+    "teacher": "Dr Vladimir Tosic"
+  },
+  {
+    "date": "2026-09-10",
+    "period": "6",
+    "start": "14:25",
+    "end": "15:15",
+    "subject": "Science Yr10",
+    "className": "10SCIE",
+    "room": "LA1",
+    "teacher": "Miss Laura Sacchetta"
+  },
+  {
+    "date": "2026-09-11",
+    "period": "1",
+    "start": "08:50",
+    "end": "09:45",
+    "subject": "Enterprise Computing Yr10",
+    "className": "10ENTB3",
+    "room": "A1",
+    "teacher": "Mr Yugendran Pillay"
+  },
+  {
+    "date": "2026-09-11",
+    "period": "2",
+    "start": "09:45",
+    "end": "10:40",
+    "subject": "History Yr10",
+    "className": "10HISE",
+    "room": "C13",
+    "teacher": "Ms Anastasia Kapetas"
+  },
+  {
+    "date": "2026-09-11",
+    "period": "3",
+    "start": "11:00",
+    "end": "11:55",
+    "subject": "English Yr10",
+    "className": "10ENGE",
+    "room": "C4",
+    "teacher": "Mr Elias Kwiet"
+  },
+  {
+    "date": "2026-09-11",
+    "period": "4",
+    "start": "11:55",
+    "end": "12:50",
+    "subject": "German Yr10",
+    "className": "10GERA1",
+    "room": "C14",
+    "teacher": "Ms Johanna KURATH"
+  },
+  {
+    "date": "2026-09-11",
+    "period": "5",
+    "start": "13:30",
+    "end": "14:25",
+    "subject": "Mathematics Yr10",
+    "className": "10MATE",
+    "room": "A3",
+    "teacher": "Mr Stephen Ireland"
+  },
+  {
+    "date": "2026-09-11",
+    "period": "6",
+    "start": "14:25",
+    "end": "15:15",
+    "subject": "PDHPE Yr10",
+    "className": "10PDHE",
+    "room": "GYM1",
+    "teacher": "Mr Christopher Murphy"
+  },
+  {
+    "date": "2026-09-14",
+    "period": "1",
+    "start": "08:50",
+    "end": "09:45",
+    "subject": "Geography Yr10",
+    "className": "10GEOE",
+    "room": "C11",
+    "teacher": "Miss Ruipu Sun"
+  },
+  {
+    "date": "2026-09-14",
+    "period": "2",
+    "start": "09:45",
+    "end": "10:40",
+    "subject": "PDHPE Yr10",
+    "className": "10PDHE",
+    "room": "GYM1",
+    "teacher": "Mr Christopher Murphy"
+  },
+  {
+    "date": "2026-09-14",
+    "period": "3",
+    "start": "11:00",
+    "end": "11:55",
+    "subject": "Mathematics Yr10",
+    "className": "10MATE",
+    "room": "A3",
+    "teacher": "Mr Stephen Ireland"
+  },
+  {
+    "date": "2026-09-14",
+    "period": "4",
+    "start": "11:55",
+    "end": "12:50",
+    "subject": "Science Yr10",
+    "className": "10SCIE",
+    "room": "LA1",
+    "teacher": "Miss Laura Sacchetta"
+  },
+  {
+    "date": "2026-09-14",
+    "period": "5",
+    "start": "13:30",
+    "end": "14:25",
+    "subject": "English Yr10",
+    "className": "10ENGE",
+    "room": "C4",
+    "teacher": "Mr Elias Kwiet"
+  },
+  {
+    "date": "2026-09-14",
+    "period": "6",
+    "start": "14:25",
+    "end": "15:15",
+    "subject": "Enterprise Computing Yr10",
+    "className": "10ENTB3",
+    "room": "A1",
+    "teacher": "Mr Yugendran Pillay"
+  },
+  {
+    "date": "2026-09-15",
+    "period": "0",
+    "start": "08:00",
+    "end": "08:50",
+    "subject": "Enterprise Computing Yr10",
+    "className": "10ENTB3",
+    "room": "A1",
+    "teacher": "Mr Yugendran Pillay"
+  },
+  {
+    "date": "2026-09-15",
+    "period": "1",
+    "start": "08:50",
+    "end": "09:45",
+    "subject": "German Yr10",
+    "className": "10GERA1",
+    "room": "C14",
+    "teacher": "Ms Johanna KURATH"
+  },
+  {
+    "date": "2026-09-15",
+    "period": "2",
+    "start": "09:45",
+    "end": "10:30",
+    "subject": "Mathematics Yr10",
+    "className": "10MATE",
+    "room": "A3",
+    "teacher": "Mr Stephen Ireland"
+  },
+  {
+    "date": "2026-09-15",
+    "period": "3",
+    "start": "10:50",
+    "end": "11:35",
+    "subject": "Science Yr10",
+    "className": "10SCIE",
+    "room": "LA1",
+    "teacher": "Miss Laura Sacchetta"
+  },
+  {
+    "date": "2026-09-15",
+    "period": "4",
+    "start": "11:35",
+    "end": "12:20",
+    "subject": "Geography Yr10",
+    "className": "10GEOE",
+    "room": "C11",
+    "teacher": "Miss Ruipu Sun"
+  },
+  {
+    "date": "2026-09-15",
+    "period": "5",
+    "start": "13:00",
+    "end": "13:45",
+    "subject": "Enterprise Computing Yr10",
+    "className": "10ENTB3",
+    "room": "A1",
+    "teacher": "Mr Yugendran Pillay"
+  },
+  {
+    "date": "2026-09-15",
+    "period": "6",
+    "start": "13:45",
+    "end": "14:30",
+    "subject": "History Yr10",
+    "className": "10HISE",
+    "room": "C13",
+    "teacher": "Ms Anastasia Kapetas"
+  },
+  {
+    "date": "2026-09-16",
+    "period": "1",
+    "start": "08:50",
+    "end": "09:45",
+    "subject": "English Yr10",
+    "className": "10ENGE",
+    "room": "C4",
+    "teacher": "Mr Elias Kwiet"
+  },
+  {
+    "date": "2026-09-16",
+    "period": "2",
+    "start": "09:45",
+    "end": "10:40",
+    "subject": "Enterprise Computing Yr10",
+    "className": "10ENTB3",
+    "room": "A1",
+    "teacher": "Mr Yugendran Pillay"
+  },
+  {
+    "date": "2026-09-16",
+    "period": "3",
+    "start": "10:55",
+    "end": "11:45",
+    "subject": "iSTEM Yr10",
+    "className": "10STMA2",
+    "room": "B4",
+    "teacher": "Dr Vladimir Tosic"
+  },
+  {
+    "date": "2026-09-16",
+    "period": "5",
+    "start": "12:30",
+    "end": "14:30",
+    "subject": ".Sport Sport",
+    "className": "SSRECPICKLE1",
+    "room": "",
+    "teacher": "Mr Dean Smith"
+  },
+  {
+    "date": "2026-09-16",
+    "period": "5",
+    "start": "12:30",
+    "end": "14:30",
+    "subject": ".Sport Sport",
+    "className": "SSRECPICKLE1",
+    "room": "",
+    "teacher": "Kate McNamara"
+  },
+  {
+    "date": "2026-09-17",
+    "period": "0",
+    "start": "08:00",
+    "end": "08:50",
+    "subject": "Enterprise Computing Yr10",
+    "className": "10ENTB3",
+    "room": "A1",
+    "teacher": "Mr Yugendran Pillay"
+  },
+  {
+    "date": "2026-09-17",
+    "period": "1",
+    "start": "08:50",
+    "end": "09:45",
+    "subject": "German Yr10",
+    "className": "10GERA1",
+    "room": "C14",
+    "teacher": "Ms Johanna KURATH"
+  },
+  {
+    "date": "2026-09-17",
+    "period": "2",
+    "start": "09:45",
+    "end": "10:40",
+    "subject": "English Yr10",
+    "className": "10ENGE",
+    "room": "C4",
+    "teacher": "Mr Elias Kwiet"
+  },
+  {
+    "date": "2026-09-17",
+    "period": "3",
+    "start": "11:00",
+    "end": "11:55",
+    "subject": "Mathematics Yr10",
+    "className": "10MATE",
+    "room": "A3",
+    "teacher": "Mr Stephen Ireland"
+  },
+  {
+    "date": "2026-09-17",
+    "period": "4",
+    "start": "11:55",
+    "end": "12:50",
+    "subject": "Science Yr10",
+    "className": "10SCIE",
+    "room": "LA1",
+    "teacher": "Miss Laura Sacchetta"
+  },
+  {
+    "date": "2026-09-17",
+    "period": "5",
+    "start": "13:30",
+    "end": "14:25",
+    "subject": "iSTEM Yr10",
+    "className": "10STMA2",
+    "room": "B4",
+    "teacher": "Dr Vladimir Tosic"
+  },
+  {
+    "date": "2026-09-17",
+    "period": "6",
+    "start": "14:25",
+    "end": "15:15",
+    "subject": "History Yr10",
+    "className": "10HISE",
+    "room": "C13",
+    "teacher": "Ms Anastasia Kapetas"
+  },
+  {
+    "date": "2026-09-18",
+    "period": "1",
+    "start": "08:50",
+    "end": "09:45",
+    "subject": "Enterprise Computing Yr10",
+    "className": "10ENTB3",
+    "room": "A1",
+    "teacher": "Mr Yugendran Pillay"
+  },
+  {
+    "date": "2026-09-18",
+    "period": "2",
+    "start": "09:45",
+    "end": "10:40",
+    "subject": "Science Yr10",
+    "className": "10SCIE",
+    "room": "LA1",
+    "teacher": "Miss Laura Sacchetta"
+  },
+  {
+    "date": "2026-09-18",
+    "period": "3",
+    "start": "11:00",
+    "end": "11:55",
+    "subject": "iSTEM Yr10",
+    "className": "10STMA2",
+    "room": "B4",
+    "teacher": "Dr Vladimir Tosic"
+  },
+  {
+    "date": "2026-09-18",
+    "period": "4",
+    "start": "11:55",
+    "end": "12:50",
+    "subject": "German Yr10",
+    "className": "10GERA1",
+    "room": "C14",
+    "teacher": "Ms Johanna KURATH"
+  },
+  {
+    "date": "2026-09-18",
+    "period": "5",
+    "start": "13:30",
+    "end": "14:25",
+    "subject": "Mathematics Yr10",
+    "className": "10MATE",
+    "room": "A3",
+    "teacher": "Mr Stephen Ireland"
+  },
+  {
+    "date": "2026-09-18",
+    "period": "6",
+    "start": "14:25",
+    "end": "15:15",
+    "subject": "English Yr10",
+    "className": "10ENGE",
+    "room": "C4",
+    "teacher": "Mr Elias Kwiet"
+  },
+  {
+    "date": "2026-09-21",
+    "period": "1",
+    "start": "08:50",
+    "end": "09:45",
+    "subject": "German Yr10",
+    "className": "10GERA1",
+    "room": "C14",
+    "teacher": "Ms Johanna KURATH"
+  },
+  {
+    "date": "2026-09-21",
+    "period": "2",
+    "start": "09:45",
+    "end": "10:40",
+    "subject": "Geography Yr10",
+    "className": "10GEOE",
+    "room": "C11",
+    "teacher": "Miss Ruipu Sun"
+  },
+  {
+    "date": "2026-09-21",
+    "period": "3",
+    "start": "11:00",
+    "end": "11:55",
+    "subject": "Mathematics Yr10",
+    "className": "10MATE",
+    "room": "A3",
+    "teacher": "Mr Stephen Ireland"
+  },
+  {
+    "date": "2026-09-21",
+    "period": "4",
+    "start": "11:55",
+    "end": "12:50",
+    "subject": "Enterprise Computing Yr10",
+    "className": "10ENTB3",
+    "room": "A1",
+    "teacher": "Mr Yugendran Pillay"
+  },
+  {
+    "date": "2026-09-21",
+    "period": "5",
+    "start": "13:30",
+    "end": "14:25",
+    "subject": "English Yr10",
+    "className": "10ENGE",
+    "room": "C4",
+    "teacher": "Mr Elias Kwiet"
+  },
+  {
+    "date": "2026-09-21",
+    "period": "6",
+    "start": "14:25",
+    "end": "15:15",
+    "subject": "Science Yr10",
+    "className": "10SCIE",
+    "room": "LA1",
+    "teacher": "Miss Laura Sacchetta"
+  },
+  {
+    "date": "2026-09-22",
+    "period": "0",
+    "start": "08:00",
+    "end": "08:50",
+    "subject": "Enterprise Computing Yr10",
+    "className": "10ENTB3",
+    "room": "A1",
+    "teacher": "Mr Yugendran Pillay"
+  },
+  {
+    "date": "2026-09-22",
+    "period": "1",
+    "start": "08:50",
+    "end": "09:45",
+    "subject": "English Yr10",
+    "className": "10ENGE",
+    "room": "C4",
+    "teacher": "Mr Elias Kwiet"
+  },
+  {
+    "date": "2026-09-22",
+    "period": "2",
+    "start": "09:45",
+    "end": "10:30",
+    "subject": "Science Yr10",
+    "className": "10SCIE",
+    "room": "LA1",
+    "teacher": "Miss Laura Sacchetta"
+  },
+  {
+    "date": "2026-09-22",
+    "period": "3",
+    "start": "10:50",
+    "end": "11:35",
+    "subject": "History Yr10",
+    "className": "10HISE",
+    "room": "C13",
+    "teacher": "Ms Anastasia Kapetas"
+  },
+  {
+    "date": "2026-09-22",
+    "period": "4",
+    "start": "11:35",
+    "end": "12:20",
+    "subject": "iSTEM Yr10",
+    "className": "10STMA2",
+    "room": "B4",
+    "teacher": "Dr Vladimir Tosic"
+  },
+  {
+    "date": "2026-09-22",
+    "period": "5",
+    "start": "13:00",
+    "end": "13:45",
+    "subject": "Careers Yr10",
+    "className": "10CARE",
+    "room": "B1",
+    "teacher": "Mr Robert L Miller"
+  },
+  {
+    "date": "2026-09-22",
+    "period": "6",
+    "start": "13:45",
+    "end": "14:30",
+    "subject": "Geography Yr10",
+    "className": "10GEOE",
+    "room": "C11",
+    "teacher": "Miss Ruipu Sun"
+  },
+  {
+    "date": "2026-09-23",
+    "period": "1",
+    "start": "08:50",
+    "end": "09:45",
+    "subject": "iSTEM Yr10",
+    "className": "10STMA2",
+    "room": "B4",
+    "teacher": "Dr Vladimir Tosic"
+  },
+  {
+    "date": "2026-09-23",
+    "period": "2",
+    "start": "09:45",
+    "end": "10:40",
+    "subject": "Science Yr10",
+    "className": "10SCIE",
+    "room": "LA1",
+    "teacher": "Miss Laura Sacchetta"
+  },
+  {
+    "date": "2026-09-23",
+    "period": "3",
+    "start": "10:55",
+    "end": "11:45",
+    "subject": "Mathematics Yr10",
+    "className": "10MATE",
+    "room": "A3",
+    "teacher": "Mr Stephen Ireland"
+  },
+  {
+    "date": "2026-09-23",
+    "period": "5",
+    "start": "12:30",
+    "end": "14:30",
+    "subject": ".Sport Sport",
+    "className": "SSRECPICKLE1",
+    "room": "",
+    "teacher": "Mr Dean Smith"
+  },
+  {
+    "date": "2026-09-23",
+    "period": "5",
+    "start": "12:30",
+    "end": "14:30",
+    "subject": ".Sport Sport",
+    "className": "SSRECPICKLE1",
+    "room": "",
+    "teacher": "Kate McNamara"
+  },
+  {
+    "date": "2026-09-24",
+    "period": "1",
+    "start": "08:50",
+    "end": "09:45",
+    "subject": "Mathematics Yr10",
+    "className": "10MATE",
+    "room": "A3",
+    "teacher": "Mr Stephen Ireland"
+  },
+  {
+    "date": "2026-09-24",
+    "period": "2",
+    "start": "09:45",
+    "end": "10:40",
+    "subject": "English Yr10",
+    "className": "10ENGE",
+    "room": "C4",
+    "teacher": "Mr Elias Kwiet"
+  },
+  {
+    "date": "2026-09-24",
+    "period": "3",
+    "start": "11:00",
+    "end": "11:55",
+    "subject": "German Yr10",
+    "className": "10GERA1",
+    "room": "C14",
+    "teacher": "Ms Johanna KURATH"
+  },
+  {
+    "date": "2026-09-24",
+    "period": "4",
+    "start": "11:55",
+    "end": "12:50",
+    "subject": "PDHPE Yr10",
+    "className": "10PDHE",
+    "room": "GYM1",
+    "teacher": "Mr Christopher Murphy"
+  },
+  {
+    "date": "2026-09-24",
+    "period": "5",
+    "start": "13:30",
+    "end": "14:25",
+    "subject": "iSTEM Yr10",
+    "className": "10STMA2",
+    "room": "B4",
+    "teacher": "Dr Vladimir Tosic"
+  },
+  {
+    "date": "2026-09-24",
+    "period": "6",
+    "start": "14:25",
+    "end": "15:15",
+    "subject": "Science Yr10",
+    "className": "10SCIE",
+    "room": "LA1",
+    "teacher": "Miss Laura Sacchetta"
+  },
+  {
+    "date": "2026-09-25",
+    "period": "1",
+    "start": "08:50",
+    "end": "09:45",
+    "subject": "Enterprise Computing Yr10",
+    "className": "10ENTB3",
+    "room": "A1",
+    "teacher": "Mr Yugendran Pillay"
+  },
+  {
+    "date": "2026-09-25",
+    "period": "2",
+    "start": "09:45",
+    "end": "10:40",
+    "subject": "History Yr10",
+    "className": "10HISE",
+    "room": "C13",
+    "teacher": "Ms Anastasia Kapetas"
+  },
+  {
+    "date": "2026-09-25",
+    "period": "3",
+    "start": "11:00",
+    "end": "11:55",
+    "subject": "English Yr10",
+    "className": "10ENGE",
+    "room": "C4",
+    "teacher": "Mr Elias Kwiet"
+  },
+  {
+    "date": "2026-09-25",
+    "period": "4",
+    "start": "11:55",
+    "end": "12:50",
+    "subject": "German Yr10",
+    "className": "10GERA1",
+    "room": "C14",
+    "teacher": "Ms Johanna KURATH"
+  },
+  {
+    "date": "2026-09-25",
+    "period": "5",
+    "start": "13:30",
+    "end": "14:25",
+    "subject": "Mathematics Yr10",
+    "className": "10MATE",
+    "room": "A3",
+    "teacher": "Mr Stephen Ireland"
+  },
+  {
+    "date": "2026-09-25",
+    "period": "6",
+    "start": "14:25",
+    "end": "15:15",
+    "subject": "PDHPE Yr10",
+    "className": "10PDHE",
+    "room": "GYM1",
+    "teacher": "Mr Christopher Murphy"
+  }
+]

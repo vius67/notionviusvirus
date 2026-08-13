@@ -69,6 +69,18 @@ create table notes (
   updated_at timestamptz default now()
 );
 
+-- Sentral sync (cached session + last-synced timetable/events)
+create table sentral_sync (
+  user_id uuid primary key references auth.users(id) on delete cascade,
+  cookie_string text not null,
+  status text not null default 'connected' check (status in ('connected', 'expired')),
+  timetable jsonb not null default '[]',
+  events jsonb not null default '[]',
+  last_synced_at timestamptz,
+  last_error text,
+  updated_at timestamptz default now()
+);
+
 -- RLS
 alter table homework enable row level security;
 alter table todos enable row level security;
@@ -76,6 +88,7 @@ alter table past_papers enable row level security;
 alter table study_sessions enable row level security;
 alter table calendar_events enable row level security;
 alter table notes enable row level security;
+alter table sentral_sync enable row level security;
 
 create policy "own data" on homework for all using (auth.uid() = user_id);
 create policy "own data" on todos for all using (auth.uid() = user_id);
@@ -83,3 +96,6 @@ create policy "own data" on past_papers for all using (auth.uid() = user_id);
 create policy "own data" on study_sessions for all using (auth.uid() = user_id);
 create policy "own data" on calendar_events for all using (auth.uid() = user_id);
 create policy "own data" on notes for all using (auth.uid() = user_id);
+
+-- client can read its own row (to show status/timetable) but only the server (service role) may write cookie_string
+create policy "read own sentral sync" on sentral_sync for select using (auth.uid() = user_id);
