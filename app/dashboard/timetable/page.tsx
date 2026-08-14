@@ -134,9 +134,11 @@ export default function TimetablePage() {
   const syncNow = async () => {
     setSyncing(true)
     try {
-      const res = await authedFetch('/api/sentral/sync-now')
+      const res = await authedFetch('/api/sentral/sync-now?debug=1')
       const data = await res.json()
       if (data.error) setConnectError(data.error)
+      // TEMP DEBUG — remove once the "wrong day" bug is diagnosed.
+      console.log('[sentral debug]', data.debugRaw)
       await loadRow()
     } finally {
       setSyncing(false)
