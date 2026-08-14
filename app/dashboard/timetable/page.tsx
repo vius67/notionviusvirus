@@ -138,7 +138,7 @@ export default function TimetablePage() {
       const data = await res.json()
       if (data.error) setConnectError(data.error)
       // TEMP DEBUG — remove once the "wrong day" bug is diagnosed.
-      console.log('[sentral debug]', data.debugRaw)
+      console.log('[sentral debug]', data)
       await loadRow()
     } finally {
       setSyncing(false)
