@@ -1,4 +1,4 @@
-import { supabaseAdmin } from './supabase-admin'
+import { getSupabaseAdmin } from './supabase-admin'
 import { fetchTimetable, fetchEvents } from './sentral'
 import { mapTimetable, mapNotices, type Period, type SchoolNotice } from './sentral-parse'
 
@@ -8,6 +8,7 @@ type SyncResult =
 
 /** Syncs one user's timetable/events using their cached cookie (or a freshly-provided one) and writes the result to Supabase. */
 export async function syncUser(userId: string, cookieOverride?: string): Promise<SyncResult> {
+  const supabaseAdmin = getSupabaseAdmin()
   let cookie = cookieOverride
   if (!cookie) {
     const { data } = await supabaseAdmin

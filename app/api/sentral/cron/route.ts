@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabaseAdmin } from '@/lib/supabase-admin'
+import { getSupabaseAdmin } from '@/lib/supabase-admin'
 import { syncUser } from '@/lib/sentral-sync'
 
 // Triggered by an external scheduler (GitHub Actions, Vercel Cron, etc) — not a browser.
@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const { data: rows, error } = await supabaseAdmin
+  const { data: rows, error } = await getSupabaseAdmin()
     .from('sentral_sync')
     .select('user_id')
     .eq('status', 'connected')
