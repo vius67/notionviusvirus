@@ -3,8 +3,8 @@ import { fetchTimetable, fetchEvents } from './sentral'
 import { mapTimetable, mapNotices, type Period, type SchoolNotice } from './sentral-parse'
 
 type SyncResult =
-  | { timetable: Period[]; notices: SchoolNotice[]; error?: undefined }
-  | { error: string; timetable?: undefined; notices?: undefined }
+  | { timetable: Period[]; notices: SchoolNotice[]; raw: unknown; error?: undefined }
+  | { error: string; timetable?: undefined; notices?: undefined; raw?: undefined }
 
 /** Syncs one user's timetable/events using their cached cookie (or a freshly-provided one) and writes the result to Supabase. */
 export async function syncUser(userId: string, cookieOverride?: string): Promise<SyncResult> {
@@ -61,5 +61,5 @@ export async function syncUser(userId: string, cookieOverride?: string): Promise
     updated_at: new Date().toISOString(),
   })
 
-  return { timetable, notices }
+  return { timetable, notices, raw: tt.data }
 }
