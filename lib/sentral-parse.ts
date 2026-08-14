@@ -27,7 +27,7 @@ const BREAK_LABELS: Record<string, string> = {
 export function mapTimetable(raw: RawPeriod[]): Period[] {
   const periods: Period[] = []
 
-  for (const p of raw ?? []) {
+  for (const p of (raw ?? []).filter(p => p.is_today)) {
     const bell = BELL_TIMES[p.timetable_period_name]
     const time = bell ? `${bell.start}–${bell.end}` : ''
 
