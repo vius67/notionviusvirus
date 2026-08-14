@@ -97,7 +97,6 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   const touchStartY = useRef(0)
   const canvasRef   = useRef<HTMLCanvasElement>(null)
   const themeRef    = useRef<Theme>(theme)
-  const glowRef     = useRef<HTMLDivElement>(null)
   const cmdInputRef = useRef<HTMLInputElement>(null)
   const [nowPlaying, setNowPlaying]   = useState<{ name: string; artist: string; is_playing: boolean } | null>(null)
   const [showCmdK, setShowCmdK]   = useState(false)
@@ -181,66 +180,6 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     return () => {
       window.removeEventListener('resize', resize)
       cancelAnimationFrame(rafId)
-    }
-  }, [])
-
-  // Mouse ambient glow — direct DOM update, zero re-renders
-  useEffect(() => {
-    const move = (e: MouseEvent) => {
-      if (!glowRef.current) return
-      const t = themeRef.current
-      const col = t === 'dark'      ? 'rgba(48,209,88,0.05)'
-                : t === 'sunset'    ? 'rgba(244,63,94,0.05)'
-                : t === 'aurora'    ? 'rgba(34,197,94,0.05)'
-                : t === 'beige'     ? 'rgba(156,107,60,0.04)'
-                : t === 'visionpro' ? 'rgba(0,113,227,0.04)'
-                : t === 'mono'      ? 'rgba(0,0,0,0.03)'
-                :                     'rgba(99,102,241,0.06)'
-      glowRef.current.style.background =
-        `radial-gradient(700px circle at ${e.clientX}px ${e.clientY}px, ${col} 0%, transparent 70%)`
-    }
-    window.addEventListener('mousemove', move, { passive: true })
-    return () => window.removeEventListener('mousemove', move)
-  }, [])
-
-  // 3-D card tilt + inner spotlight — pointer:fine only (trackpad / mouse)
-  useEffect(() => {
-    if (typeof window === 'undefined') return
-    if (window.matchMedia('(pointer: coarse)').matches) return
-
-    let activeCard: HTMLElement | null = null
-
-    const resetCard = (card: HTMLElement) => {
-      card.style.transition = 'transform 0.55s cubic-bezier(0.23,1,0.32,1), box-shadow 0.28s ease, border-color 0.28s ease'
-      card.style.transform = ''
-      card.style.setProperty('--mx', '50%')
-      card.style.setProperty('--my', '50%')
-    }
-
-    const onMove = (e: MouseEvent) => {
-      const card = (e.target as HTMLElement).closest<HTMLElement>('.glass-card')
-      if (activeCard && activeCard !== card) { resetCard(activeCard); activeCard = null }
-      if (!card) return
-      if (activeCard !== card) {
-        card.style.transition = 'box-shadow 0.28s ease, border-color 0.28s ease'
-        activeCard = card
-      }
-      const rect = card.getBoundingClientRect()
-      const dx = (e.clientX - (rect.left + rect.width  / 2)) / (rect.width  / 2)
-      const dy = (e.clientY - (rect.top  + rect.height / 2)) / (rect.height / 2)
-      card.style.transform = `perspective(900px) rotateX(${(-dy * 5).toFixed(2)}deg) rotateY(${(dx * 5).toFixed(2)}deg) translateZ(4px)`
-      card.style.setProperty('--mx', ((e.clientX - rect.left) / rect.width  * 100).toFixed(1) + '%')
-      card.style.setProperty('--my', ((e.clientY - rect.top)  / rect.height * 100).toFixed(1) + '%')
-    }
-
-    const onDocLeave = () => { if (activeCard) { resetCard(activeCard); activeCard = null } }
-
-    window.addEventListener('mousemove', onMove, { passive: true })
-    document.documentElement.addEventListener('mouseleave', onDocLeave)
-    return () => {
-      window.removeEventListener('mousemove', onMove)
-      document.documentElement.removeEventListener('mouseleave', onDocLeave)
-      if (activeCard) { activeCard.style.transform = ''; activeCard.style.transition = '' }
     }
   }, [])
 
@@ -439,8 +378,6 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
       {/* Particle canvas — above bg, below all UI */}
       <canvas ref={canvasRef} style={{ position: 'fixed', top: 0, right: 0, bottom: 0, left: 0, zIndex: 0, pointerEvents: 'none' }} />
-      {/* Mouse ambient glow */}
-      <div ref={glowRef} style={{ position: 'fixed', top: 0, right: 0, bottom: 0, left: 0, zIndex: 0, pointerEvents: 'none' }} />
 
       {/* ── DESKTOP: Vertical pill sidebar ── */}
       {!isMobile && (
