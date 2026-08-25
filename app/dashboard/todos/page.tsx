@@ -2,6 +2,7 @@
 import { useEffect, useState, useRef } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/lib/auth-context'
+import { useSound } from '@/lib/use-sound'
 
 type Todo = { id: string; title: string; description: string | null; subject: string | null; due_date: string | null; priority: 'low'|'medium'|'high'|null; completed: boolean; status: string; created_at: string }
 type KanbanCol = { id: string; label: string; color: string }
@@ -27,6 +28,7 @@ function loadCols(): KanbanCol[] {
 
 export default function TodosPage() {
   const { user } = useAuth()
+  const sound = useSound()
   const [todos, setTodos] = useState<Todo[]>([])
   const [loading, setLoading] = useState(true)
   const [view, setView] = useState<'list'|'kanban'>('list')
@@ -63,6 +65,7 @@ export default function TodosPage() {
   }
 
   const toggle = async (id: string, current: boolean) => {
+    !current ? sound.success() : sound.toggleOff()
     const newStatus = !current ? 'done' : cols[0]?.id || 'todo'
     const prev = todos.find(t => t.id === id)
     setTodos(ps => ps.map(t => t.id === id ? { ...t, completed: !current, status: newStatus } : t))
@@ -74,6 +77,7 @@ export default function TodosPage() {
   }
 
   const del = async (id: string) => {
+    sound.delete()
     const prev = todos.find(t => t.id === id)
     setTodos(ps => ps.filter(t => t.id !== id))
     const { error } = await supabase.from('todos').delete().eq('id', id)

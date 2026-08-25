@@ -2,6 +2,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/lib/auth-context'
+import { useSound } from '@/lib/use-sound'
 
 type Ev = { id: string; title: string; description: string|null; start_time: string; end_time: string|null; color: string|null; source?: 'notion'|'google'; url?: string }
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
@@ -54,6 +55,7 @@ const SourceBadge = ({ source }: { source: 'notion'|'google' }) =>
 
 export default function CalendarPage() {
   const { user } = useAuth()
+  const sound = useSound()
   const [events, setEvents]         = useState<Ev[]>([])
   const [notionEvs, setNotionEvs]   = useState<Ev[]>([])
   const [notionOk, setNotionOk]     = useState<boolean|null>(null)
@@ -136,10 +138,11 @@ export default function CalendarPage() {
       start_time: start, end_time: end, color: form.color, user_id: user!.id,
     })
     setSaving(false)
-    if (!error) { setForm(f => ({ ...f, title: '', description: '' })); load() }
+    if (!error) { sound.success(); setForm(f => ({ ...f, title: '', description: '' })); load() }
   }
 
   const del = async (id: string) => {
+    sound.delete()
     setDeletingId(id)
     await supabase.from('calendar_events').delete().eq('id', id)
     setEvents(ev => ev.filter(e => e.id !== id))
@@ -248,7 +251,7 @@ export default function CalendarPage() {
         </div>
         <div style={{ display: 'flex', background: 'var(--chip-bg, rgba(255,255,255,0.68))', border: '1px solid rgba(200,210,240,0.5)', borderRadius: 12, padding: 3 }}>
           {(['week','month'] as const).map(v => (
-            <button key={v} onClick={() => setView(v)} style={{ padding: '6px 16px', borderRadius: 9, border: 'none', cursor: 'pointer', fontFamily: 'Geist, sans-serif', fontSize: 13, fontWeight: 500, transition: 'all 0.2s', background: view===v ? 'white' : 'transparent', color: view===v ? 'var(--accent-deep)' : 'var(--text-muted)', boxShadow: view===v ? '0 2px 8px rgba(80,100,200,0.12)' : 'none' }}>
+            <button key={v} onClick={() => { if (v !== view) sound.select(); setView(v) }} style={{ padding: '6px 16px', borderRadius: 9, border: 'none', cursor: 'pointer', fontFamily: 'Geist, sans-serif', fontSize: 13, fontWeight: 500, transition: 'all 0.2s', background: view===v ? 'white' : 'transparent', color: view===v ? 'var(--accent-deep)' : 'var(--text-muted)', boxShadow: view===v ? '0 2px 8px rgba(80,100,200,0.12)' : 'none' }}>
               {v.charAt(0).toUpperCase()+v.slice(1)}
             </button>
           ))}
@@ -464,11 +467,11 @@ export default function CalendarPage() {
 
               {/* All-day toggle */}
               <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
-                <div onClick={() => setAllDay(a => !a)}
+                <div onClick={() => { setAllDay(a => { const next = !a; next ? sound.toggleOn() : sound.toggleOff(); return next }) }}
                   style={{ width: 34, height: 19, borderRadius: 10, background: allDay ? 'var(--accent)' : 'rgba(128,128,128,0.22)', position: 'relative', transition: 'background 0.2s', cursor: 'pointer', flexShrink: 0 }}>
                   <div style={{ position: 'absolute', top: 2.5, left: allDay ? 17 : 2.5, width: 14, height: 14, borderRadius: '50%', background: 'white', boxShadow: '0 1px 4px rgba(0,0,0,0.25)', transition: 'left 0.18s' }} />
                 </div>
-                <span style={{ fontSize: 12, color: 'var(--text-secondary)', fontWeight: 500, cursor: 'pointer', userSelect: 'none' }} onClick={() => setAllDay(a => !a)}>All day</span>
+                <span style={{ fontSize: 12, color: 'var(--text-secondary)', fontWeight: 500, cursor: 'pointer', userSelect: 'none' }} onClick={() => { setAllDay(a => { const next = !a; next ? sound.toggleOn() : sound.toggleOff(); return next }) }}>All day</span>
               </div>
 
               {allDay ? (

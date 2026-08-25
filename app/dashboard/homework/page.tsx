@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/lib/auth-context'
+import { useSound } from '@/lib/use-sound'
 
 type HW = {
   id: string; title: string; subject: string | null
@@ -57,6 +58,7 @@ const TODAY = new Date().toISOString().split('T')[0]
 
 export default function HomeworkPage() {
   const { user } = useAuth()
+  const sound = useSound()
   const [hw, setHw] = useState<HW[]>([])
   const [papers, setPapers] = useState<Paper[]>([])
   const [loading, setLoading] = useState(true)
@@ -112,11 +114,13 @@ export default function HomeworkPage() {
   }
 
   const toggleHw = async (id: string, current: boolean) => {
+    !current ? sound.success() : sound.toggleOff()
     setHw(prev => prev.map(h => h.id === id ? { ...h, completed: !current } : h))
     await supabase.from('homework').update({ completed: !current }).eq('id', id)
   }
 
   const deleteHw = async (id: string) => {
+    sound.delete()
     setDeletingHw(id)
     await supabase.from('homework').delete().eq('id', id)
     setHw(prev => prev.filter(h => h.id !== id))
@@ -156,6 +160,7 @@ export default function HomeworkPage() {
   }
 
   const deletePaper = async (id: string, attachmentPath?: string | null) => {
+    sound.delete()
     setDeletingP(id)
     if (attachmentPath) await supabase.storage.from(BUCKET).remove([attachmentPath])
     await supabase.from('past_papers').delete().eq('id', id)

@@ -4,6 +4,7 @@ import { useRouter, usePathname } from 'next/navigation'
 import { useAuth } from '@/lib/auth-context'
 import Link from 'next/link'
 import { isConnected, getPlayer } from '@/lib/spotify'
+import { useSound } from '@/lib/use-sound'
 
 // ── Theme system ──────────────────────────────────────────────────────────────
 const THEMES = [
@@ -67,9 +68,20 @@ function IconPalette({ s }: { s: number }) {
 function IconSearch({ s }: { s: number }) {
   return <svg width={s} height={s} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="9" cy="9" r="5.5"/><path d="M15 15l-3-3"/></svg>
 }
+function IconSound({ s, muted }: { s: number; muted: boolean }) {
+  return (
+    <svg width={s} height={s} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 8v4h3l4 3.5v-10.5l-4 3.5H3z" />
+      {!muted && <path d="M13.5 7a4 4 0 010 6" />}
+      {!muted && <path d="M15.5 4.5a7.5 7.5 0 010 11" />}
+      {muted && <path d="M13 8l4 4M17 8l-4 4" />}
+    </svg>
+  )
+}
 // ── Layout ────────────────────────────────────────────────────────────────────
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   const { user, loading, signOut } = useAuth()
+  const sound = useSound()
   const router   = useRouter()
   const pathname = usePathname()
   const [time, setTime]               = useState('')
@@ -110,7 +122,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     resize()
     window.addEventListener('resize', resize)
 
-    const N = 60
+    const N = 34
     type Pt = { x: number; y: number; r: number; vx: number; vy: number; base: number; phase: number; ps: number; depth: number }
     const pts: Pt[] = []
     for (let i = 0; i < N; i++) {
@@ -118,10 +130,10 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       pts.push({
         x: Math.random() * W,
         y: Math.random() * H,
-        r: 1.0 + depth * 3.5,
-        vx: (Math.random() - 0.5) * (0.22 + depth * 0.38),
-        vy: (Math.random() - 0.5) * (0.16 + depth * 0.28),
-        base: 0.18 + depth * 0.28,   // bumped up so they're actually visible
+        r: 0.8 + depth * 2.6,
+        vx: (Math.random() - 0.5) * (0.18 + depth * 0.3),
+        vy: (Math.random() - 0.5) * (0.13 + depth * 0.22),
+        base: 0.10 + depth * 0.16,
         phase: Math.random() * Math.PI * 2,
         ps: Math.random() * 0.0022 + 0.0006,
         depth,
@@ -273,30 +285,30 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   const isVisionPro = theme === 'visionpro'
 
   const themeIdx  = THEMES.findIndex(t => t.id === theme)
-  const prevTheme = () => setTheme(THEMES[(themeIdx - 1 + THEMES.length) % THEMES.length].id)
-  const nextTheme = () => setTheme(THEMES[(themeIdx + 1) % THEMES.length].id)
+  const prevTheme = () => { sound.select(); setTheme(THEMES[(themeIdx - 1 + THEMES.length) % THEMES.length].id) }
+  const nextTheme = () => { sound.select(); setTheme(THEMES[(themeIdx + 1) % THEMES.length].id) }
 
-  const navBg      = 'rgba(255,255,255,0.80)'
-  const navBorder  = 'rgba(255,255,255,0.94)'
-  const navShadow  = 'inset 0 1.5px 0 rgba(255,255,255,1), 0 8px 48px rgba(80,100,200,0.16), 0 2px 8px rgba(80,100,200,0.06), 0 0 0 0.5px rgba(200,210,255,0.22)'
-  const divider    = 'rgba(99,102,241,0.08)'
-  const chipBg     = 'rgba(255,255,255,0.55)'
-  const chipBorder = 'rgba(200,210,240,0.45)'
-  const hoverBg    = 'rgba(99,102,241,0.06)'
+  const navBg      = 'rgba(255,255,255,0.72)'
+  const navBorder  = 'rgba(255,255,255,0.85)'
+  const navShadow  = 'var(--glass-shadow)'
+  const divider    = 'rgba(99,102,241,0.07)'
+  const chipBg     = 'rgba(255,255,255,0.45)'
+  const chipBorder = 'rgba(200,210,240,0.4)'
+  const hoverBg    = 'rgba(99,102,241,0.055)'
   const activeNavBg = isSunset
-    ? 'linear-gradient(135deg, rgba(244,63,94,0.15), rgba(251,146,60,0.10))'
+    ? 'rgba(244,63,94,0.09)'
     : isVisionPro
-      ? 'linear-gradient(135deg, rgba(0,113,227,0.10), rgba(59,143,232,0.06))'
-      : 'linear-gradient(135deg, rgba(99,102,241,0.14), rgba(139,92,246,0.08))'
+      ? 'rgba(0,113,227,0.08)'
+      : 'rgba(99,102,241,0.09)'
   const activeNavBorder = isSunset
-    ? 'rgba(244,63,94,0.22)'
+    ? 'rgba(244,63,94,0.18)'
     : isVisionPro
-      ? 'rgba(0,113,227,0.18)'
-      : 'rgba(99,102,241,0.13)'
-  const mobileBarBg     = 'rgba(255,255,255,0.90)'
-  const mobileBarBorder = 'rgba(255,255,255,0.92)'
-  const dropdownBg      = 'rgba(255,255,255,0.97)'
-  const dropdownBorder  = 'rgba(255,255,255,0.9)'
+      ? 'rgba(0,113,227,0.15)'
+      : 'rgba(99,102,241,0.14)'
+  const mobileBarBg     = 'rgba(255,255,255,0.85)'
+  const mobileBarBorder = 'rgba(255,255,255,0.85)'
+  const dropdownBg      = 'rgba(255,255,255,0.94)'
+  const dropdownBorder  = 'rgba(255,255,255,0.85)'
   const currentTheme    = THEMES.find(t => t.id === theme)!
   const sidebarW        = open ? 228 : 60
 
@@ -318,6 +330,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       e.preventDefault()
       const item = filteredCmd[cmdIdx]
       if (!item) return
+      sound.click()
       if (item.href) { router.push(item.href); setShowCmdK(false) }
       else if (item.action) item.action()
     } else if (e.key === 'Escape') { setShowCmdK(false) }
@@ -375,7 +388,8 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
               const Icon   = item.icon
               return (
                 <Link key={item.href} href={item.href}
-                  style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 10px', borderRadius: 14, textDecoration: 'none', fontSize: 13.5, fontWeight: active ? 620 : 450, color: active ? 'var(--accent-deep)' : 'var(--text-secondary)', background: active ? activeNavBg : 'transparent', border: `1px solid ${active ? activeNavBorder : 'transparent'}`, boxShadow: active ? ('0 2px 10px rgba(99,102,241,0.13), inset 0 1px 0 rgba(255,255,255,0.92)') : 'none', transition: 'all 0.18s ease', whiteSpace: 'nowrap', flexShrink: 0, position: 'relative', overflow: 'hidden' }}
+                  onClick={() => !active && sound.click()}
+                  style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 10px', borderRadius: 14, textDecoration: 'none', fontSize: 13.5, fontWeight: active ? 620 : 450, color: active ? 'var(--accent-deep)' : 'var(--text-secondary)', background: active ? activeNavBg : 'transparent', border: `1px solid ${active ? activeNavBorder : 'transparent'}`, transition: 'all 0.18s ease', whiteSpace: 'nowrap', flexShrink: 0, position: 'relative', overflow: 'hidden' }}
                   onMouseEnter={e => { if (!active) (e.currentTarget as HTMLElement).style.background = hoverBg }}
                   onMouseLeave={e => { if (!active) (e.currentTarget as HTMLElement).style.background = 'transparent' }}
                 >
@@ -419,6 +433,16 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
               </div>
             </div>
 
+            {/* Sound toggle */}
+            <button onClick={sound.toggleMuted} style={{ display: 'flex', alignItems: 'center', gap: 9, padding: '8px 10px', borderRadius: 13, background: chipBg, border: `1px solid ${chipBorder}`, overflow: 'hidden', flexShrink: 0, cursor: 'pointer', fontFamily: 'Geist, sans-serif', textAlign: 'left' }}
+              onMouseEnter={e => (e.currentTarget.style.background = hoverBg)}
+              onMouseLeave={e => (e.currentTarget.style.background = chipBg)}
+            >
+              <span style={{ flexShrink: 0, display: 'flex', color: 'var(--text-muted)' }}><IconSound s={14} muted={sound.muted} /></span>
+              <span style={{ fontSize: 11.5, fontWeight: 540, color: 'var(--text-muted)', opacity: open ? 1 : 0, transition: 'opacity 0.15s', whiteSpace: 'nowrap', flex: 1 }}>Sound</span>
+              <span style={{ fontSize: 10.5, fontWeight: 580, color: sound.muted ? 'var(--text-muted)' : 'var(--accent)', opacity: open ? 1 : 0, transition: 'opacity 0.15s', whiteSpace: 'nowrap' }}>{sound.muted ? 'Off' : 'On'}</span>
+            </button>
+
             {/* User */}
             <div style={{ position: 'relative', flexShrink: 0 }}>
               <button onClick={() => setShowUser(s => !s)} style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 10, padding: '6px 6px', border: 'none', background: 'none', cursor: 'pointer', borderRadius: 14, overflow: 'hidden', transition: 'background 0.18s' }}
@@ -438,7 +462,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                     <div style={{ fontSize: 12.5, fontWeight: 560, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user.email}</div>
                   </div>
                   <button onClick={() => { setShowShortcuts(true); setShowUser(false) }} style={{ width: '100%', border: 'none', background: 'none', cursor: 'pointer', color: 'var(--text-secondary)', fontSize: 13, padding: '7px 10px', borderRadius: 8, textAlign: 'left', fontFamily: 'Geist, sans-serif' }}>⌨ Keyboard shortcuts</button>
-                  <button onClick={signOut} style={{ width: '100%', border: 'none', background: 'none', cursor: 'pointer', color: '#ef4444', fontSize: 13, padding: '7px 10px', borderRadius: 8, textAlign: 'left', fontFamily: 'Geist, sans-serif', display: 'flex', alignItems: 'center', gap: 7 }}><IconLogout s={13} /> Sign out</button>
+                  <button onClick={() => { sound.click(); signOut() }} style={{ width: '100%', border: 'none', background: 'none', cursor: 'pointer', color: '#ef4444', fontSize: 13, padding: '7px 10px', borderRadius: 8, textAlign: 'left', fontFamily: 'Geist, sans-serif', display: 'flex', alignItems: 'center', gap: 7 }}><IconLogout s={13} /> Sign out</button>
                 </div>
               )}
             </div>
@@ -464,6 +488,10 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                 <span style={{ fontSize: 11, fontWeight: 520, color: '#1db954', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{nowPlaying.name}</span>
               </Link>
             )}
+            {/* Sound toggle */}
+            <button onClick={sound.toggleMuted} style={{ width: 32, height: 32, borderRadius: 10, border: '1px solid rgba(200,210,240,0.5)', background: 'rgba(255,255,255,0.72)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0, color: sound.muted ? 'var(--text-muted)' : 'var(--accent)' }}>
+              <IconSound s={15} muted={sound.muted} />
+            </button>
             {/* Theme picker button */}
             <button onClick={() => { setShowTheme(s => !s); setShowUser(false) }} style={{ width: 32, height: 32, borderRadius: 10, border: `1px solid ${'rgba(200,210,240,0.5)'}`, background: 'rgba(255,255,255,0.72)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0, transition: 'all 0.3s' }}>
               <div style={{ width: 16, height: 16, borderRadius: 5, background: currentTheme.swatch, boxShadow: '0 1px 5px rgba(0,0,0,0.2)' }} />
@@ -500,7 +528,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
               <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 2 }}>Signed in as</div>
               <div style={{ fontSize: 12.5, fontWeight: 560, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis' }}>{user.email}</div>
             </div>
-            <button onClick={signOut} style={{ width: '100%', border: 'none', background: 'none', cursor: 'pointer', color: '#ef4444', fontSize: 13, padding: '7px 10px', borderRadius: 8, textAlign: 'left', fontFamily: 'Geist, sans-serif', display: 'flex', alignItems: 'center', gap: 7 }}><IconLogout s={13} /> Sign out</button>
+            <button onClick={() => { sound.click(); signOut() }} style={{ width: '100%', border: 'none', background: 'none', cursor: 'pointer', color: '#ef4444', fontSize: 13, padding: '7px 10px', borderRadius: 8, textAlign: 'left', fontFamily: 'Geist, sans-serif', display: 'flex', alignItems: 'center', gap: 7 }}><IconLogout s={13} /> Sign out</button>
           </div>
         </>
       )}
@@ -513,14 +541,14 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
               const active = pathname === item.href
               const Icon   = item.icon
               return (
-                <Link key={item.href} href={item.href} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 3, padding: '10px 4px 8px', textDecoration: 'none', color: active ? 'var(--accent)' : 'var(--text-muted)', position: 'relative' }}>
+                <Link key={item.href} href={item.href} onClick={() => !active && sound.click()} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 3, padding: '10px 4px 8px', textDecoration: 'none', color: active ? 'var(--accent)' : 'var(--text-muted)', position: 'relative' }}>
                   {active && <span style={{ position: 'absolute', top: 0, left: '25%', right: '25%', height: 2.5, borderRadius: 2, background: isSunset ? 'linear-gradient(90deg, #f43f5e, #fb923c)' : isVisionPro ? '#0071e3' : 'linear-gradient(90deg, #6366f1, #a78bfa)' }} />}
                   <span style={{ opacity: active ? 1 : 0.6, transition: 'all 0.18s', transform: active ? 'scale(1.12)' : 'scale(1)' }}><Icon s={20} /></span>
                   <span style={{ fontSize: 9.5, fontWeight: active ? 640 : 450, letterSpacing: '0.01em', whiteSpace: 'nowrap' }}>{item.label}</span>
                 </Link>
               )
             })}
-            <button onClick={() => setShowMore(s => !s)} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 3, padding: '10px 4px 8px', border: 'none', background: 'none', cursor: 'pointer', color: MOBILE_MORE.some(m => m.href === pathname) ? 'var(--accent)' : 'var(--text-muted)' }}>
+            <button onClick={() => { sound.click(); setShowMore(s => !s) }} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 3, padding: '10px 4px 8px', border: 'none', background: 'none', cursor: 'pointer', color: MOBILE_MORE.some(m => m.href === pathname) ? 'var(--accent)' : 'var(--text-muted)' }}>
               <span style={{ opacity: 0.6 }}><IconMore s={20} /></span>
               <span style={{ fontSize: 9.5, fontWeight: 450, letterSpacing: '0.01em' }}>More</span>
             </button>
@@ -536,7 +564,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                     const active = pathname === item.href
                     const Icon   = item.icon
                     return (
-                      <Link key={item.href} href={item.href} onClick={() => setShowMore(false)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 7, padding: '14px 8px', borderRadius: 14, textDecoration: 'none', background: active ? activeNavBg : ('rgba(99,102,241,0.04)'), border: `1px solid ${active ? activeNavBorder : 'transparent'}`, color: active ? 'var(--accent-deep)' : 'var(--text-secondary)' }}>
+                      <Link key={item.href} href={item.href} onClick={() => { sound.click(); setShowMore(false) }} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 7, padding: '14px 8px', borderRadius: 14, textDecoration: 'none', background: active ? activeNavBg : ('rgba(99,102,241,0.04)'), border: `1px solid ${active ? activeNavBorder : 'transparent'}`, color: active ? 'var(--accent-deep)' : 'var(--text-secondary)' }}>
                         <span style={{ color: active ? 'var(--accent)' : 'var(--text-muted)' }}><Icon s={22} /></span>
                         <span style={{ fontSize: 11.5, fontWeight: active ? 620 : 460, textAlign: 'center' }}>{item.label}</span>
                       </Link>
@@ -614,7 +642,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                           {showCat && <div style={{ padding: '8px 10px 2px', fontSize: 10, fontWeight: 640, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>{item.category}</div>}
                           <div
                             onMouseEnter={() => setCmdIdx(i)}
-                            onClick={() => { if (item.href) { router.push(item.href); setShowCmdK(false) } else if (item.action) item.action() }}
+                            onClick={() => { sound.click(); if (item.href) { router.push(item.href); setShowCmdK(false) } else if (item.action) item.action() }}
                             style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 10px', borderRadius: 11, cursor: 'pointer', background: isActive ? ('rgba(99,102,241,0.08)') : 'transparent', transition: 'background 0.08s' }}
                           >
                             <div style={{ width: 32, height: 32, borderRadius: 9, background: isActive ? ('rgba(99,102,241,0.12)') : ('rgba(0,0,0,0.04)'), display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'background 0.08s' }}>

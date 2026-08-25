@@ -3,6 +3,7 @@ import { useEffect, useState, useRef } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/lib/auth-context'
 import Link from 'next/link'
+import { useSound } from '@/lib/use-sound'
 
 // ── Types ────────────────────────────────────────────────────────────────────
 type Checkin = {
@@ -50,6 +51,7 @@ const calcStreak = (checkins: Checkin[]): number => {
 // ── Dashboard page ────────────────────────────────────────────────────────────
 export default function DashboardPage() {
   const { user } = useAuth()
+  const sound = useSound()
 
   // existing stats
   const [stats, setStats]       = useState({ hw: 0, hwDone: 0, todos: 0, todosDone: 0, papers: 0, studyMins: 0 })
@@ -141,6 +143,9 @@ export default function DashboardPage() {
     const optimistic: Checkin = todayCI
       ? { ...todayCI, [key]: newVal }
       : { id: '', date: TODAY, maths: false, ucat: false, science: false, kurt: false, beam: false, enterprise: false, [key]: newVal }
+    if (newVal && countDone(optimistic) === 6) sound.success()
+    else if (newVal) sound.toggleOn()
+    else sound.toggleOff()
     setTodayCI(optimistic)
     setCheckins(prev => {
       const without = prev.filter(c => c.date !== TODAY)
@@ -197,9 +202,9 @@ export default function DashboardPage() {
   const streak    = calcStreak(checkins)
 
   const STAT_CARDS = [
-    { label: 'Homework', href: '/dashboard/homework', pct: hwPct, done: Math.round(stats.hwDone * animPct), total: stats.hw, gradient: 'linear-gradient(135deg, #6366f1, #8b5cf6)', bar: 'linear-gradient(90deg, #6366f1, #a78bfa)', icon: <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="white" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M4 3h9a2 2 0 012 2v11a2 2 0 01-2 2H4a1 1 0 01-1-1V4a1 1 0 011-1z"/><path d="M15 14h1a1 1 0 000-2h-1"/><path d="M7 7h5M7 10h5M7 13h3"/></svg> },
-    { label: 'To-do',    href: '/dashboard/todos',    pct: todoPct, done: Math.round(stats.todosDone * animPct), total: stats.todos, gradient: 'linear-gradient(135deg, #a78bfa, #f87171)', bar: 'linear-gradient(90deg, #a78bfa, #f87171)', icon: <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="white" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="14" height="14" rx="3.5"/><path d="M7 10l2.5 2.5L13 8"/></svg> },
-    { label: 'Past Papers', href: '/dashboard/past-papers', pct: null, done: Math.round(stats.papers * animPct), total: null, gradient: 'linear-gradient(135deg, #34d399, #06b6d4)', bar: 'linear-gradient(90deg, #34d399, #06b6d4)', icon: <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="white" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M3 17V9l4-4 4 4 4-6"/><path d="M3 17h14"/></svg> },
+    { label: 'Homework', href: '/dashboard/homework', pct: hwPct, done: Math.round(stats.hwDone * animPct), total: stats.hw, icon: <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M4 3h9a2 2 0 012 2v11a2 2 0 01-2 2H4a1 1 0 01-1-1V4a1 1 0 011-1z"/><path d="M15 14h1a1 1 0 000-2h-1"/><path d="M7 7h5M7 10h5M7 13h3"/></svg> },
+    { label: 'To-do',    href: '/dashboard/todos',    pct: todoPct, done: Math.round(stats.todosDone * animPct), total: stats.todos, icon: <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="14" height="14" rx="3.5"/><path d="M7 10l2.5 2.5L13 8"/></svg> },
+    { label: 'Past Papers', href: '/dashboard/past-papers', pct: null, done: Math.round(stats.papers * animPct), total: null, icon: <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M3 17V9l4-4 4 4 4-6"/><path d="M3 17h14"/></svg> },
   ]
 
   const QUICK_NAV = [
@@ -230,19 +235,18 @@ export default function DashboardPage() {
         {STAT_CARDS.map((card, i) => (
           <Link key={card.label} href={card.href} style={{ textDecoration: 'none' }}>
             <div className="glass-card fade-up" style={{ padding: isMobile ? '16px 14px' : '20px 22px', animationDelay: `${i * 50}ms`, cursor: 'pointer', overflow: 'hidden', position: 'relative' }}>
-              <div style={{ width: 36, height: 36, borderRadius: 11, background: card.gradient, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14, boxShadow: '0 4px 14px rgba(0,0,0,0.12)' }}>{card.icon}</div>
+              <div style={{ width: 34, height: 34, borderRadius: 10, background: 'rgba(99,102,241,0.08)', color: 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>{card.icon}</div>
               <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 6 }}>{card.label}</div>
               {loading ? <div className="skeleton" style={{ height: 28, width: '60%', marginBottom: 14 }} /> : (
                 <div style={{ fontSize: isMobile ? 22 : 28, fontWeight: 720, color: 'var(--text-primary)', letterSpacing: '-0.03em', lineHeight: 1, marginBottom: 14, fontVariantNumeric: 'tabular-nums' }}>
                   {card.done}
                   {card.total !== null && <span style={{ fontSize: 15, fontWeight: 500, color: 'var(--text-muted)', marginLeft: 4 }}>/ {card.total}</span>}
-                  {(card as any).suffix && <span style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-muted)', marginLeft: 5 }}>{(card as any).suffix}</span>}
                 </div>
               )}
               {card.pct !== null && (
                 <div>
-                  <div style={{ height: 5, background: 'rgba(0,0,0,0.06)', borderRadius: 6, overflow: 'hidden' }}>
-                    <div style={{ height: '100%', width: loading ? '0%' : `${card.pct}%`, background: card.bar, borderRadius: 6, transition: 'width 0.7s cubic-bezier(0.22,1,0.36,1)' }} />
+                  <div style={{ height: 4, background: 'rgba(99,102,241,0.08)', borderRadius: 6, overflow: 'hidden' }}>
+                    <div style={{ height: '100%', width: loading ? '0%' : `${card.pct}%`, background: 'var(--accent)', borderRadius: 6, transition: 'width 0.7s cubic-bezier(0.22,1,0.36,1)' }} />
                   </div>
                 </div>
               )}
