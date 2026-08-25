@@ -7,14 +7,9 @@ import { isConnected, getPlayer } from '@/lib/spotify'
 
 // ── Theme system ──────────────────────────────────────────────────────────────
 const THEMES = [
-  { id: 'light',     label: 'Light',      swatch: 'linear-gradient(135deg, #f0f1f8, #eef0ff)' },
-  { id: 'dark',      label: 'Dark',       swatch: 'linear-gradient(135deg, #060908, #0a100b)' },
-  { id: 'aurora',    label: 'Aurora',     swatch: 'linear-gradient(135deg, #22c55e 0%, #34d399 100%)' },
-  { id: 'emerald',   label: 'Emerald',    swatch: 'linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%)' },
+  { id: 'light',     label: 'Default',    swatch: 'linear-gradient(135deg, #f0f1f8, #eef0ff)' },
   { id: 'sunset',    label: 'Sunset',     swatch: 'linear-gradient(135deg, #fb923c 0%, #f43f5e 100%)' },
-  { id: 'beige',     label: 'Playfair',   swatch: 'linear-gradient(135deg, #f5f0e8, #e8dcc8)' },
   { id: 'visionpro', label: 'Vision Pro', swatch: 'linear-gradient(135deg, #f5f5f7, #e8e8ed)' },
-  { id: 'mono',      label: 'Mono',       swatch: 'linear-gradient(135deg, #0a0a0a, #404040)' },
 ] as const
 type Theme = typeof THEMES[number]['id']
 
@@ -28,10 +23,9 @@ const NAV_ITEMS = [
   { href: '/dashboard/kurt',        label: 'Kurt',        icon: IconKurt,    key: 'k' },
   { href: '/dashboard/drive',       label: 'Drive',       icon: IconDrive,   key: 'd' },
   { href: '/dashboard/spotify',     label: 'Spotify',     icon: IconSpotify,   key: 'm' },
-  { href: '/dashboard/timetable',   label: 'Timetable',   icon: IconTimetable, key: 'i' },
 ]
 const MOBILE_PRIMARY = [NAV_ITEMS[0], NAV_ITEMS[1], NAV_ITEMS[2], NAV_ITEMS[4], NAV_ITEMS[5]]
-const MOBILE_MORE    = [NAV_ITEMS[3], NAV_ITEMS[6], NAV_ITEMS[7], NAV_ITEMS[8]]
+const MOBILE_MORE    = [NAV_ITEMS[3], NAV_ITEMS[6], NAV_ITEMS[7]]
 
 // ── Icons ─────────────────────────────────────────────────────────────────────
 function IconDash({ s }: { s: number }) {
@@ -73,10 +67,6 @@ function IconPalette({ s }: { s: number }) {
 function IconSearch({ s }: { s: number }) {
   return <svg width={s} height={s} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="9" cy="9" r="5.5"/><path d="M15 15l-3-3"/></svg>
 }
-function IconTimetable({ s }: { s: number }) {
-  return <svg width={s} height={s} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="3" width="16" height="15" rx="3"/><path d="M2 8h16M7 3v5M13 3v5M5 12h2M9 12h2M13 12h2M5 15.5h2M9 15.5h2"/></svg>
-}
-
 // ── Layout ────────────────────────────────────────────────────────────────────
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   const { user, loading, signOut } = useAuth()
@@ -151,20 +141,10 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         const op = p.base * (0.75 + 0.25 * Math.sin(p.phase * 1.4))
         // Colour per theme so dots are always visible against the bg
         let r: number, g: number, b: number
-        if (t === 'dark') {
-          r = Math.round(0  + p.depth * 30); g = Math.round(160 + p.depth * 60); b = Math.round(40 + p.depth * 30)
-        } else if (t === 'sunset') {
+        if (t === 'sunset') {
           r = 255; g = Math.round(200 - p.depth * 60); b = Math.round(180 - p.depth * 80)
-        } else if (t === 'aurora') {
-          r = Math.round(80 - p.depth * 20); g = Math.round(200 - p.depth * 30); b = Math.round(140 - p.depth * 40)
-        } else if (t === 'emerald') {
-          r = Math.round(60 - p.depth * 20); g = Math.round(180 + p.depth * 30); b = Math.round(120 - p.depth * 30)
-        } else if (t === 'beige') {
-          r = Math.round(180 - p.depth * 40); g = Math.round(140 - p.depth * 30); b = Math.round(100 - p.depth * 30)
         } else if (t === 'visionpro') {
           const v = Math.round(140 - p.depth * 60); r = v; g = v; b = v
-        } else if (t === 'mono') {
-          const v = Math.round(60 + p.depth * 60); r = v; g = v; b = v
         } else {
           const v = Math.round(120 - p.depth * 60); r = v; g = v; b = v + 20
         }
@@ -289,56 +269,34 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   )
 
   // ── Theme-derived inline styles ───────────────────────────────────────────
-  const isDark     = theme === 'dark'
-  const isSunset   = theme === 'sunset'
-  const isBeige    = theme === 'beige'
+  const isSunset    = theme === 'sunset'
   const isVisionPro = theme === 'visionpro'
-  const isMono     = theme === 'mono'
-  const isEmerald  = theme === 'emerald'
 
   const themeIdx  = THEMES.findIndex(t => t.id === theme)
   const prevTheme = () => setTheme(THEMES[(themeIdx - 1 + THEMES.length) % THEMES.length].id)
   const nextTheme = () => setTheme(THEMES[(themeIdx + 1) % THEMES.length].id)
 
-  const navBg      = isDark   ? 'rgba(8,10,20,0.95)'     : 'rgba(255,255,255,0.80)'
-  const navBorder  = isDark   ? 'rgba(255,255,255,0.07)'  : 'rgba(255,255,255,0.94)'
-  const navShadow  = isDark
-    ? 'inset 0 1px 0 rgba(255,255,255,0.04), 0 8px 48px rgba(0,0,0,0.6), 0 2px 8px rgba(0,0,0,0.45)'
-    : 'inset 0 1.5px 0 rgba(255,255,255,1), 0 8px 48px rgba(80,100,200,0.16), 0 2px 8px rgba(80,100,200,0.06), 0 0 0 0.5px rgba(200,210,255,0.22)'
-  const divider    = isDark   ? 'rgba(255,255,255,0.06)'  : 'rgba(99,102,241,0.08)'
-  const chipBg     = isDark   ? 'rgba(255,255,255,0.05)'  : 'rgba(255,255,255,0.55)'
-  const chipBorder = isDark   ? 'rgba(255,255,255,0.08)'  : 'rgba(200,210,240,0.45)'
-  const hoverBg    = isDark   ? 'rgba(255,255,255,0.07)'  : 'rgba(99,102,241,0.06)'
-  const activeNavBg = isDark
-    ? 'linear-gradient(135deg, rgba(48,209,88,0.14), rgba(0,220,80,0.07))'
-    : isSunset
-      ? 'linear-gradient(135deg, rgba(244,63,94,0.15), rgba(251,146,60,0.10))'
-      : isBeige
-        ? 'linear-gradient(135deg, rgba(156,107,60,0.12), rgba(184,120,64,0.08))'
-        : isVisionPro
-          ? 'linear-gradient(135deg, rgba(0,113,227,0.10), rgba(59,143,232,0.06))'
-          : isMono
-            ? 'rgba(0,0,0,0.08)'
-            : isEmerald
-              ? 'linear-gradient(135deg, rgba(16,185,129,0.14), rgba(52,211,153,0.08))'
-              : 'linear-gradient(135deg, rgba(99,102,241,0.14), rgba(139,92,246,0.08))'
-  const activeNavBorder = isDark
-    ? 'rgba(48,209,88,0.35)'
-    : isSunset
-      ? 'rgba(244,63,94,0.22)'
-      : isBeige
-        ? 'rgba(156,107,60,0.22)'
-        : isVisionPro
-          ? 'rgba(0,113,227,0.18)'
-          : isMono
-            ? 'rgba(0,0,0,0.18)'
-            : isEmerald
-              ? 'rgba(16,185,129,0.22)'
-              : 'rgba(99,102,241,0.13)'
-  const mobileBarBg     = isDark ? 'rgba(8,10,20,0.96)'    : 'rgba(255,255,255,0.90)'
-  const mobileBarBorder = isDark ? 'rgba(255,255,255,0.07)' : 'rgba(255,255,255,0.92)'
-  const dropdownBg      = isDark ? 'rgba(10,11,22,0.98)'   : 'rgba(255,255,255,0.97)'
-  const dropdownBorder  = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.9)'
+  const navBg      = 'rgba(255,255,255,0.80)'
+  const navBorder  = 'rgba(255,255,255,0.94)'
+  const navShadow  = 'inset 0 1.5px 0 rgba(255,255,255,1), 0 8px 48px rgba(80,100,200,0.16), 0 2px 8px rgba(80,100,200,0.06), 0 0 0 0.5px rgba(200,210,255,0.22)'
+  const divider    = 'rgba(99,102,241,0.08)'
+  const chipBg     = 'rgba(255,255,255,0.55)'
+  const chipBorder = 'rgba(200,210,240,0.45)'
+  const hoverBg    = 'rgba(99,102,241,0.06)'
+  const activeNavBg = isSunset
+    ? 'linear-gradient(135deg, rgba(244,63,94,0.15), rgba(251,146,60,0.10))'
+    : isVisionPro
+      ? 'linear-gradient(135deg, rgba(0,113,227,0.10), rgba(59,143,232,0.06))'
+      : 'linear-gradient(135deg, rgba(99,102,241,0.14), rgba(139,92,246,0.08))'
+  const activeNavBorder = isSunset
+    ? 'rgba(244,63,94,0.22)'
+    : isVisionPro
+      ? 'rgba(0,113,227,0.18)'
+      : 'rgba(99,102,241,0.13)'
+  const mobileBarBg     = 'rgba(255,255,255,0.90)'
+  const mobileBarBorder = 'rgba(255,255,255,0.92)'
+  const dropdownBg      = 'rgba(255,255,255,0.97)'
+  const dropdownBorder  = 'rgba(255,255,255,0.9)'
   const currentTheme    = THEMES.find(t => t.id === theme)!
   const sidebarW        = open ? 228 : 60
 
@@ -369,12 +327,6 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     <div style={{ minHeight: '100vh', display: 'flex', position: 'relative', overflowX: 'hidden' }}>
       <div className="grid-bg" />
       <div className="noise-overlay" />
-      {/* Aurora blobs — full opacity for aurora, soft for emerald */}
-      <div className="aurora-wrap" style={{ opacity: theme === 'aurora' ? 1 : theme === 'emerald' ? 0.38 : 0 }}>
-        <div className="aurora-band-1" /><div className="aurora-band-2" /><div className="aurora-band-3" />
-        <div className="aurora-ray-1" /><div className="aurora-ray-2" /><div className="aurora-ray-3" /><div className="aurora-ray-4" />
-        <div className="aurora-blob-1" /><div className="aurora-blob-2" /><div className="aurora-blob-3" /><div className="aurora-blob-4" />
-      </div>
 
       {/* Particle canvas — above bg, below all UI */}
       <canvas ref={canvasRef} style={{ position: 'fixed', top: 0, right: 0, bottom: 0, left: 0, zIndex: 0, pointerEvents: 'none' }} />
@@ -413,7 +365,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           >
             <span style={{ flexShrink: 0, display: 'flex', color: 'var(--text-muted)' }}><IconSearch s={13} /></span>
             <span style={{ fontSize: 12, color: 'var(--text-muted)', opacity: open ? 1 : 0, transition: 'opacity 0.15s', whiteSpace: 'nowrap', flex: 1, textAlign: 'left' }}>Search…</span>
-            <span style={{ fontSize: 10, padding: '1px 5px', borderRadius: 4, background: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)', border: `1px solid ${divider}`, color: 'var(--text-muted)', fontFamily: 'monospace', opacity: open ? 1 : 0, transition: 'opacity 0.15s', flexShrink: 0 }}>⌘K</span>
+            <span style={{ fontSize: 10, padding: '1px 5px', borderRadius: 4, background: 'rgba(0,0,0,0.05)', border: `1px solid ${divider}`, color: 'var(--text-muted)', fontFamily: 'monospace', opacity: open ? 1 : 0, transition: 'opacity 0.15s', flexShrink: 0 }}>⌘K</span>
           </button>
 
           {/* Nav items */}
@@ -423,11 +375,11 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
               const Icon   = item.icon
               return (
                 <Link key={item.href} href={item.href}
-                  style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 10px', borderRadius: 14, textDecoration: 'none', fontSize: 13.5, fontWeight: active ? 620 : 450, color: active ? 'var(--accent-deep)' : 'var(--text-secondary)', background: active ? activeNavBg : 'transparent', border: `1px solid ${active ? activeNavBorder : 'transparent'}`, boxShadow: active ? (isDark ? '0 2px 12px rgba(48,209,88,0.20), inset 0 1px 0 rgba(255,255,255,0.06)' : '0 2px 10px rgba(99,102,241,0.13), inset 0 1px 0 rgba(255,255,255,0.92)') : 'none', transition: 'all 0.18s ease', whiteSpace: 'nowrap', flexShrink: 0, position: 'relative', overflow: 'hidden' }}
+                  style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 10px', borderRadius: 14, textDecoration: 'none', fontSize: 13.5, fontWeight: active ? 620 : 450, color: active ? 'var(--accent-deep)' : 'var(--text-secondary)', background: active ? activeNavBg : 'transparent', border: `1px solid ${active ? activeNavBorder : 'transparent'}`, boxShadow: active ? ('0 2px 10px rgba(99,102,241,0.13), inset 0 1px 0 rgba(255,255,255,0.92)') : 'none', transition: 'all 0.18s ease', whiteSpace: 'nowrap', flexShrink: 0, position: 'relative', overflow: 'hidden' }}
                   onMouseEnter={e => { if (!active) (e.currentTarget as HTMLElement).style.background = hoverBg }}
                   onMouseLeave={e => { if (!active) (e.currentTarget as HTMLElement).style.background = 'transparent' }}
                 >
-                  {active && <span style={{ position: 'absolute', left: 0, top: '50%', transform: 'translateY(-50%)', width: 3, height: 18, borderRadius: 3, background: isDark ? 'linear-gradient(to bottom, #30d158, #00ff88)' : isSunset ? 'linear-gradient(to bottom, #f43f5e, #fb923c)' : isBeige ? 'linear-gradient(to bottom, #9c6b3c, #c8945a)' : isVisionPro ? 'linear-gradient(to bottom, #0071e3, #3b8fe8)' : isMono ? '#0a0a0a' : isEmerald ? 'linear-gradient(to bottom, #10b981, #34d399)' : 'linear-gradient(to bottom, #6366f1, #a78bfa)' }} />}
+                  {active && <span style={{ position: 'absolute', left: 0, top: '50%', transform: 'translateY(-50%)', width: 3, height: 18, borderRadius: 3, background: isSunset ? 'linear-gradient(to bottom, #f43f5e, #fb923c)' : isVisionPro ? 'linear-gradient(to bottom, #0071e3, #3b8fe8)' : 'linear-gradient(to bottom, #6366f1, #a78bfa)' }} />}
                   <span style={{ flexShrink: 0, display: 'flex', color: active ? 'var(--accent)' : 'currentColor', opacity: active ? 1 : 0.68 }}><Icon s={17} /></span>
                   <span style={{ opacity: open ? 1 : 0, transform: open ? 'translateX(0)' : 'translateX(-4px)', transition: 'opacity 0.18s 0.04s, transform 0.18s 0.04s', overflow: 'hidden' }}>{item.label}</span>
                 </Link>
@@ -496,7 +448,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
       {/* ── MOBILE: Top bar ── */}
       {isMobile && (
-        <header style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50, height: 56, background: mobileBarBg, backdropFilter: 'blur(48px) saturate(2.2)', WebkitBackdropFilter: 'blur(48px) saturate(2.2)', borderBottom: `1px solid ${mobileBarBorder}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 16px', boxShadow: isDark ? '0 2px 20px rgba(0,0,0,0.4)' : '0 2px 20px rgba(80,100,200,0.08)', transition: 'background 0.6s, border-color 0.6s' }}>
+        <header style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50, height: 56, background: mobileBarBg, backdropFilter: 'blur(48px) saturate(2.2)', WebkitBackdropFilter: 'blur(48px) saturate(2.2)', borderBottom: `1px solid ${mobileBarBorder}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 16px', boxShadow: '0 2px 20px rgba(80,100,200,0.08)', transition: 'background 0.6s, border-color 0.6s' }}>
           <Link href="/dashboard" style={{ display: 'flex', alignItems: 'center', gap: 9, textDecoration: 'none' }}>
             <div style={{ width: 30, height: 30, borderRadius: 9, background: 'linear-gradient(135deg, #6366f1, #a78bfa)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 10px rgba(99,102,241,0.38)' }}>
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 2h4v4H2zM8 2h4v4H8zM2 8h4v4H2z" fill="white" fillOpacity=".95"/><path d="M8 8h4v4H8z" fill="white" fillOpacity=".35"/></svg>
@@ -513,7 +465,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
               </Link>
             )}
             {/* Theme picker button */}
-            <button onClick={() => { setShowTheme(s => !s); setShowUser(false) }} style={{ width: 32, height: 32, borderRadius: 10, border: `1px solid ${isDark ? 'rgba(255,255,255,0.10)' : 'rgba(200,210,240,0.5)'}`, background: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.72)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0, transition: 'all 0.3s' }}>
+            <button onClick={() => { setShowTheme(s => !s); setShowUser(false) }} style={{ width: 32, height: 32, borderRadius: 10, border: `1px solid ${'rgba(200,210,240,0.5)'}`, background: 'rgba(255,255,255,0.72)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0, transition: 'all 0.3s' }}>
               <div style={{ width: 16, height: 16, borderRadius: 5, background: currentTheme.swatch, boxShadow: '0 1px 5px rgba(0,0,0,0.2)' }} />
             </button>
             {/* User avatar */}
@@ -531,9 +483,9 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           <div style={{ position: 'fixed', top: 64, right: 12, zIndex: 99, background: dropdownBg, backdropFilter: 'blur(48px)', border: `1px solid ${dropdownBorder}`, borderRadius: 16, padding: '14px 16px', boxShadow: '0 12px 40px rgba(80,100,200,0.2)', animation: 'scaleIn 0.18s ease', minWidth: 190 }}>
             <p style={{ fontSize: 11, fontWeight: 640, color: 'var(--accent-mid)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>Theme</p>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <button onClick={prevTheme} style={{ width: 30, height: 30, borderRadius: 8, border: `1px solid ${isDark ? 'rgba(255,255,255,0.10)' : 'rgba(200,210,240,0.4)'}`, background: 'none', cursor: 'pointer', fontSize: 18, color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, lineHeight: 1 }}>‹</button>
+              <button onClick={prevTheme} style={{ width: 30, height: 30, borderRadius: 8, border: `1px solid ${'rgba(200,210,240,0.4)'}`, background: 'none', cursor: 'pointer', fontSize: 18, color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, lineHeight: 1 }}>‹</button>
               <span style={{ flex: 1, textAlign: 'center', fontSize: 13.5, fontWeight: 600, color: 'var(--text-primary)' }}>{currentTheme.label}</span>
-              <button onClick={nextTheme} style={{ width: 30, height: 30, borderRadius: 8, border: `1px solid ${isDark ? 'rgba(255,255,255,0.10)' : 'rgba(200,210,240,0.4)'}`, background: 'none', cursor: 'pointer', fontSize: 18, color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, lineHeight: 1 }}>›</button>
+              <button onClick={nextTheme} style={{ width: 30, height: 30, borderRadius: 8, border: `1px solid ${'rgba(200,210,240,0.4)'}`, background: 'none', cursor: 'pointer', fontSize: 18, color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, lineHeight: 1 }}>›</button>
             </div>
           </div>
         </>
@@ -556,13 +508,13 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       {/* ── MOBILE: Bottom tab bar ── */}
       {isMobile && (
         <>
-          <nav style={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 50, background: mobileBarBg, backdropFilter: 'blur(48px) saturate(2.2)', WebkitBackdropFilter: 'blur(48px) saturate(2.2)', borderTop: `1px solid ${mobileBarBorder}`, paddingBottom: 'env(safe-area-inset-bottom)', display: 'flex', alignItems: 'stretch', boxShadow: isDark ? '0 -4px 24px rgba(0,0,0,0.4)' : '0 -4px 24px rgba(80,100,200,0.08)', transition: 'background 0.6s' }}>
+          <nav style={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 50, background: mobileBarBg, backdropFilter: 'blur(48px) saturate(2.2)', WebkitBackdropFilter: 'blur(48px) saturate(2.2)', borderTop: `1px solid ${mobileBarBorder}`, paddingBottom: 'env(safe-area-inset-bottom)', display: 'flex', alignItems: 'stretch', boxShadow: '0 -4px 24px rgba(80,100,200,0.08)', transition: 'background 0.6s' }}>
             {MOBILE_PRIMARY.map(item => {
               const active = pathname === item.href
               const Icon   = item.icon
               return (
                 <Link key={item.href} href={item.href} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 3, padding: '10px 4px 8px', textDecoration: 'none', color: active ? 'var(--accent)' : 'var(--text-muted)', position: 'relative' }}>
-                  {active && <span style={{ position: 'absolute', top: 0, left: '25%', right: '25%', height: 2.5, borderRadius: 2, background: isSunset ? 'linear-gradient(90deg, #f43f5e, #fb923c)' : isBeige ? 'linear-gradient(90deg, #9c6b3c, #c8945a)' : isVisionPro ? '#0071e3' : isMono ? '#0a0a0a' : 'linear-gradient(90deg, #6366f1, #a78bfa)' }} />}
+                  {active && <span style={{ position: 'absolute', top: 0, left: '25%', right: '25%', height: 2.5, borderRadius: 2, background: isSunset ? 'linear-gradient(90deg, #f43f5e, #fb923c)' : isVisionPro ? '#0071e3' : 'linear-gradient(90deg, #6366f1, #a78bfa)' }} />}
                   <span style={{ opacity: active ? 1 : 0.6, transition: 'all 0.18s', transform: active ? 'scale(1.12)' : 'scale(1)' }}><Icon s={20} /></span>
                   <span style={{ fontSize: 9.5, fontWeight: active ? 640 : 450, letterSpacing: '0.01em', whiteSpace: 'nowrap' }}>{item.label}</span>
                 </Link>
@@ -576,15 +528,15 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
           {showMore && (
             <>
-              <div style={{ position: 'fixed', inset: 0, zIndex: 58, background: isDark ? 'rgba(0,0,0,0.4)' : 'rgba(0,0,0,0.18)', backdropFilter: 'blur(4px)' }} onClick={() => setShowMore(false)} />
-              <div style={{ position: 'fixed', bottom: 'calc(64px + env(safe-area-inset-bottom))', left: 12, right: 12, zIndex: 59, background: dropdownBg, backdropFilter: 'blur(48px)', border: `1px solid ${dropdownBorder}`, borderRadius: 20, padding: '16px', boxShadow: isDark ? '0 -8px 40px rgba(0,0,0,0.5)' : '0 -8px 40px rgba(80,100,200,0.14)', animation: 'slideUp 0.26s cubic-bezier(0.34,1.56,0.64,1)' }}>
+              <div style={{ position: 'fixed', inset: 0, zIndex: 58, background: 'rgba(0,0,0,0.18)', backdropFilter: 'blur(4px)' }} onClick={() => setShowMore(false)} />
+              <div style={{ position: 'fixed', bottom: 'calc(64px + env(safe-area-inset-bottom))', left: 12, right: 12, zIndex: 59, background: dropdownBg, backdropFilter: 'blur(48px)', border: `1px solid ${dropdownBorder}`, borderRadius: 20, padding: '16px', boxShadow: '0 -8px 40px rgba(80,100,200,0.14)', animation: 'slideUp 0.26s cubic-bezier(0.34,1.56,0.64,1)' }}>
                 <p style={{ fontSize: 11, fontWeight: 640, color: 'var(--accent-mid)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>More pages</p>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
                   {MOBILE_MORE.map(item => {
                     const active = pathname === item.href
                     const Icon   = item.icon
                     return (
-                      <Link key={item.href} href={item.href} onClick={() => setShowMore(false)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 7, padding: '14px 8px', borderRadius: 14, textDecoration: 'none', background: active ? activeNavBg : (isDark ? 'rgba(255,255,255,0.04)' : 'rgba(99,102,241,0.04)'), border: `1px solid ${active ? activeNavBorder : 'transparent'}`, color: active ? 'var(--accent-deep)' : 'var(--text-secondary)' }}>
+                      <Link key={item.href} href={item.href} onClick={() => setShowMore(false)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 7, padding: '14px 8px', borderRadius: 14, textDecoration: 'none', background: active ? activeNavBg : ('rgba(99,102,241,0.04)'), border: `1px solid ${active ? activeNavBorder : 'transparent'}`, color: active ? 'var(--accent-deep)' : 'var(--text-secondary)' }}>
                         <span style={{ color: active ? 'var(--accent)' : 'var(--text-muted)' }}><Icon s={22} /></span>
                         <span style={{ fontSize: 11.5, fontWeight: active ? 620 : 460, textAlign: 'center' }}>{item.label}</span>
                       </Link>
@@ -616,9 +568,9 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
               <p style={{ fontSize: 11, fontWeight: 640, color: 'var(--accent-mid)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>Navigation (press g then key)</p>
               {NAV_ITEMS.map(item => (
-                <div key={item.key} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 12px', background: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(99,102,241,0.04)', borderRadius: 10 }}>
+                <div key={item.key} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 12px', background: 'rgba(99,102,241,0.04)', borderRadius: 10 }}>
                   <span style={{ fontSize: 13.5, color: 'var(--text-secondary)' }}>{item.label}</span>
-                  <div style={{ display: 'flex', gap: 5 }}><Kbd isDark={isDark}>g</Kbd><Kbd isDark={isDark}>{item.key}</Kbd></div>
+                  <div style={{ display: 'flex', gap: 5 }}><Kbd>g</Kbd><Kbd>{item.key}</Kbd></div>
                 </div>
               ))}
             </div>
@@ -631,20 +583,20 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       {/* ── Command Palette ── */}
       {showCmdK && (
         <>
-          <div style={{ position: 'fixed', top: 0, right: 0, bottom: 0, left: 0, zIndex: 800, background: isDark ? 'rgba(0,0,0,0.6)' : 'rgba(4,8,32,0.38)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)' }} onClick={() => setShowCmdK(false)} />
-          <div style={{ position: 'fixed', top: '14%', left: '50%', transform: 'translateX(-50%)', zIndex: 801, width: 'min(560px, calc(100vw - 24px))', background: dropdownBg, border: `1px solid ${dropdownBorder}`, borderRadius: 22, overflow: 'hidden', boxShadow: isDark ? '0 28px 80px rgba(0,0,0,0.72), 0 0 0 0.5px rgba(255,255,255,0.06)' : '0 28px 80px rgba(60,80,180,0.26), 0 0 0 1px rgba(99,102,241,0.1)', animation: 'cmdIn 0.22s cubic-bezier(0.34,1.2,0.64,1)' }}>
+          <div style={{ position: 'fixed', top: 0, right: 0, bottom: 0, left: 0, zIndex: 800, background: 'rgba(4,8,32,0.38)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)' }} onClick={() => setShowCmdK(false)} />
+          <div style={{ position: 'fixed', top: '14%', left: '50%', transform: 'translateX(-50%)', zIndex: 801, width: 'min(560px, calc(100vw - 24px))', background: dropdownBg, border: `1px solid ${dropdownBorder}`, borderRadius: 22, overflow: 'hidden', boxShadow: '0 28px 80px rgba(60,80,180,0.26), 0 0 0 1px rgba(99,102,241,0.1)', animation: 'cmdIn 0.22s cubic-bezier(0.34,1.2,0.64,1)' }}>
             {/* Search row */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '14px 16px', borderBottom: `1px solid ${divider}` }}>
-              <span style={{ display: 'flex', color: isDark ? 'rgba(255,255,255,0.28)' : 'rgba(100,110,150,0.5)', flexShrink: 0 }}><IconSearch s={17} /></span>
+              <span style={{ display: 'flex', color: 'rgba(100,110,150,0.5)', flexShrink: 0 }}><IconSearch s={17} /></span>
               <input
                 ref={cmdInputRef}
                 value={cmdQuery}
                 onChange={e => setCmdQuery(e.target.value)}
                 onKeyDown={handleCmdKey}
                 placeholder="Search pages, themes, actions…"
-                style={{ flex: 1, border: 'none', background: 'none', outline: 'none', fontSize: 15, color: isDark ? 'rgba(255,255,255,0.9)' : 'var(--text-primary)', fontFamily: 'Geist, sans-serif', caretColor: 'var(--accent)' }}
+                style={{ flex: 1, border: 'none', background: 'none', outline: 'none', fontSize: 15, color: 'var(--text-primary)', fontFamily: 'Geist, sans-serif', caretColor: 'var(--accent)' }}
               />
-              <span style={{ fontSize: 10, padding: '2px 6px', borderRadius: 5, border: `1px solid ${divider}`, color: 'var(--text-muted)', fontFamily: 'monospace', background: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)', whiteSpace: 'nowrap', flexShrink: 0 }}>ESC</span>
+              <span style={{ fontSize: 10, padding: '2px 6px', borderRadius: 5, border: `1px solid ${divider}`, color: 'var(--text-muted)', fontFamily: 'monospace', background: 'rgba(0,0,0,0.04)', whiteSpace: 'nowrap', flexShrink: 0 }}>ESC</span>
             </div>
             {/* Results */}
             <div style={{ maxHeight: 380, overflowY: 'auto', padding: '6px' }}>
@@ -663,15 +615,15 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                           <div
                             onMouseEnter={() => setCmdIdx(i)}
                             onClick={() => { if (item.href) { router.push(item.href); setShowCmdK(false) } else if (item.action) item.action() }}
-                            style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 10px', borderRadius: 11, cursor: 'pointer', background: isActive ? (isDark ? 'rgba(255,255,255,0.08)' : 'rgba(99,102,241,0.08)') : 'transparent', transition: 'background 0.08s' }}
+                            style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 10px', borderRadius: 11, cursor: 'pointer', background: isActive ? ('rgba(99,102,241,0.08)') : 'transparent', transition: 'background 0.08s' }}
                           >
-                            <div style={{ width: 32, height: 32, borderRadius: 9, background: isActive ? (isDark ? 'rgba(99,102,241,0.2)' : 'rgba(99,102,241,0.12)') : (isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)'), display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'background 0.08s' }}>
+                            <div style={{ width: 32, height: 32, borderRadius: 9, background: isActive ? ('rgba(99,102,241,0.12)') : ('rgba(0,0,0,0.04)'), display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'background 0.08s' }}>
                               {item.swatch
                                 ? <div style={{ width: 14, height: 14, borderRadius: 4, background: item.swatch, boxShadow: '0 1px 4px rgba(0,0,0,0.18)' }} />
                                 : <span style={{ color: isActive ? 'var(--accent)' : 'var(--text-muted)', transition: 'color 0.08s', display: 'flex' }}><Icon s={15} /></span>
                               }
                             </div>
-                            <span style={{ fontSize: 13.5, fontWeight: isActive ? 540 : 430, color: isActive ? (isDark ? '#fff' : 'var(--text-primary)') : 'var(--text-secondary)', flex: 1, transition: 'color 0.08s' }}>{item.label}</span>
+                            <span style={{ fontSize: 13.5, fontWeight: isActive ? 540 : 430, color: isActive ? ('var(--text-primary)') : 'var(--text-secondary)', flex: 1, transition: 'color 0.08s' }}>{item.label}</span>
                             {item.href && <span style={{ fontSize: 12, color: 'var(--accent-mid)', opacity: isActive ? 1 : 0, transition: 'opacity 0.08s' }}>→</span>}
                           </div>
                         </div>
@@ -684,7 +636,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
             <div style={{ display: 'flex', gap: 14, padding: '8px 14px', borderTop: `1px solid ${divider}` }}>
               {[['↑↓', 'navigate'], ['↵', 'open'], ['esc', 'close']].map(([k, v]) => (
                 <span key={k} style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 10.5, color: 'var(--text-muted)' }}>
-                  <kbd style={{ fontFamily: 'monospace', fontSize: 10, padding: '1px 5px', borderRadius: 4, border: `1px solid ${divider}`, background: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)' }}>{k}</kbd>{v}
+                  <kbd style={{ fontFamily: 'monospace', fontSize: 10, padding: '1px 5px', borderRadius: 4, border: `1px solid ${divider}`, background: 'rgba(0,0,0,0.04)' }}>{k}</kbd>{v}
                 </span>
               ))}
               <span style={{ marginLeft: 'auto', fontSize: 10.5, color: 'var(--text-muted)', opacity: 0.6 }}>⌘K to toggle</span>
@@ -716,9 +668,9 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   )
 }
 
-function Kbd({ children, isDark }: { children: React.ReactNode; isDark: boolean }) {
+function Kbd({ children }: { children: React.ReactNode }) {
   return (
-    <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', minWidth: 24, padding: '2px 7px', background: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)', border: `1px solid ${isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.1)'}`, borderRadius: 6, fontSize: 12, fontWeight: 600, fontFamily: 'monospace', color: 'var(--text-primary)' }}>
+    <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', minWidth: 24, padding: '2px 7px', background: 'rgba(0,0,0,0.06)', border: '1px solid rgba(0,0,0,0.1)', borderRadius: 6, fontSize: 12, fontWeight: 600, fontFamily: 'monospace', color: 'var(--text-primary)' }}>
       {children}
     </span>
   )
