@@ -235,7 +235,7 @@ export default function DashboardPage() {
         {STAT_CARDS.map((card, i) => (
           <Link key={card.label} href={card.href} style={{ textDecoration: 'none' }}>
             <div className="glass-card fade-up" style={{ padding: isMobile ? '16px 14px' : '20px 22px', animationDelay: `${i * 50}ms`, cursor: 'pointer', overflow: 'hidden', position: 'relative' }}>
-              <div style={{ width: 34, height: 34, borderRadius: 10, background: 'rgba(99,102,241,0.08)', color: 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>{card.icon}</div>
+              <div style={{ width: 34, height: 34, borderRadius: 10, background: 'rgba(128,128,128,0.08)', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>{card.icon}</div>
               <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 6 }}>{card.label}</div>
               {loading ? <div className="skeleton" style={{ height: 28, width: '60%', marginBottom: 14 }} /> : (
                 <div style={{ fontSize: isMobile ? 22 : 28, fontWeight: 720, color: 'var(--text-primary)', letterSpacing: '-0.03em', lineHeight: 1, marginBottom: 14, fontVariantNumeric: 'tabular-nums' }}>
@@ -245,7 +245,7 @@ export default function DashboardPage() {
               )}
               {card.pct !== null && (
                 <div>
-                  <div style={{ height: 4, background: 'rgba(99,102,241,0.08)', borderRadius: 6, overflow: 'hidden' }}>
+                  <div style={{ height: 4, background: 'rgba(128,128,128,0.10)', borderRadius: 6, overflow: 'hidden' }}>
                     <div style={{ height: '100%', width: loading ? '0%' : `${card.pct}%`, background: 'var(--accent)', borderRadius: 6, transition: 'width 0.7s cubic-bezier(0.22,1,0.36,1)' }} />
                   </div>
                 </div>
@@ -323,7 +323,7 @@ export default function DashboardPage() {
 
           {/* All done celebration */}
           {todayDone === 6 && (
-            <div style={{ marginTop: 14, padding: '12px 14px', borderRadius: 12, background: 'linear-gradient(135deg, rgba(34,197,94,0.10), rgba(99,102,241,0.07))', border: '1px solid rgba(34,197,94,0.22)', textAlign: 'center' }}>
+            <div style={{ marginTop: 14, padding: '12px 14px', borderRadius: 12, background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.22)', textAlign: 'center' }}>
               <p style={{ fontSize: 13, fontWeight: 620, color: '#22c55e' }}>🎉 Perfect day! All 6 tasks done.</p>
             </div>
           )}
@@ -341,8 +341,8 @@ export default function DashboardPage() {
 
           {/* Next due countdown */}
           {!loading && nextHW && (
-            <div style={{ marginBottom: 14, padding: '14px 16px', borderRadius: 14, background: 'linear-gradient(135deg, rgba(99,102,241,0.07), rgba(167,139,250,0.05))', border: '1px solid rgba(99,102,241,0.14)' }}>
-              <div style={{ fontSize: 10.5, fontWeight: 600, color: 'var(--accent-mid)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 5 }}>Next due</div>
+            <div style={{ marginBottom: 14, padding: '14px 16px', borderRadius: 14, background: 'rgba(128,128,128,0.05)', border: '1px solid var(--border)' }}>
+              <div className="page-eyebrow" style={{ marginBottom: 5 }}>Next due</div>
               <div style={{ fontSize: 13.5, fontWeight: 640, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: nextHW.subject ? 4 : 10 }}>{nextHW.title}</div>
               {nextHW.subject && <span className="subject-tag" style={{ display: 'inline-block', marginBottom: 10 }}>{nextHW.subject}</span>}
               <div style={{ display: 'flex', gap: 8 }}>
@@ -407,7 +407,7 @@ export default function DashboardPage() {
         {QUICK_NAV.map((item, i) => (
           <Link key={item.href} href={item.href} style={{ textDecoration: 'none' }}>
             <div className="glass-card fade-up" style={{ padding: '16px 12px', cursor: 'pointer', animationDelay: `${380 + i * 40}ms`, textAlign: 'center' }}>
-              <div style={{ display: 'flex', justifyContent: 'center', color: 'var(--accent-mid)', marginBottom: 8 }}>{item.icon}</div>
+              <div style={{ display: 'flex', justifyContent: 'center', color: 'var(--text-secondary)', marginBottom: 8 }}>{item.icon}</div>
               <div style={{ fontSize: 12, fontWeight: 620, color: 'var(--text-primary)' }}>{item.label}</div>
             </div>
           </Link>

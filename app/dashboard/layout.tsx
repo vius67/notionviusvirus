@@ -210,9 +210,9 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   const divider    = 'var(--border)'
   const chipBg     = night ? 'rgba(255,255,255,0.07)' : 'rgba(255,255,255,0.5)'
   const chipBorder = 'var(--border)'
-  const hoverBg    = night ? 'rgba(255,255,255,0.08)' : 'rgba(99,102,241,0.06)'
-  const activeNavBg     = night ? 'rgba(99,102,241,0.16)' : 'rgba(99,102,241,0.09)'
-  const activeNavBorder = night ? 'rgba(99,102,241,0.30)' : 'rgba(99,102,241,0.16)'
+  const hoverBg    = night ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.045)'
+  const activeNavBg     = night ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.06)'
+  const activeNavBorder = 'transparent'
   const mobileBarBg     = 'var(--glass-bg)'
   const mobileBarBorder = 'var(--glass-border)'
   const dropdownBg      = night ? 'rgba(20,22,30,0.96)' : 'rgba(255,255,255,0.94)'
@@ -291,12 +291,11 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
               return (
                 <Link key={item.href} href={item.href}
                   onClick={() => !active && sound.click()}
-                  style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 10px', borderRadius: 14, textDecoration: 'none', fontSize: 13.5, fontWeight: active ? 620 : 450, color: active ? 'var(--accent-deep)' : 'var(--text-secondary)', background: active ? activeNavBg : 'transparent', border: `1px solid ${active ? activeNavBorder : 'transparent'}`, transition: 'all 0.18s ease', whiteSpace: 'nowrap', flexShrink: 0, position: 'relative', overflow: 'hidden' }}
+                  style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 10px', borderRadius: 14, textDecoration: 'none', fontSize: 13.5, fontWeight: active ? 600 : 450, color: active ? 'var(--text-primary)' : 'var(--text-secondary)', background: active ? activeNavBg : 'transparent', border: `1px solid ${active ? activeNavBorder : 'transparent'}`, transition: 'all 0.18s ease', whiteSpace: 'nowrap', flexShrink: 0, position: 'relative', overflow: 'hidden' }}
                   onMouseEnter={e => { if (!active) (e.currentTarget as HTMLElement).style.background = hoverBg }}
                   onMouseLeave={e => { if (!active) (e.currentTarget as HTMLElement).style.background = 'transparent' }}
                 >
-                  {active && <span style={{ position: 'absolute', left: 0, top: '50%', transform: 'translateY(-50%)', width: 3, height: 18, borderRadius: 3, background: 'linear-gradient(to bottom, #6366f1, #a78bfa)' }} />}
-                  <span style={{ flexShrink: 0, display: 'flex', color: active ? 'var(--accent)' : 'currentColor', opacity: active ? 1 : 0.68 }}><Icon s={17} /></span>
+                  <span style={{ flexShrink: 0, display: 'flex', color: active ? 'var(--text-primary)' : 'currentColor', opacity: active ? 1 : 0.6 }}><Icon s={17} /></span>
                   <span style={{ opacity: open ? 1 : 0, transform: open ? 'translateX(0)' : 'translateX(-4px)', transition: 'opacity 0.18s 0.04s, transform 0.18s 0.04s', overflow: 'hidden' }}>{item.label}</span>
                 </Link>
               )
@@ -427,14 +426,14 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
               const active = pathname === item.href
               const Icon   = item.icon
               return (
-                <Link key={item.href} href={item.href} onClick={() => !active && sound.click()} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 3, padding: '10px 4px 8px', textDecoration: 'none', color: active ? 'var(--accent)' : 'var(--text-muted)', position: 'relative' }}>
-                  {active && <span style={{ position: 'absolute', top: 0, left: '25%', right: '25%', height: 2.5, borderRadius: 2, background: 'linear-gradient(90deg, #6366f1, #a78bfa)' }} />}
+                <Link key={item.href} href={item.href} onClick={() => !active && sound.click()} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 3, padding: '10px 4px 8px', textDecoration: 'none', color: active ? 'var(--text-primary)' : 'var(--text-muted)', position: 'relative' }}>
+                  {active && <span style={{ position: 'absolute', top: 0, left: '25%', right: '25%', height: 2.5, borderRadius: 2, background: 'var(--text-primary)' }} />}
                   <span style={{ opacity: active ? 1 : 0.6, transition: 'all 0.18s', transform: active ? 'scale(1.12)' : 'scale(1)' }}><Icon s={20} /></span>
                   <span style={{ fontSize: 9.5, fontWeight: active ? 640 : 450, letterSpacing: '0.01em', whiteSpace: 'nowrap' }}>{item.label}</span>
                 </Link>
               )
             })}
-            <button onClick={() => { sound.click(); setShowMore(s => !s) }} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 3, padding: '10px 4px 8px', border: 'none', background: 'none', cursor: 'pointer', color: MOBILE_MORE.some(m => m.href === pathname) ? 'var(--accent)' : 'var(--text-muted)' }}>
+            <button onClick={() => { sound.click(); setShowMore(s => !s) }} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 3, padding: '10px 4px 8px', border: 'none', background: 'none', cursor: 'pointer', color: MOBILE_MORE.some(m => m.href === pathname) ? 'var(--text-primary)' : 'var(--text-muted)' }}>
               <span style={{ opacity: 0.6 }}><IconMore s={20} /></span>
               <span style={{ fontSize: 9.5, fontWeight: 450, letterSpacing: '0.01em' }}>More</span>
             </button>
@@ -450,8 +449,8 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                     const active = pathname === item.href
                     const Icon   = item.icon
                     return (
-                      <Link key={item.href} href={item.href} onClick={() => { sound.click(); setShowMore(false) }} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 7, padding: '14px 8px', borderRadius: 14, textDecoration: 'none', background: active ? activeNavBg : 'rgba(99,102,241,0.04)', border: `1px solid ${active ? activeNavBorder : 'transparent'}`, color: active ? 'var(--accent-deep)' : 'var(--text-secondary)' }}>
-                        <span style={{ color: active ? 'var(--accent)' : 'var(--text-muted)' }}><Icon s={22} /></span>
+                      <Link key={item.href} href={item.href} onClick={() => { sound.click(); setShowMore(false) }} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 7, padding: '14px 8px', borderRadius: 14, textDecoration: 'none', background: active ? activeNavBg : 'rgba(128,128,128,0.045)', border: `1px solid ${active ? activeNavBorder : 'transparent'}`, color: active ? 'var(--text-primary)' : 'var(--text-secondary)' }}>
+                        <span style={{ color: active ? 'var(--text-primary)' : 'var(--text-muted)' }}><Icon s={22} /></span>
                         <span style={{ fontSize: 11.5, fontWeight: active ? 620 : 460, textAlign: 'center' }}>{item.label}</span>
                       </Link>
                     )

@@ -180,7 +180,7 @@ export default function SpotifyPage() {
                     {art ? (
                       <img src={art} alt="album" width={130} height={130} style={{ borderRadius: 14, boxShadow: '0 16px 48px rgba(0,0,0,0.25)', display: 'block' }} />
                     ) : (
-                      <div style={{ width: 130, height: 130, borderRadius: 14, background: 'rgba(99,102,241,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <div style={{ width: 130, height: 130, borderRadius: 14, background: 'rgba(128,128,128,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         <SpotifyLogo size={40} color="#1db954" />
                       </div>
                     )}
@@ -297,7 +297,7 @@ export default function SpotifyPage() {
                     {img ? (
                       <img src={img} alt="" width={36} height={36} style={{ borderRadius: 6, flexShrink: 0 }} />
                     ) : (
-                      <div style={{ width: 36, height: 36, borderRadius: 6, background: 'rgba(99,102,241,0.08)', flexShrink: 0 }} />
+                      <div style={{ width: 36, height: 36, borderRadius: 6, background: 'rgba(128,128,128,0.08)', flexShrink: 0 }} />
                     )}
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ fontSize: 12.5, fontWeight: 560, color: isNow ? '#1db954' : 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{t.name}</div>

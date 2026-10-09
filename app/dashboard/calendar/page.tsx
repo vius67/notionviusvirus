@@ -239,7 +239,7 @@ export default function CalendarPage() {
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <div style={{ display: 'flex', background: 'var(--chip-bg, var(--glass-bg))', border: '1px solid var(--border)', borderRadius: 12, padding: 3 }}>
             {(['week','month'] as const).map(v => (
-              <button key={v} onClick={() => { if (v !== view) sound.select(); setView(v) }} style={{ padding: '6px 16px', borderRadius: 9, border: 'none', cursor: 'pointer', fontFamily: 'Geist, sans-serif', fontSize: 13, fontWeight: 500, transition: 'all 0.2s', background: view===v ? 'white' : 'transparent', color: view===v ? 'var(--accent-deep)' : 'var(--text-muted)', boxShadow: view===v ? '0 2px 8px rgba(80,100,200,0.12)' : 'none' }}>
+              <button key={v} onClick={() => { if (v !== view) sound.select(); setView(v) }} style={{ padding: '6px 16px', borderRadius: 9, border: 'none', cursor: 'pointer', fontFamily: 'Geist, sans-serif', fontSize: 13, fontWeight: 500, transition: 'all 0.2s', background: view===v ? 'white' : 'transparent', color: view===v ? 'var(--text-primary)' : 'var(--text-muted)', boxShadow: view===v ? '0 2px 8px rgba(80,100,200,0.12)' : 'none' }}>
                 {v.charAt(0).toUpperCase()+v.slice(1)}
               </button>
             ))}

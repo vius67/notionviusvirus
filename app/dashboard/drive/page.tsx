@@ -142,7 +142,7 @@ export default function DrivePage() {
   )
 
   const ColHeader = ({ label, k, width }: { label: string; k: SortKey; width?: number }) => (
-    <div onClick={() => handleSort(k)} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', fontSize: 11.5, fontWeight: 600, color: sortKey === k ? 'var(--accent-deep)' : 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', userSelect: 'none', width, flexShrink: 0, transition: 'color 0.15s' }}>
+    <div onClick={() => handleSort(k)} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', fontSize: 11.5, fontWeight: 600, color: sortKey === k ? 'var(--text-primary)' : 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', userSelect: 'none', width, flexShrink: 0, transition: 'color 0.15s' }}>
       {label}<SortIcon k={k} />
     </div>
   )
@@ -219,13 +219,13 @@ export default function DrivePage() {
       {/* Main table */}
       <div
         className="glass-card fade-up"
-        style={{ padding: 0, overflow: 'hidden', border: dragOver ? '1.5px solid rgba(99,102,241,0.35)' : undefined, transition: 'border 0.15s' }}
+        style={{ padding: 0, overflow: 'hidden', border: dragOver ? '1.5px solid var(--border-strong)' : undefined, transition: 'border 0.15s' }}
         onDragOver={e => { e.preventDefault(); setDragOver(true) }}
         onDragLeave={() => setDragOver(false)}
         onDrop={e => { e.preventDefault(); setDragOver(false); upload(Array.from(e.dataTransfer.files)) }}
       >
         {/* Column headers */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 100px 140px 100px', gap: 0, padding: '10px 18px', borderBottom: '1px solid rgba(99,102,241,0.07)', background: 'rgba(248,250,255,0.6)' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 100px 140px 100px', gap: 0, padding: '10px 18px', borderBottom: '1px solid var(--border)', background: 'rgba(128,128,128,0.04)' }}>
           <ColHeader label="Name" k="name" />
           <ColHeader label="Size" k="size" width={100} />
           <ColHeader label="Modified" k="modified" width={140} />
@@ -255,7 +255,7 @@ export default function DrivePage() {
             return (
               <div
                 key={item.name}
-                style={{ display: 'grid', gridTemplateColumns: '1fr 100px 140px 100px', padding: '10px 18px', borderBottom: i < sorted.length-1 ? '1px solid rgba(99,102,241,0.05)' : 'none', background: hovered ? 'rgba(99,102,241,0.035)' : 'transparent', transition: 'background 0.12s', cursor: item.isFolder ? 'pointer' : 'default', animation: `fadeUp 0.28s ease ${i*20}ms both`, alignItems: 'center' }}
+                style={{ display: 'grid', gridTemplateColumns: '1fr 100px 140px 100px', padding: '10px 18px', borderBottom: i < sorted.length-1 ? '1px solid var(--border)' : 'none', background: hovered ? 'rgba(128,128,128,0.04)' : 'transparent', transition: 'background 0.12s', cursor: item.isFolder ? 'pointer' : 'default', animation: `fadeUp 0.28s ease ${i*20}ms both`, alignItems: 'center' }}
                 onMouseEnter={() => setHoveredRow(item.name)}
                 onMouseLeave={() => setHoveredRow(null)}
                 onDoubleClick={() => item.isFolder ? openFolder(item.name) : (setRenamingId(item.name), setRenameVal(pubName))}
@@ -291,9 +291,9 @@ export default function DrivePage() {
                 {/* Actions — visible on hover */}
                 <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end', flexShrink: 0, opacity: hovered ? 1 : 0, transition: 'opacity 0.15s' }}>
                   {item.isFolder ? (
-                    <button onClick={e => { e.stopPropagation(); openFolder(item.name) }} style={{ padding: '4px 10px', borderRadius: 7, border: '1px solid rgba(99,102,241,0.2)', background: 'rgba(99,102,241,0.07)', color: 'var(--accent-deep)', fontSize: 12, cursor: 'pointer', fontFamily: 'Geist, sans-serif', fontWeight: 500 }}>Open</button>
+                    <button onClick={e => { e.stopPropagation(); openFolder(item.name) }} style={{ padding: '4px 10px', borderRadius: 7, border: '1px solid var(--border)', background: 'rgba(128,128,128,0.06)', color: 'var(--text-primary)', fontSize: 12, cursor: 'pointer', fontFamily: 'Geist, sans-serif', fontWeight: 500 }}>Open</button>
                   ) : (
-                    <button onClick={e => { e.stopPropagation(); download(item) }} style={{ padding: '4px 10px', borderRadius: 7, border: '1px solid rgba(99,102,241,0.2)', background: 'rgba(99,102,241,0.07)', color: 'var(--accent-deep)', fontSize: 12, cursor: 'pointer', fontFamily: 'Geist, sans-serif', fontWeight: 500 }}>Download</button>
+                    <button onClick={e => { e.stopPropagation(); download(item) }} style={{ padding: '4px 10px', borderRadius: 7, border: '1px solid var(--border)', background: 'rgba(128,128,128,0.06)', color: 'var(--text-primary)', fontSize: 12, cursor: 'pointer', fontFamily: 'Geist, sans-serif', fontWeight: 500 }}>Download</button>
                   )}
                   <button onClick={e => { e.stopPropagation(); deleteItem(item) }} disabled={deleting === item.name} style={{ padding: '4px 8px', borderRadius: 7, border: '1px solid rgba(239,68,68,0.18)', background: 'rgba(239,68,68,0.06)', color: '#ef4444', fontSize: 12, cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
                     {deleting === item.name
@@ -309,7 +309,7 @@ export default function DrivePage() {
 
         {/* Drop overlay hint */}
         {dragOver && (
-          <div style={{ position: 'absolute', inset: 0, background: 'rgba(99,102,241,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none', borderRadius: 'inherit' }}>
+          <div style={{ position: 'absolute', inset: 0, background: 'rgba(128,128,128,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none', borderRadius: 'inherit' }}>
             <p style={{ fontSize: 15, fontWeight: 600, color: 'var(--accent)' }}>Drop to upload</p>
           </div>
         )}

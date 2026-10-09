@@ -251,21 +251,21 @@ export default function HomeworkPage() {
                 <div style={{ fontSize: 11.5, color: 'var(--text-muted)' }}>{hwPending} pending · {hwDone} done</div>
               </div>
             </div>
-            <button onClick={() => { setShowHwForm(s => !s); setShowPForm(false) }} style={{ width: 30, height: 30, borderRadius: 8, border: 'none', background: showHwForm ? '#6366f1' : 'rgba(99,102,241,0.1)', color: showHwForm ? 'white' : '#6366f1', cursor: 'pointer', fontSize: 18, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.18s', fontWeight: 300 }}>
+            <button onClick={() => { setShowHwForm(s => !s); setShowPForm(false) }} style={{ width: 30, height: 30, borderRadius: 8, border: 'none', background: showHwForm ? 'var(--btn-bg)' : 'rgba(128,128,128,0.1)', color: showHwForm ? 'var(--btn-fg)' : 'var(--text-secondary)', cursor: 'pointer', fontSize: 18, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.18s', fontWeight: 300 }}>
               {showHwForm ? '×' : '+'}
             </button>
           </div>
 
           <div style={{ padding: '12px 20px 0', display: 'flex', gap: 4 }}>
             {(['pending','all','done'] as const).map(f => (
-              <button key={f} onClick={() => setHwFilter(f)} style={{ padding: '4px 12px', borderRadius: 8, border: 'none', cursor: 'pointer', fontSize: 12, fontWeight: hwFilter === f ? 600 : 450, fontFamily: 'Geist, sans-serif', background: hwFilter === f ? 'rgba(99,102,241,0.1)' : 'transparent', color: hwFilter === f ? '#6366f1' : 'var(--text-muted)', transition: 'all 0.15s' }}>
+              <button key={f} onClick={() => setHwFilter(f)} style={{ padding: '4px 12px', borderRadius: 8, border: 'none', cursor: 'pointer', fontSize: 12, fontWeight: hwFilter === f ? 600 : 450, fontFamily: 'Geist, sans-serif', background: hwFilter === f ? 'rgba(128,128,128,0.1)' : 'transparent', color: hwFilter === f ? 'var(--text-primary)' : 'var(--text-muted)', transition: 'all 0.15s' }}>
                 {f.charAt(0).toUpperCase() + f.slice(1)}
               </button>
             ))}
           </div>
 
           {showHwForm && (
-            <div style={{ margin: '12px 20px 0', padding: '14px', background: 'rgba(99,102,241,0.04)', border: '1px solid rgba(99,102,241,0.12)', borderRadius: 14, display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <div style={{ margin: '12px 20px 0', padding: '14px', background: 'rgba(128,128,128,0.05)', border: '1px solid var(--border)', borderRadius: 14, display: 'flex', flexDirection: 'column', gap: 10 }}>
               <input className="glass-input" placeholder="Assignment title *" value={hwForm.title} onChange={e => setHwForm(f => ({ ...f, title: e.target.value }))} onKeyDown={e => e.key === 'Enter' && addHw()} style={{ padding: '9px 12px', fontSize: 13.5 }} />
               <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 8 }}>
                 <select className="glass-input" value={hwForm.subject} onChange={e => setHwForm(f => ({ ...f, subject: e.target.value }))} style={{ padding: '9px 12px', fontSize: 13 }}>
@@ -414,7 +414,7 @@ export default function HomeworkPage() {
                   </div>
                   <div style={{ display: 'flex', gap: 4, flexShrink: 0 }}>
                     {paper.attachment_path && (
-                      <button onClick={() => downloadPaper(paper.attachment_path!, paper.name || paper.subject)} title="Download" style={{ width: 28, height: 28, borderRadius: 7, border: 'none', background: 'rgba(99,102,241,0.08)', color: 'var(--accent)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <button onClick={() => downloadPaper(paper.attachment_path!, paper.name || paper.subject)} title="Download" style={{ width: 28, height: 28, borderRadius: 7, border: 'none', background: 'rgba(128,128,128,0.08)', color: 'var(--text-secondary)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M7 2v7M4 6l3 3 3-3"/><path d="M2 11h10"/></svg>
                       </button>
                     )}
@@ -433,7 +433,7 @@ export default function HomeworkPage() {
       {/* ── Subject breakdown ── */}
       {allSubjects.length > 0 && (
         <div className="glass-card fade-up" style={{ marginTop: 20, padding: '20px 24px', animationDelay: '140ms' }}>
-          <p style={{ fontSize: 12, fontWeight: 640, color: 'var(--accent-mid)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 16 }}>Subject Breakdown</p>
+          <p className="page-eyebrow" style={{ marginBottom: 16 }}>Subject Breakdown</p>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 12 }}>
             {allSubjects.map(subj => {
               const subjHw     = hw.filter(h => h.subject === subj)

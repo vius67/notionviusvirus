@@ -112,7 +112,7 @@ export default function PastPapersPage() {
             <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 16 }}>Avg score by subject</p>
             <ResponsiveContainer width="100%" height={150}>
               <BarChart data={barData} margin={{ top: 0, right: 0, bottom: 0, left: -24 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(99,102,241,0.07)" vertical={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(128,128,128,0.12)" vertical={false} />
                 <XAxis dataKey="subject" tick={{ fontSize: 11, fill: 'var(--text-muted)' }} axisLine={false} tickLine={false} />
                 <YAxis domain={[0, 100]} tick={{ fontSize: 11, fill: 'var(--text-muted)' }} axisLine={false} tickLine={false} />
                 <Tooltip content={<CustomTooltip />} />
@@ -124,7 +124,7 @@ export default function PastPapersPage() {
             <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 16 }}>Score trend</p>
             <ResponsiveContainer width="100%" height={150}>
               <LineChart data={lineData} margin={{ top: 4, right: 4, bottom: 0, left: -24 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(99,102,241,0.07)" vertical={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(128,128,128,0.12)" vertical={false} />
                 <XAxis dataKey="date" tick={{ fontSize: 10, fill: 'var(--text-muted)' }} axisLine={false} tickLine={false} />
                 <YAxis domain={[0, 100]} tick={{ fontSize: 11, fill: 'var(--text-muted)' }} axisLine={false} tickLine={false} />
                 <Tooltip content={<CustomTooltip />} />
@@ -137,7 +137,7 @@ export default function PastPapersPage() {
 
       <div className="fade-up" style={{ display: 'flex', gap: 7, marginBottom: 16, flexWrap: 'wrap' }}>
         {subjects.map(s => (
-          <button key={s} onClick={() => setSel(s)} style={{ padding: '5px 12px', borderRadius: 8, border: '1px solid', cursor: 'pointer', fontSize: 12.5, fontWeight: 500, fontFamily: 'Geist, sans-serif', transition: 'all 0.18s', background: sel === s ? 'rgba(99,102,241,0.12)' : 'rgba(128,128,128,0.06)', borderColor: sel === s ? 'rgba(99,102,241,0.3)' : 'var(--border)', color: sel === s ? 'var(--accent-deep)' : 'var(--text-secondary)' }}>
+          <button key={s} onClick={() => setSel(s)} style={{ padding: '5px 12px', borderRadius: 8, border: '1px solid', cursor: 'pointer', fontSize: 12.5, fontWeight: sel === s ? 600 : 500, fontFamily: 'Geist, sans-serif', transition: 'all 0.18s', background: sel === s ? 'var(--glass-bg-hover)' : 'rgba(128,128,128,0.06)', borderColor: sel === s ? 'var(--border-strong)' : 'var(--border)', color: sel === s ? 'var(--text-primary)' : 'var(--text-secondary)' }}>
             {s === 'all' ? 'All subjects' : s}
           </button>
         ))}
@@ -149,9 +149,9 @@ export default function PastPapersPage() {
           : <div className="glass-card fade-up" style={{ overflow: 'hidden', padding: 0 }}>
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13.5 }}>
                 <thead>
-                  <tr style={{ background: 'rgba(99,102,241,0.04)' }}>
+                  <tr style={{ background: 'rgba(128,128,128,0.05)' }}>
                     {['Name','Subject','Year','Score','%','Date','Notes',''].map(h => (
-                      <th key={h} style={{ padding: '11px 16px', textAlign: 'left', fontSize: 11, fontWeight: 650, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', borderBottom: '1px solid rgba(99,102,241,0.07)' }}>{h}</th>
+                      <th key={h} style={{ padding: '11px 16px', textAlign: 'left', fontSize: 11, fontWeight: 650, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', borderBottom: '1px solid var(--border)' }}>{h}</th>
                     ))}
                   </tr>
                 </thead>
@@ -159,7 +159,7 @@ export default function PastPapersPage() {
                   {filtered.map((p, i) => {
                     const pct = getPct(p)
                     return (
-                      <tr key={p.id} className="fade-up" style={{ borderBottom: i < filtered.length - 1 ? '1px solid rgba(99,102,241,0.05)' : 'none', animationDelay: `${i*35}ms` }}>
+                      <tr key={p.id} className="fade-up" style={{ borderBottom: i < filtered.length - 1 ? '1px solid var(--border)' : 'none', animationDelay: `${i*35}ms` }}>
                         <td style={{ padding: '11px 16px', fontSize: 13, fontWeight: 520, color: 'var(--text-primary)', maxWidth: 140, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.name || '—'}</td>
                         <td style={{ padding: '11px 16px' }}><span className="subject-tag">{p.subject}</span></td>
                         <td style={{ padding: '11px 16px', color: 'var(--text-muted)', fontVariantNumeric: 'tabular-nums' }}>{p.year || '—'}</td>
@@ -167,7 +167,7 @@ export default function PastPapersPage() {
                         <td style={{ padding: '11px 16px', minWidth: 100 }}>
                           {pct != null ? (
                             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                              <div style={{ width: 48, height: 4, background: 'rgba(99,102,241,0.1)', borderRadius: 2 }}>
+                              <div style={{ width: 48, height: 4, background: 'rgba(128,128,128,0.12)', borderRadius: 2 }}>
                                 <div style={{ height: '100%', width: `${pct}%`, background: pctColor(pct), borderRadius: 2, transition: 'width 0.4s ease' }} />
                               </div>
                               <span style={{ fontSize: 12.5, fontWeight: 650, color: pctColor(pct), fontVariantNumeric: 'tabular-nums' }}>{pct}%</span>
@@ -179,7 +179,7 @@ export default function PastPapersPage() {
                         <td style={{ padding: '11px 16px' }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                             {p.attachment_path && (
-                              <button onClick={() => download(p.attachment_path!, p.name || p.subject)} title="Download attachment" style={{ border: 'none', background: 'rgba(99,102,241,0.08)', cursor: 'pointer', color: 'var(--accent)', borderRadius: 6, width: 26, height: 26, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                              <button onClick={() => download(p.attachment_path!, p.name || p.subject)} title="Download attachment" style={{ border: 'none', background: 'rgba(128,128,128,0.08)', cursor: 'pointer', color: 'var(--text-secondary)', borderRadius: 6, width: 26, height: 26, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                                 <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M7 2v7M4 6l3 3 3-3"/><path d="M2 11h10"/></svg>
                               </button>
                             )}
@@ -231,7 +231,7 @@ export default function PastPapersPage() {
           </div>
           <div>
             <label style={{ fontSize: 12, fontWeight: 550, color: 'var(--text-secondary)', display: 'block', marginBottom: 6 }}>Attach paper <span style={{ fontWeight: 400, color: 'var(--text-muted)' }}>(PDF, image, etc.)</span></label>
-            <label style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '9px 13px', borderRadius: 10, border: '1px dashed rgba(99,102,241,0.3)', background: 'rgba(99,102,241,0.03)', cursor: 'pointer' }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '9px 13px', borderRadius: 10, border: '1px dashed var(--border-strong)', background: 'rgba(128,128,128,0.04)', cursor: 'pointer' }}>
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--accent)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M8 2v8M5 7l3 3 3-3"/><path d="M2 12h12"/></svg>
               <span style={{ fontSize: 12.5, color: attachFile ? 'var(--text-primary)' : 'var(--text-muted)' }}>{attachFile ? attachFile.name : 'Choose file…'}</span>
               <input type="file" style={{ display: 'none' }} onChange={e => setAttachFile(e.target.files?.[0] ?? null)} />
