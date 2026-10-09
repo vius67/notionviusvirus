@@ -45,9 +45,6 @@ function IconSpotify({ s }: { s: number }) {
 function IconLogout({ s }: { s: number }) {
   return <svg width={s} height={s} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M13 10H3m0 0l3-3m-3 3l3 3"/><path d="M9 6V4a1 1 0 011-1h6a1 1 0 011 1v12a1 1 0 01-1 1h-6a1 1 0 01-1-1v-2"/></svg>
 }
-function IconClock({ s }: { s: number }) {
-  return <svg width={s} height={s} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><circle cx="10" cy="10" r="7"/><path d="M10 6.5v3.5l2 2"/></svg>
-}
 function IconKurt({ s }: { s: number }) {
   return <svg width={s} height={s} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M10 2l1.8 3.6L16 6.2l-3 2.9.7 4.1L10 11.1l-3.7 2.1.7-4.1L4 6.2l4.2-.6L10 2z"/><path d="M6 17h8"/><path d="M10 14v3"/></svg>
 }
@@ -79,15 +76,19 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   const sound = useSound()
   const router   = useRouter()
   const pathname = usePathname()
-  const [time, setTime]               = useState('')
   const [mounted, setMounted]         = useState(false)
   const [showShortcuts, setShowShortcuts] = useState(false)
   const [showUser, setShowUser]       = useState(false)
   const [showMore, setShowMore]       = useState(false)
   const [gPressed, setGPressed]       = useState(false)
-  const [open, setOpen]               = useState(false)
+  const [hovering, setHovering]       = useState(false)
   const [isMobile, setIsMobile]       = useState(false)
   const [night, setNight]             = useState(false)
+  const [pinned, setPinned]           = useState(false)
+  const [pillPos, setPillPos]         = useState<{ x: number; y: number } | null>(null)
+  const dragOffset = useRef({ x: 0, y: 0 })
+  const [dragging, setDragging]       = useState(false)
+  const open = hovering || pinned
   const gTimer      = useRef<NodeJS.Timeout | null>(null)
   const touchStartX = useRef(0)
   const touchStartY = useRef(0)
@@ -117,6 +118,47 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     const saved = localStorage.getItem('app-night')
     if (saved === '1') setNight(true)
   }, [])
+
+  // Load pill nav position + pin state
+  useEffect(() => {
+    const savedPin = localStorage.getItem('pill-pinned')
+    if (savedPin === '1') setPinned(true)
+    const x = parseFloat(localStorage.getItem('pill-x') || '')
+    const y = parseFloat(localStorage.getItem('pill-y') || '')
+    setPillPos({
+      x: Number.isFinite(x) ? x : 14,
+      y: Number.isFinite(y) ? y : window.innerHeight / 2 - 160,
+    })
+  }, [])
+
+  const togglePin = useCallback(() => {
+    setPinned(p => { const next = !p; localStorage.setItem('pill-pinned', next ? '1' : '0'); sound.select(); return next })
+  }, [sound])
+
+  // Drag the pill nav by its grip handle
+  const handleGripDown = useCallback((e: React.MouseEvent) => {
+    e.preventDefault()
+    setDragging(true)
+    dragOffset.current = { x: e.clientX - (pillPos?.x ?? 14), y: e.clientY - (pillPos?.y ?? 14) }
+  }, [pillPos])
+
+  useEffect(() => {
+    if (!dragging) return
+    const move = (e: MouseEvent) => {
+      const pillW = open ? 216 : 56
+      const pillH = open ? 420 : 320
+      const x = Math.max(8, Math.min(window.innerWidth - pillW - 8, e.clientX - dragOffset.current.x))
+      const y = Math.max(8, Math.min(window.innerHeight - pillH - 8, e.clientY - dragOffset.current.y))
+      setPillPos({ x, y })
+    }
+    const up = () => {
+      setDragging(false)
+      setPillPos(p => { if (p) { localStorage.setItem('pill-x', String(p.x)); localStorage.setItem('pill-y', String(p.y)) } return p })
+    }
+    window.addEventListener('mousemove', move)
+    window.addEventListener('mouseup', up)
+    return () => { window.removeEventListener('mousemove', move); window.removeEventListener('mouseup', up) }
+  }, [dragging, open])
 
   // Apply to <html data-theme="night">
   useEffect(() => {
@@ -151,10 +193,6 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   }, [mounted])
 
   useEffect(() => { if (!loading && !user) router.replace('/') }, [user, loading, router])
-  useEffect(() => {
-    const tick = () => setTime(new Date().toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' }))
-    tick(); const id = setInterval(tick, 1000); return () => clearInterval(id)
-  }, [])
 
   // Keyboard shortcuts
   const handleKey = useCallback((e: KeyboardEvent) => {
@@ -217,7 +255,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   const mobileBarBorder = 'var(--glass-border)'
   const dropdownBg      = night ? 'rgba(20,22,30,0.96)' : 'rgba(255,255,255,0.94)'
   const dropdownBorder  = 'var(--glass-border)'
-  const sidebarW        = open ? 228 : 60
+  const sidebarW        = open ? 216 : 56
 
   // ── Command palette ───────────────────────────────────────────────────────
   type CmdItem = { label: string; category: string; icon: ({ s }: { s: number }) => JSX.Element; href?: string; action?: () => void }
@@ -246,126 +284,116 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   return (
     <div style={{ minHeight: '100vh', display: 'flex', position: 'relative', overflowX: 'hidden' }}>
 
-      {/* ── DESKTOP: Vertical pill sidebar ── */}
-      {!isMobile && (
+      {/* ── DESKTOP: Floating pill nav — capsule when collapsed, rounded panel when open ── */}
+      {!isMobile && pillPos && (
         <aside
-          onMouseEnter={() => setOpen(true)}
-          onMouseLeave={() => { setOpen(false); setShowUser(false) }}
+          onMouseEnter={() => setHovering(true)}
+          onMouseLeave={() => { setHovering(false); setShowUser(false) }}
           style={{
-            position: 'fixed', left: 14, top: 14, bottom: 14, zIndex: 50,
+            position: 'fixed', left: pillPos.x, top: pillPos.y, zIndex: 50,
             width: sidebarW,
             background: navBg,
             backdropFilter: 'blur(40px) saturate(1.6)',
             WebkitBackdropFilter: 'blur(40px) saturate(1.6)',
             border: `1px solid ${navBorder}`,
-            borderRadius: 24,
+            borderRadius: open ? 26 : 999,
             boxShadow: navShadow,
-            transition: 'width 0.38s cubic-bezier(0.34,1.56,0.64,1), background 0.5s, border-color 0.5s, box-shadow 0.5s',
-            overflow: 'hidden', display: 'flex', flexDirection: 'column',
-            padding: '14px 10px', gap: 0,
+            transition: dragging ? 'none' : 'width 0.34s cubic-bezier(0.4,0,0.2,1), border-radius 0.34s, background 0.5s, border-color 0.5s, box-shadow 0.5s',
+            overflow: 'hidden', display: 'flex', flexDirection: 'column', alignItems: 'center',
+            padding: '10px 0 14px', gap: 2,
+            userSelect: 'none',
           }}
         >
-          {/* Logo */}
-          <Link href="/dashboard" style={{ display: 'flex', alignItems: 'center', gap: 11, textDecoration: 'none', padding: '4px 2px 16px', borderBottom: `1px solid ${divider}`, marginBottom: 10, flexShrink: 0, minWidth: 0 }}>
-            <div style={{ width: 36, height: 36, borderRadius: 11, flexShrink: 0, background: 'linear-gradient(135deg, #6366f1, #a78bfa)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 3px 14px rgba(99,102,241,0.42)' }}>
-              <svg width="16" height="16" viewBox="0 0 14 14" fill="none"><path d="M2 2h4v4H2zM8 2h4v4H8zM2 8h4v4H2z" fill="white" fillOpacity=".95"/><path d="M8 8h4v4H8z" fill="white" fillOpacity=".35"/></svg>
-            </div>
-            <span style={{ fontSize: 14, fontWeight: 760, letterSpacing: '-0.035em', color: 'var(--text-primary)', whiteSpace: 'nowrap', opacity: open ? 1 : 0, transform: open ? 'translateX(0)' : 'translateX(-6px)', transition: 'opacity 0.2s, transform 0.2s' }}>productivity.</span>
-          </Link>
-
-          {/* ⌘K search trigger */}
-          <button onClick={() => setShowCmdK(true)} style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%', padding: '7px 10px', borderRadius: 12, border: `1px solid ${chipBorder}`, background: chipBg, cursor: 'pointer', marginBottom: 8, flexShrink: 0, overflow: 'hidden', transition: 'all 0.18s', fontFamily: 'Geist, sans-serif' }}
-            onMouseEnter={e => (e.currentTarget.style.background = hoverBg)}
-            onMouseLeave={e => (e.currentTarget.style.background = chipBg)}
+          {/* Grip — drag to move */}
+          <div onMouseDown={handleGripDown} title="Drag to move"
+            style={{ width: '100%', display: 'flex', justifyContent: open ? 'flex-start' : 'center', paddingLeft: open ? 12 : 0, padding: open ? '4px 0 6px 12px' : '4px 0 6px', cursor: dragging ? 'grabbing' : 'grab', opacity: dragging ? 1 : 0.3, transition: 'opacity 0.15s', flexShrink: 0 }}
+            onMouseEnter={e => (e.currentTarget.style.opacity = '0.65')}
+            onMouseLeave={e => (e.currentTarget.style.opacity = dragging ? '1' : '0.3')}
           >
-            <span style={{ flexShrink: 0, display: 'flex', color: 'var(--text-muted)' }}><IconSearch s={13} /></span>
-            <span style={{ fontSize: 12, color: 'var(--text-muted)', opacity: open ? 1 : 0, transition: 'opacity 0.15s', whiteSpace: 'nowrap', flex: 1, textAlign: 'left' }}>Search…</span>
-            <span style={{ fontSize: 10, fontFamily: 'Geist Mono, monospace', padding: '1px 5px', borderRadius: 4, background: 'rgba(0,0,0,0.05)', border: `1px solid ${divider}`, color: 'var(--text-muted)', opacity: open ? 1 : 0, transition: 'opacity 0.15s', flexShrink: 0 }}>⌘K</span>
-          </button>
+            <svg width="16" height="9" viewBox="0 0 16 9" fill="currentColor" style={{ color: 'var(--text-muted)' }}>
+              <circle cx="2" cy="1.5" r="1.5"/><circle cx="8" cy="1.5" r="1.5"/><circle cx="14" cy="1.5" r="1.5"/>
+              <circle cx="2" cy="7.5" r="1.5"/><circle cx="8" cy="7.5" r="1.5"/><circle cx="14" cy="7.5" r="1.5"/>
+            </svg>
+          </div>
 
-          {/* Nav items */}
-          <nav style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 3, minWidth: 0 }}>
+          {/* Logo — only visible when open */}
+          <Link href="/dashboard" style={{
+            width: 'calc(100% - 20px)', overflow: 'hidden', whiteSpace: 'nowrap', textDecoration: 'none',
+            fontWeight: 760, letterSpacing: '-0.04em', color: 'var(--text-primary)',
+            fontSize: open ? 19 : 0, maxHeight: open ? 40 : 0, opacity: open ? 1 : 0,
+            padding: open ? '2px 12px 11px' : '0 12px', borderBottom: open ? `1px solid ${divider}` : '1px solid transparent',
+            marginBottom: open ? 4 : 0, flexShrink: 0,
+            transition: 'max-height 0.3s, opacity 0.22s, font-size 0.22s, padding 0.3s, margin 0.3s',
+          }}>productivity.</Link>
+
+          {/* Nav items — 38px circles collapsed, full rows open */}
+          <nav style={{ display: 'flex', flexDirection: 'column', gap: 2, minWidth: 0, width: '100%', alignItems: open ? 'stretch' : 'center' }}>
             {NAV_ITEMS.map(item => {
               const active = pathname === item.href
               const Icon   = item.icon
               return (
                 <Link key={item.href} href={item.href}
                   onClick={() => !active && sound.click()}
-                  style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 10px', borderRadius: 14, textDecoration: 'none', fontSize: 13.5, fontWeight: active ? 600 : 450, color: active ? 'var(--text-primary)' : 'var(--text-secondary)', background: active ? activeNavBg : 'transparent', border: `1px solid ${active ? activeNavBorder : 'transparent'}`, transition: 'all 0.18s ease', whiteSpace: 'nowrap', flexShrink: 0, position: 'relative', overflow: 'hidden' }}
+                  style={{
+                    display: 'flex', alignItems: 'center', justifyContent: open ? 'flex-start' : 'center',
+                    width: open ? 'calc(100% - 20px)' : 38, height: 38, flexShrink: 0,
+                    margin: open ? '0 10px' : 0, gap: open ? 10 : 0, padding: open ? '0 12px' : 0,
+                    borderRadius: open ? 12 : '50%', textDecoration: 'none',
+                    fontSize: 13.5, fontWeight: active ? 600 : 450,
+                    color: active ? 'var(--text-primary)' : 'var(--text-secondary)',
+                    background: active ? activeNavBg : 'transparent',
+                    transition: 'all 0.18s ease', whiteSpace: 'nowrap', position: 'relative', overflow: 'hidden',
+                  }}
                   onMouseEnter={e => { if (!active) (e.currentTarget as HTMLElement).style.background = hoverBg }}
                   onMouseLeave={e => { if (!active) (e.currentTarget as HTMLElement).style.background = 'transparent' }}
                 >
-                  <span style={{ flexShrink: 0, display: 'flex', color: active ? 'var(--text-primary)' : 'currentColor', opacity: active ? 1 : 0.6 }}><Icon s={17} /></span>
-                  <span style={{ opacity: open ? 1 : 0, transform: open ? 'translateX(0)' : 'translateX(-4px)', transition: 'opacity 0.18s 0.04s, transform 0.18s 0.04s', overflow: 'hidden' }}>{item.label}</span>
+                  <span style={{ flexShrink: 0, display: 'flex', color: active ? 'var(--text-primary)' : 'currentColor', opacity: active ? 0.9 : 0.5 }}><Icon s={17} /></span>
+                  <span style={{ maxWidth: open ? 130 : 0, opacity: open ? 1 : 0, overflow: 'hidden', transition: 'max-width 0.26s, opacity 0.2s' }}>{item.label}</span>
                 </Link>
               )
             })}
           </nav>
 
-          {/* Sidebar bottom section */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 6, paddingTop: 10, borderTop: `1px solid ${divider}`, flexShrink: 0, minWidth: 0 }}>
+          {/* Separator */}
+          <div style={{ width: open ? 'calc(100% - 20px)' : 22, height: 1, background: divider, margin: '4px 0', flexShrink: 0, transition: 'width 0.26s' }} />
 
-            {/* Spotify now playing */}
-            {nowPlaying && (
-              <Link href="/dashboard/spotify" style={{ display: 'flex', alignItems: 'center', gap: 9, padding: '8px 10px', borderRadius: 13, background: 'rgba(29,185,84,0.08)', border: '1px solid rgba(29,185,84,0.18)', textDecoration: 'none', overflow: 'hidden', flexShrink: 0 }}>
-                <div style={{ display: 'flex', gap: 2, alignItems: 'flex-end', flexShrink: 0 }}>
-                  {[1,2,3].map(i => <div key={i} style={{ width: 2.5, background: '#1db954', borderRadius: 2, animation: nowPlaying.is_playing ? `equBar${i} 0.7s ease infinite alternate` : 'none', height: nowPlaying.is_playing ? undefined : 3, animationDelay: `${i*0.12}s` }} />)}
-                </div>
-                <span style={{ fontSize: 11.5, fontWeight: 530, color: '#1db954', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', opacity: open ? 1 : 0, transition: 'opacity 0.15s' }}>{nowPlaying.name}</span>
-              </Link>
-            )}
+          {/* Utility circles: pin / sound / night / search — only pin peeks through when collapsed */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', gap: open ? 8 : 6, width: open ? 'calc(100% - 20px)' : 38, overflow: 'hidden', transition: 'width 0.3s, gap 0.3s' }}>
+            <button onClick={togglePin} title="Pin sidebar open" style={{ width: 30, height: 30, borderRadius: '50%', border: `1px solid ${chipBorder}`, background: pinned ? 'var(--btn-bg)' : chipBg, color: pinned ? 'var(--btn-fg)' : 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'all 0.15s' }}>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
+            </button>
+            <button onClick={sound.toggleMuted} title="Sound" style={{ width: 30, height: 30, borderRadius: '50%', border: `1px solid ${chipBorder}`, background: chipBg, color: sound.muted ? 'var(--text-muted)' : 'var(--text-primary)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <IconSound s={13} muted={sound.muted} />
+            </button>
+            <button onClick={toggleNight} title="Day / Night" style={{ width: 30, height: 30, borderRadius: '50%', border: `1px solid ${chipBorder}`, background: chipBg, color: 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              {night ? <IconMoon s={13} /> : <IconSun s={13} />}
+            </button>
+            <button onClick={() => setShowCmdK(true)} title="Search (⌘K)" style={{ width: 30, height: 30, borderRadius: '50%', border: `1px solid ${chipBorder}`, background: chipBg, color: 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <IconSearch s={13} />
+            </button>
+          </div>
 
-            {/* Clock */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 9, padding: '8px 10px', borderRadius: 13, background: chipBg, border: `1px solid ${chipBorder}`, overflow: 'hidden', flexShrink: 0 }}>
-              <span style={{ flexShrink: 0, display: 'flex', color: 'var(--text-muted)' }}><IconClock s={14} /></span>
-              <span style={{ fontFamily: 'Geist Mono, monospace', fontSize: 12.5, color: 'var(--text-muted)', letterSpacing: '0.04em', whiteSpace: 'nowrap', opacity: open ? 1 : 0, transition: 'opacity 0.15s' }}>{time}</span>
-            </div>
-
-            {/* Day / Night toggle */}
-            <button onClick={toggleNight} style={{ display: 'flex', alignItems: 'center', gap: 9, width: '100%', padding: '8px 10px', borderRadius: 13, background: chipBg, border: `1px solid ${chipBorder}`, overflow: 'hidden', flexShrink: 0, cursor: 'pointer', fontFamily: 'Geist, sans-serif', textAlign: 'left' }}
+          {/* User — only shown when open */}
+          <div style={{ position: 'relative', width: '100%', maxHeight: open ? 60 : 0, opacity: open ? 1 : 0, overflow: 'hidden', transition: 'max-height 0.3s, opacity 0.2s', marginTop: open ? 6 : 0 }}>
+            <button onClick={() => setShowUser(s => !s)} style={{ width: 'calc(100% - 20px)', margin: '0 10px', display: 'flex', alignItems: 'center', gap: 10, padding: '6px 6px', border: 'none', background: 'none', cursor: 'pointer', borderRadius: 14, overflow: 'hidden', transition: 'background 0.18s' }}
               onMouseEnter={e => (e.currentTarget.style.background = hoverBg)}
-              onMouseLeave={e => (e.currentTarget.style.background = chipBg)}
+              onMouseLeave={e => (e.currentTarget.style.background = 'none')}
             >
-              <span style={{ flexShrink: 0, display: 'flex', color: 'var(--text-muted)' }}>{night ? <IconMoon s={14} /> : <IconSun s={14} />}</span>
-              <span style={{ fontSize: 11.5, fontWeight: 540, color: 'var(--text-muted)', opacity: open ? 1 : 0, transition: 'opacity 0.15s', whiteSpace: 'nowrap', flex: 1 }}>{night ? 'Night' : 'Day'}</span>
-              <div style={{ width: 30, height: 17, borderRadius: 9, background: night ? 'var(--accent)' : 'rgba(128,128,128,0.25)', position: 'relative', flexShrink: 0, opacity: open ? 1 : 0, transition: 'opacity 0.15s, background 0.2s' }}>
-                <div style={{ position: 'absolute', top: 2, left: night ? 14.5 : 2, width: 13, height: 13, borderRadius: '50%', background: 'white', boxShadow: '0 1px 3px rgba(0,0,0,0.25)', transition: 'left 0.18s' }} />
+              <div style={{ width: 30, height: 30, flexShrink: 0, borderRadius: '50%', background: 'linear-gradient(135deg, #6366f1, #a78bfa)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12.5, fontWeight: 700, color: 'white' }}>{user.email?.[0].toUpperCase()}</div>
+              <div style={{ textAlign: 'left', flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: 12, fontWeight: 580, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 140 }}>{user.email}</div>
               </div>
             </button>
-
-            {/* Sound toggle */}
-            <button onClick={sound.toggleMuted} style={{ display: 'flex', alignItems: 'center', gap: 9, padding: '8px 10px', borderRadius: 13, background: chipBg, border: `1px solid ${chipBorder}`, overflow: 'hidden', flexShrink: 0, cursor: 'pointer', fontFamily: 'Geist, sans-serif', textAlign: 'left' }}
-              onMouseEnter={e => (e.currentTarget.style.background = hoverBg)}
-              onMouseLeave={e => (e.currentTarget.style.background = chipBg)}
-            >
-              <span style={{ flexShrink: 0, display: 'flex', color: 'var(--text-muted)' }}><IconSound s={14} muted={sound.muted} /></span>
-              <span style={{ fontSize: 11.5, fontWeight: 540, color: 'var(--text-muted)', opacity: open ? 1 : 0, transition: 'opacity 0.15s', whiteSpace: 'nowrap', flex: 1 }}>Sound</span>
-              <span style={{ fontSize: 10.5, fontWeight: 580, color: sound.muted ? 'var(--text-muted)' : 'var(--accent)', opacity: open ? 1 : 0, transition: 'opacity 0.15s', whiteSpace: 'nowrap' }}>{sound.muted ? 'Off' : 'On'}</span>
-            </button>
-
-            {/* User */}
-            <div style={{ position: 'relative', flexShrink: 0 }}>
-              <button onClick={() => setShowUser(s => !s)} style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 10, padding: '6px 6px', border: 'none', background: 'none', cursor: 'pointer', borderRadius: 14, overflow: 'hidden', transition: 'background 0.18s' }}
-                onMouseEnter={e => (e.currentTarget.style.background = hoverBg)}
-                onMouseLeave={e => (e.currentTarget.style.background = 'none')}
-              >
-                <div style={{ width: 36, height: 36, flexShrink: 0, borderRadius: '50%', background: 'linear-gradient(135deg, #6366f1, #a78bfa)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13.5, fontWeight: 700, color: 'white', boxShadow: '0 2px 10px rgba(99,102,241,0.38)' }}>{user.email?.[0].toUpperCase()}</div>
-                <div style={{ textAlign: 'left', flex: 1, minWidth: 0, opacity: open ? 1 : 0, transform: open ? 'translateX(0)' : 'translateX(-4px)', transition: 'opacity 0.18s, transform 0.18s' }}>
-                  <div style={{ fontSize: 10.5, color: 'var(--text-muted)', whiteSpace: 'nowrap', marginBottom: 1 }}>signed in as</div>
-                  <div style={{ fontSize: 12, fontWeight: 580, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 152 }}>{user.email}</div>
+            {showUser && (
+              <div style={{ position: 'absolute', top: 'calc(100% + 6px)', left: 10, background: dropdownBg, backdropFilter: 'blur(32px)', border: `1px solid ${dropdownBorder}`, borderRadius: 14, padding: '8px', boxShadow: 'var(--glass-shadow-hover)', minWidth: 196, animation: 'scaleIn 0.18s ease', zIndex: 100 }}>
+                <div style={{ padding: '8px 10px 10px', borderBottom: `1px solid ${divider}`, marginBottom: 6 }}>
+                  <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 2 }}>Signed in as</div>
+                  <div style={{ fontSize: 12.5, fontWeight: 560, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user.email}</div>
                 </div>
-              </button>
-              {showUser && open && (
-                <div style={{ position: 'absolute', bottom: 50, left: 0, background: dropdownBg, backdropFilter: 'blur(32px)', border: `1px solid ${dropdownBorder}`, borderRadius: 14, padding: '8px', boxShadow: 'var(--glass-shadow-hover)', minWidth: 206, animation: 'scaleIn 0.18s ease', zIndex: 100 }}>
-                  <div style={{ padding: '8px 10px 10px', borderBottom: `1px solid ${divider}`, marginBottom: 6 }}>
-                    <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 2 }}>Signed in as</div>
-                    <div style={{ fontSize: 12.5, fontWeight: 560, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user.email}</div>
-                  </div>
-                  <button onClick={() => { setShowShortcuts(true); setShowUser(false) }} style={{ width: '100%', border: 'none', background: 'none', cursor: 'pointer', color: 'var(--text-secondary)', fontSize: 13, padding: '7px 10px', borderRadius: 8, textAlign: 'left', fontFamily: 'Geist, sans-serif' }}>⌨ Keyboard shortcuts</button>
-                  <button onClick={() => { sound.click(); signOut() }} style={{ width: '100%', border: 'none', background: 'none', cursor: 'pointer', color: '#ef4444', fontSize: 13, padding: '7px 10px', borderRadius: 8, textAlign: 'left', fontFamily: 'Geist, sans-serif', display: 'flex', alignItems: 'center', gap: 7 }}><IconLogout s={13} /> Sign out</button>
-                </div>
-              )}
-            </div>
+                <button onClick={() => { setShowShortcuts(true); setShowUser(false) }} style={{ width: '100%', border: 'none', background: 'none', cursor: 'pointer', color: 'var(--text-secondary)', fontSize: 13, padding: '7px 10px', borderRadius: 8, textAlign: 'left', fontFamily: 'Geist, sans-serif' }}>⌨ Keyboard shortcuts</button>
+                <button onClick={() => { sound.click(); signOut() }} style={{ width: '100%', border: 'none', background: 'none', cursor: 'pointer', color: '#ef4444', fontSize: 13, padding: '7px 10px', borderRadius: 8, textAlign: 'left', fontFamily: 'Geist, sans-serif', display: 'flex', alignItems: 'center', gap: 7 }}><IconLogout s={13} /> Sign out</button>
+              </div>
+            )}
           </div>
         </aside>
       )}
