@@ -287,9 +287,9 @@ export default function DashboardPage() {
 
           {/* Streak chip */}
           {streak > 0 && (
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '3px 10px', borderRadius: 20, background: 'rgba(251,146,60,0.1)', border: '1px solid rgba(251,146,60,0.22)', marginBottom: 12 }}>
-              <span style={{ fontSize: 13 }}>🔥</span>
-              <span style={{ fontSize: 12, fontWeight: 620, color: '#f59e0b' }}>{streak} day streak</span>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '3px 10px', borderRadius: 20, background: 'rgba(251,146,60,0.14)', border: '1px solid rgba(251,146,60,0.25)', marginBottom: 12 }}>
+              <span style={{ fontSize: 12 }}>🔥</span>
+              <span style={{ fontSize: 11.5, fontFamily: 'Geist Mono, monospace', fontWeight: 500, color: '#ea580c' }}>{streak} day streak</span>
             </div>
           )}
 
@@ -300,7 +300,7 @@ export default function DashboardPage() {
               const saving = savingCI === item.key
               return (
                 <button key={item.key} onClick={() => toggleItem(item.key)} disabled={saving}
-                  style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '13px 15px', borderRadius: 14, border: `1px solid ${done ? item.color + '30' : 'rgba(200,210,240,0.35)'}`, background: done ? item.color + '0e' : 'rgba(255,255,255,0.5)', cursor: 'pointer', textAlign: 'left', fontFamily: 'Geist, sans-serif', transition: 'all 0.22s ease', opacity: saving ? 0.65 : 1 }}>
+                  style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '13px 15px', borderRadius: 14, border: `1px solid ${done ? item.color + '30' : 'var(--border)'}`, background: done ? item.color + '0e' : 'rgba(128,128,128,0.06)', cursor: 'pointer', textAlign: 'left', fontFamily: 'Geist, sans-serif', transition: 'all 0.22s ease', opacity: saving ? 0.65 : 1 }}>
                   {/* Circle checkbox */}
                   <div style={{ width: 26, height: 26, borderRadius: '50%', border: `2px solid ${done ? item.color : 'rgba(148,163,184,0.4)'}`, background: done ? item.color : 'transparent', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.22s cubic-bezier(0.34,1.56,0.64,1)', boxShadow: done ? `0 2px 10px ${item.color}44` : 'none' }}>
                     {done && (
@@ -347,8 +347,8 @@ export default function DashboardPage() {
               {nextHW.subject && <span className="subject-tag" style={{ display: 'inline-block', marginBottom: 10 }}>{nextHW.subject}</span>}
               <div style={{ display: 'flex', gap: 8 }}>
                 {[{ v: countdown.d, l: 'd' }, { v: countdown.h, l: 'h' }, { v: countdown.m, l: 'm' }, { v: countdown.s, l: 's' }].map(({ v, l }) => (
-                  <div key={l} style={{ textAlign: 'center', flex: 1, background: 'rgba(255,255,255,0.72)', borderRadius: 10, padding: '7px 6px', border: '1px solid rgba(255,255,255,0.9)', boxShadow: '0 1px 4px rgba(80,100,200,0.07)' }}>
-                    <div style={{ fontFamily: 'Geist Mono, monospace', fontSize: isMobile ? 18 : 20, fontWeight: 700, color: 'var(--accent-deep)', lineHeight: 1, fontVariantNumeric: 'tabular-nums' }}>{String(v).padStart(2, '0')}</div>
+                  <div key={l} style={{ textAlign: 'center', flex: 1, background: 'var(--glass-bg)', borderRadius: 10, padding: '7px 6px', border: '1px solid var(--glass-border)' }}>
+                    <div style={{ fontFamily: 'Geist Mono, monospace', fontSize: isMobile ? 18 : 20, fontWeight: 700, color: 'var(--accent)', lineHeight: 1, fontVariantNumeric: 'tabular-nums' }}>{String(v).padStart(2, '0')}</div>
                     <div style={{ fontSize: 9, color: 'var(--text-muted)', marginTop: 3, fontWeight: 600, letterSpacing: '0.06em' }}>{l}</div>
                   </div>
                 ))}
@@ -363,7 +363,7 @@ export default function DashboardPage() {
                 {upcomingHW.map((hw: any) => {
                   const due = getDueLabel(hw.due_date)
                   return (
-                    <div key={hw.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 13px', background: 'rgba(255,255,255,0.6)', borderRadius: 12, border: '1px solid rgba(255,255,255,0.8)' }}>
+                    <div key={hw.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 13px', background: 'rgba(128,128,128,0.06)', borderRadius: 12, border: '1px solid var(--border)' }}>
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ fontSize: 13, fontWeight: 520, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{hw.title}</div>
                         {hw.subject && <span className="subject-tag" style={{ marginTop: 3, display: 'inline-block' }}>{hw.subject}</span>}
@@ -389,7 +389,7 @@ export default function DashboardPage() {
               {recentTodos.map((t: any) => {
                 const pc = t.priority === 'high' ? '#ef4444' : t.priority === 'medium' ? '#f59e0b' : '#22c55e'
                 return (
-                  <div key={t.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 13px', background: 'rgba(255,255,255,0.6)', borderRadius: 12, border: '1px solid rgba(255,255,255,0.8)' }}>
+                  <div key={t.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 13px', background: 'rgba(128,128,128,0.06)', borderRadius: 12, border: '1px solid var(--border)' }}>
                     <div style={{ width: 7, height: 7, borderRadius: '50%', flexShrink: 0, background: pc, boxShadow: `0 0 6px ${pc}66` }} />
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ fontSize: 13, fontWeight: 520, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{t.title}</div>

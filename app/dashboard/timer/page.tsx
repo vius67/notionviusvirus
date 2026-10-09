@@ -228,7 +228,7 @@ export default function TimerPage() {
                 { label: 'All time', value: `${Math.floor(totalStudied/60)}h`, color: '#34d399' },
                 { label: 'Total', value: String(sessions.length), color: '#f59e0b' },
               ].map(s => (
-                <div key={s.label} style={{ padding: '12px 14px', background: 'rgba(255,255,255,0.55)', borderRadius: 12, border: '1px solid rgba(255,255,255,0.8)' }}>
+                <div key={s.label} style={{ padding: '12px 14px', background: 'rgba(128,128,128,0.06)', borderRadius: 12, border: '1px solid var(--border)' }}>
                   <div style={{ fontSize: 20, fontWeight: 700, color: s.color, fontVariantNumeric: 'tabular-nums' }}>{s.value}</div>
                   <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>{s.label}</div>
                 </div>
@@ -244,7 +244,7 @@ export default function TimerPage() {
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 6, maxHeight: 360, overflowY: 'auto' }}>
                 {sessions.map((s, i) => (
-                  <div key={s.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '9px 11px', background: 'rgba(255,255,255,0.5)', borderRadius: 11, border: '1px solid rgba(255,255,255,0.7)', animation: `fadeUp 0.25s ease ${i * 25}ms both` }}>
+                  <div key={s.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '9px 11px', background: 'rgba(128,128,128,0.05)', borderRadius: 11, border: '1px solid rgba(128,128,128,0.07)', animation: `fadeUp 0.25s ease ${i * 25}ms both` }}>
                     <div style={{ width: 34, height: 34, borderRadius: 9, background: 'linear-gradient(135deg, rgba(99,102,241,0.15), rgba(167,139,250,0.1))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, flexShrink: 0 }}>⏱</div>
                     <div style={{ flex: 1 }}>
                       <div style={{ fontSize: 13, fontWeight: 560, color: 'var(--text-primary)' }}>{s.duration_minutes} min</div>

@@ -178,7 +178,7 @@ export default function TodosPage() {
           <p style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 3 }}>{todos.filter(t => !t.completed).length} remaining</p>
         </div>
         <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginTop: 6 }}>
-          <div style={{ display: 'flex', background: 'rgba(255,255,255,0.68)', border: '1px solid rgba(200,210,240,0.5)', borderRadius: 12, padding: 3 }}>
+          <div style={{ display: 'flex', background: 'var(--glass-bg)', border: '1px solid var(--border)', borderRadius: 12, padding: 3 }}>
             {(['list','kanban'] as const).map(v => (
               <button key={v} onClick={() => setView(v)} style={{ padding: '6px 16px', borderRadius: 9, border: 'none', cursor: 'pointer', fontFamily: 'Geist, sans-serif', fontSize: 13, fontWeight: 500, transition: 'all 0.2s', background: view === v ? 'white' : 'transparent', color: view === v ? 'var(--accent-deep)' : 'var(--text-muted)', boxShadow: view === v ? '0 2px 8px rgba(80,100,200,0.12)' : 'none' }}>
                 {v === 'list' ? 'List' : 'Board'}
@@ -193,7 +193,7 @@ export default function TodosPage() {
         <div>
           <div className="fade-up" style={{ display: 'flex', gap: 7, marginBottom: 16 }}>
             {([{k:'all',l:'All'},{k:'today',l:'Today'},{k:'high',l:'High priority'},{k:'done',l:'Done'}] as const).map(f => (
-              <button key={f.k} onClick={() => setFilter(f.k as any)} style={{ padding: '6px 16px', borderRadius: 9, border: '1px solid', cursor: 'pointer', fontSize: 13, fontWeight: 500, fontFamily: 'Geist, sans-serif', transition: 'all 0.2s', background: filter === f.k ? 'rgba(99,102,241,0.12)' : 'rgba(255,255,255,0.68)', borderColor: filter === f.k ? 'rgba(99,102,241,0.3)' : 'rgba(200,210,240,0.5)', color: filter === f.k ? 'var(--accent-deep)' : 'var(--text-secondary)' }}>
+              <button key={f.k} onClick={() => setFilter(f.k as any)} style={{ padding: '6px 16px', borderRadius: 9, border: '1px solid', cursor: 'pointer', fontSize: 13, fontWeight: 500, fontFamily: 'Geist, sans-serif', transition: 'all 0.2s', background: filter === f.k ? 'rgba(99,102,241,0.12)' : 'var(--glass-bg)', borderColor: filter === f.k ? 'rgba(99,102,241,0.3)' : 'var(--border)', color: filter === f.k ? 'var(--accent-deep)' : 'var(--text-secondary)' }}>
                 {f.l}
               </button>
             ))}

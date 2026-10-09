@@ -89,7 +89,7 @@ export default function PastPapersPage() {
     .map(p => ({ date: new Date(p.completed_at!).toLocaleDateString('en-AU', { month: 'short', day: 'numeric' }), pct: getPct(p) }))
 
   const CustomTooltip = ({ active, payload, label }: any) => active && payload?.length ? (
-    <div style={{ background: 'rgba(255,255,255,0.95)', border: '1px solid rgba(255,255,255,0.9)', borderRadius: 10, padding: '8px 12px', fontSize: 12, boxShadow: '0 4px 16px rgba(80,100,200,0.1)' }}>
+    <div style={{ background: 'rgba(255,255,255,0.95)', border: '1px solid var(--glass-border)', borderRadius: 10, padding: '8px 12px', fontSize: 12, boxShadow: '0 4px 16px rgba(80,100,200,0.1)' }}>
       <p style={{ color: 'var(--text-muted)', marginBottom: 2 }}>{label}</p>
       <p style={{ fontWeight: 600, color: 'var(--accent)' }}>{payload[0].value}%</p>
     </div>
@@ -137,7 +137,7 @@ export default function PastPapersPage() {
 
       <div className="fade-up" style={{ display: 'flex', gap: 7, marginBottom: 16, flexWrap: 'wrap' }}>
         {subjects.map(s => (
-          <button key={s} onClick={() => setSel(s)} style={{ padding: '5px 12px', borderRadius: 8, border: '1px solid', cursor: 'pointer', fontSize: 12.5, fontWeight: 500, fontFamily: 'Geist, sans-serif', transition: 'all 0.18s', background: sel === s ? 'rgba(99,102,241,0.12)' : 'rgba(255,255,255,0.6)', borderColor: sel === s ? 'rgba(99,102,241,0.3)' : 'rgba(200,210,240,0.5)', color: sel === s ? 'var(--accent-deep)' : 'var(--text-secondary)' }}>
+          <button key={s} onClick={() => setSel(s)} style={{ padding: '5px 12px', borderRadius: 8, border: '1px solid', cursor: 'pointer', fontSize: 12.5, fontWeight: 500, fontFamily: 'Geist, sans-serif', transition: 'all 0.18s', background: sel === s ? 'rgba(99,102,241,0.12)' : 'rgba(128,128,128,0.06)', borderColor: sel === s ? 'rgba(99,102,241,0.3)' : 'var(--border)', color: sel === s ? 'var(--accent-deep)' : 'var(--text-secondary)' }}>
             {s === 'all' ? 'All subjects' : s}
           </button>
         ))}

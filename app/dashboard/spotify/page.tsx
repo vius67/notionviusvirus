@@ -293,7 +293,7 @@ export default function SpotifyPage() {
                 const img = t.album.images[t.album.images.length - 1]?.url
                 const isNow = t.id === track?.id
                 return (
-                  <div key={`${t.id}-${i}`} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '7px 9px', borderRadius: 10, background: isNow ? 'rgba(29,185,84,0.07)' : 'rgba(255,255,255,0.5)', border: `1px solid ${isNow ? 'rgba(29,185,84,0.2)' : 'rgba(255,255,255,0.75)'}`, transition: 'all 0.15s' }}>
+                  <div key={`${t.id}-${i}`} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '7px 9px', borderRadius: 10, background: isNow ? 'rgba(29,185,84,0.07)' : 'rgba(128,128,128,0.05)', border: `1px solid ${isNow ? 'rgba(29,185,84,0.2)' : 'rgba(255,255,255,0.75)'}`, transition: 'all 0.15s' }}>
                     {img ? (
                       <img src={img} alt="" width={36} height={36} style={{ borderRadius: 6, flexShrink: 0 }} />
                     ) : (

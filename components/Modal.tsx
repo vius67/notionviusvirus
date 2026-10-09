@@ -22,28 +22,10 @@ export default function Modal({ open, onClose, title, children, width = 480 }: P
 
   return (
     <div
-      style={{
-        position: 'fixed', inset: 0,
-        background: 'rgba(8,12,36,0.36)',
-        zIndex: 200,
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        padding: 20,
-        animation: 'fadeIn 0.18s ease',
-      }}
+      className="modal-overlay"
       onClick={e => e.target === e.currentTarget && onClose()}
     >
-      <div style={{
-        background: 'rgba(255,255,255,0.94)',
-        backdropFilter: 'blur(40px)',
-        WebkitBackdropFilter: 'blur(40px)',
-        border: '1px solid rgba(255,255,255,0.96)',
-        borderRadius: 20,
-        boxShadow: '0 24px 80px rgba(60,80,200,0.16), 0 2px 8px rgba(0,0,0,0.04)',
-        animation: 'scaleIn 0.28s cubic-bezier(0.22,1,0.36,1)',
-        width, maxWidth: '96vw',
-        maxHeight: '88vh', overflowY: 'auto',
-        padding: 28,
-      }}>
+      <div className="modal-content" style={{ width, padding: 28 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 22 }}>
           <h2 style={{ fontSize: 17, fontWeight: 650, color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>{title}</h2>
           <button onClick={onClose} style={{ border: 'none', background: 'rgba(0,0,0,0.05)', cursor: 'pointer', width: 28, height: 28, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', fontSize: 16, transition: 'all 0.15s' }}>×</button>

@@ -6,14 +6,6 @@ import Link from 'next/link'
 import { isConnected, getPlayer } from '@/lib/spotify'
 import { useSound } from '@/lib/use-sound'
 
-// ── Theme system ──────────────────────────────────────────────────────────────
-const THEMES = [
-  { id: 'light',     label: 'Default',    swatch: 'linear-gradient(135deg, #f0f1f8, #eef0ff)' },
-  { id: 'sunset',    label: 'Sunset',     swatch: 'linear-gradient(135deg, #fb923c 0%, #f43f5e 100%)' },
-  { id: 'visionpro', label: 'Vision Pro', swatch: 'linear-gradient(135deg, #f5f5f7, #e8e8ed)' },
-] as const
-type Theme = typeof THEMES[number]['id']
-
 // ── Nav items ─────────────────────────────────────────────────────────────────
 const NAV_ITEMS = [
   { href: '/dashboard',             label: 'Dashboard',   icon: IconDash,    key: 'h' },
@@ -62,8 +54,11 @@ function IconKurt({ s }: { s: number }) {
 function IconMore({ s }: { s: number }) {
   return <svg width={s} height={s} viewBox="0 0 20 20" fill="currentColor"><circle cx="4" cy="10" r="1.6"/><circle cx="10" cy="10" r="1.6"/><circle cx="16" cy="10" r="1.6"/></svg>
 }
-function IconPalette({ s }: { s: number }) {
-  return <svg width={s} height={s} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M10 2a8 8 0 100 16 4 4 0 000-8 4 4 0 014-4"/><circle cx="7" cy="9" r="1" fill="currentColor" stroke="none"/><circle cx="11" cy="6.5" r="1" fill="currentColor" stroke="none"/><circle cx="6" cy="12.5" r="1" fill="currentColor" stroke="none"/></svg>
+function IconSun({ s }: { s: number }) {
+  return <svg width={s} height={s} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><circle cx="10" cy="10" r="3.6"/><path d="M10 2.2v2.1M10 15.7v2.1M3.5 10H1.4M18.6 10h-2.1M5.1 5.1l-1.5-1.5M16.4 16.4l-1.5-1.5M14.9 5.1l1.5-1.5M3.6 16.4l1.5-1.5"/></svg>
+}
+function IconMoon({ s }: { s: number }) {
+  return <svg width={s} height={s} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M17 11.3A7.5 7.5 0 018.7 3 7 7 0 1017 11.3z"/></svg>
 }
 function IconSearch({ s }: { s: number }) {
   return <svg width={s} height={s} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="9" cy="9" r="5.5"/><path d="M15 15l-3-3"/></svg>
@@ -89,16 +84,13 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   const [showShortcuts, setShowShortcuts] = useState(false)
   const [showUser, setShowUser]       = useState(false)
   const [showMore, setShowMore]       = useState(false)
-  const [showTheme, setShowTheme]     = useState(false)
   const [gPressed, setGPressed]       = useState(false)
   const [open, setOpen]               = useState(false)
   const [isMobile, setIsMobile]       = useState(false)
-  const [theme, setThemeState]        = useState<Theme>('sunset')
+  const [night, setNight]             = useState(false)
   const gTimer      = useRef<NodeJS.Timeout | null>(null)
   const touchStartX = useRef(0)
   const touchStartY = useRef(0)
-  const canvasRef   = useRef<HTMLCanvasElement>(null)
-  const themeRef    = useRef<Theme>(theme)
   const cmdInputRef = useRef<HTMLInputElement>(null)
   const [nowPlaying, setNowPlaying]   = useState<{ name: string; artist: string; is_playing: boolean } | null>(null)
   const [showCmdK, setShowCmdK]   = useState(false)
@@ -106,74 +98,6 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   const [cmdIdx, setCmdIdx]       = useState(0)
 
   useEffect(() => { setMounted(true) }, [])
-
-  // Keep themeRef in sync so particle loop can read latest theme without re-init
-  useEffect(() => { themeRef.current = theme }, [theme])
-
-  // Particle system — runs once on mount, reads themeRef per frame for colour
-  useEffect(() => {
-    const cv = canvasRef.current
-    if (!cv) return
-    const ctx = cv.getContext('2d')
-    if (!ctx) return
-
-    let W = 0, H = 0
-    const resize = () => { W = cv.width = window.innerWidth; H = cv.height = window.innerHeight }
-    resize()
-    window.addEventListener('resize', resize)
-
-    const N = 34
-    type Pt = { x: number; y: number; r: number; vx: number; vy: number; base: number; phase: number; ps: number; depth: number }
-    const pts: Pt[] = []
-    for (let i = 0; i < N; i++) {
-      const depth = Math.random()
-      pts.push({
-        x: Math.random() * W,
-        y: Math.random() * H,
-        r: 0.8 + depth * 2.6,
-        vx: (Math.random() - 0.5) * (0.18 + depth * 0.3),
-        vy: (Math.random() - 0.5) * (0.13 + depth * 0.22),
-        base: 0.10 + depth * 0.16,
-        phase: Math.random() * Math.PI * 2,
-        ps: Math.random() * 0.0022 + 0.0006,
-        depth,
-      })
-    }
-
-    let rafId: number
-    const draw = () => {
-      ctx.clearRect(0, 0, W, H)
-      const t = themeRef.current
-      for (const p of pts) {
-        p.phase += p.ps
-        p.x += p.vx + Math.sin(p.phase) * 0.04
-        p.y += p.vy + Math.cos(p.phase * 0.7) * 0.03
-        if (p.x < -4) p.x = W + 4; if (p.x > W + 4) p.x = -4
-        if (p.y < -4) p.y = H + 4; if (p.y > H + 4) p.y = -4
-        const op = p.base * (0.75 + 0.25 * Math.sin(p.phase * 1.4))
-        // Colour per theme so dots are always visible against the bg
-        let r: number, g: number, b: number
-        if (t === 'sunset') {
-          r = 255; g = Math.round(200 - p.depth * 60); b = Math.round(180 - p.depth * 80)
-        } else if (t === 'visionpro') {
-          const v = Math.round(140 - p.depth * 60); r = v; g = v; b = v
-        } else {
-          const v = Math.round(120 - p.depth * 60); r = v; g = v; b = v + 20
-        }
-        ctx.beginPath()
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
-        ctx.fillStyle = `rgba(${r},${g},${b},${op.toFixed(3)})`
-        ctx.fill()
-      }
-      rafId = requestAnimationFrame(draw)
-    }
-    draw()
-
-    return () => {
-      window.removeEventListener('resize', resize)
-      cancelAnimationFrame(rafId)
-    }
-  }, [])
 
   // Cmd palette: focus input on open, reset on close
   useEffect(() => {
@@ -188,22 +112,21 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   // Reset selection index when search query changes
   useEffect(() => { setCmdIdx(0) }, [cmdQuery])
 
-  // Load theme
+  // Load day/night preference
   useEffect(() => {
-    const saved = localStorage.getItem('app-theme') as Theme | null
-    if (saved && THEMES.find(t => t.id === saved)) setThemeState(saved)
+    const saved = localStorage.getItem('app-night')
+    if (saved === '1') setNight(true)
   }, [])
 
-  // Apply theme to <html data-theme="...">
-  const setTheme = useCallback((t: Theme) => {
-    setThemeState(t)
-    document.documentElement.dataset.theme = t === 'light' ? '' : t
-    localStorage.setItem('app-theme', t)
-  }, [])
-
+  // Apply to <html data-theme="night">
   useEffect(() => {
-    document.documentElement.dataset.theme = theme === 'light' ? '' : theme
-  }, [theme])
+    document.documentElement.dataset.theme = night ? 'night' : ''
+    localStorage.setItem('app-night', night ? '1' : '0')
+  }, [night])
+
+  const toggleNight = useCallback(() => {
+    setNight(n => { const next = !n; next ? sound.toggleOn() : sound.toggleOff(); return next })
+  }, [sound])
 
   // Mobile detection
   useEffect(() => {
@@ -241,7 +164,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     if ((e.metaKey || e.ctrlKey) && e.key === 'k') { e.preventDefault(); setShowCmdK(s => !s); return }
     if (e.metaKey || e.ctrlKey || e.altKey) return
     if (e.key === '?') { setShowShortcuts(s => !s); return }
-    if (e.key === 'Escape') { setShowShortcuts(false); setShowUser(false); setGPressed(false); setShowMore(false); setShowTheme(false); setShowCmdK(false); return }
+    if (e.key === 'Escape') { setShowShortcuts(false); setShowUser(false); setGPressed(false); setShowMore(false); setShowCmdK(false); return }
     if (e.key === 'g' || e.key === 'G') {
       setGPressed(true)
       if (gTimer.current) clearTimeout(gTimer.current)
@@ -280,43 +203,27 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     </div>
   )
 
-  // ── Theme-derived inline styles ───────────────────────────────────────────
-  const isSunset    = theme === 'sunset'
-  const isVisionPro = theme === 'visionpro'
-
-  const themeIdx  = THEMES.findIndex(t => t.id === theme)
-  const prevTheme = () => { sound.select(); setTheme(THEMES[(themeIdx - 1 + THEMES.length) % THEMES.length].id) }
-  const nextTheme = () => { sound.select(); setTheme(THEMES[(themeIdx + 1) % THEMES.length].id) }
-
-  const navBg      = 'rgba(255,255,255,0.72)'
-  const navBorder  = 'rgba(255,255,255,0.85)'
+  // ── Theme-derived inline styles — flip with day/night via the `night` flag ──
+  const navBg      = 'var(--glass-bg)'
+  const navBorder  = 'var(--glass-border)'
   const navShadow  = 'var(--glass-shadow)'
-  const divider    = 'rgba(99,102,241,0.07)'
-  const chipBg     = 'rgba(255,255,255,0.45)'
-  const chipBorder = 'rgba(200,210,240,0.4)'
-  const hoverBg    = 'rgba(99,102,241,0.055)'
-  const activeNavBg = isSunset
-    ? 'rgba(244,63,94,0.09)'
-    : isVisionPro
-      ? 'rgba(0,113,227,0.08)'
-      : 'rgba(99,102,241,0.09)'
-  const activeNavBorder = isSunset
-    ? 'rgba(244,63,94,0.18)'
-    : isVisionPro
-      ? 'rgba(0,113,227,0.15)'
-      : 'rgba(99,102,241,0.14)'
-  const mobileBarBg     = 'rgba(255,255,255,0.85)'
-  const mobileBarBorder = 'rgba(255,255,255,0.85)'
-  const dropdownBg      = 'rgba(255,255,255,0.94)'
-  const dropdownBorder  = 'rgba(255,255,255,0.85)'
-  const currentTheme    = THEMES.find(t => t.id === theme)!
+  const divider    = 'var(--border)'
+  const chipBg     = night ? 'rgba(255,255,255,0.07)' : 'rgba(255,255,255,0.5)'
+  const chipBorder = 'var(--border)'
+  const hoverBg    = night ? 'rgba(255,255,255,0.08)' : 'rgba(99,102,241,0.06)'
+  const activeNavBg     = night ? 'rgba(99,102,241,0.16)' : 'rgba(99,102,241,0.09)'
+  const activeNavBorder = night ? 'rgba(99,102,241,0.30)' : 'rgba(99,102,241,0.16)'
+  const mobileBarBg     = 'var(--glass-bg)'
+  const mobileBarBorder = 'var(--glass-border)'
+  const dropdownBg      = night ? 'rgba(20,22,30,0.96)' : 'rgba(255,255,255,0.94)'
+  const dropdownBorder  = 'var(--glass-border)'
   const sidebarW        = open ? 228 : 60
 
   // ── Command palette ───────────────────────────────────────────────────────
-  type CmdItem = { label: string; category: string; icon: ({ s }: { s: number }) => JSX.Element; href?: string; action?: () => void; swatch?: string }
+  type CmdItem = { label: string; category: string; icon: ({ s }: { s: number }) => JSX.Element; href?: string; action?: () => void }
   const rawCmdItems: CmdItem[] = [
     ...NAV_ITEMS.map(n => ({ label: n.label, category: 'Pages', icon: n.icon, href: n.href })),
-    ...THEMES.map(t => ({ label: `${t.label} Theme`, category: 'Theme', icon: IconPalette, swatch: t.swatch, action: () => { setTheme(t.id); setShowCmdK(false) } })),
+    { label: night ? 'Switch to Day Mode' : 'Switch to Night Mode', category: 'Theme', icon: night ? IconSun : IconMoon, action: () => toggleNight() },
     { label: 'Keyboard Shortcuts', category: 'Misc', icon: IconSearch, action: () => { setShowShortcuts(true); setShowCmdK(false) } },
     { label: 'Sign Out', category: 'Account', icon: IconLogout, action: () => signOut() },
   ]
@@ -338,11 +245,6 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', position: 'relative', overflowX: 'hidden' }}>
-      <div className="grid-bg" />
-      <div className="noise-overlay" />
-
-      {/* Particle canvas — above bg, below all UI */}
-      <canvas ref={canvasRef} style={{ position: 'fixed', top: 0, right: 0, bottom: 0, left: 0, zIndex: 0, pointerEvents: 'none' }} />
 
       {/* ── DESKTOP: Vertical pill sidebar ── */}
       {!isMobile && (
@@ -353,12 +255,12 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
             position: 'fixed', left: 14, top: 14, bottom: 14, zIndex: 50,
             width: sidebarW,
             background: navBg,
-            backdropFilter: 'blur(80px) saturate(2.4)',
-            WebkitBackdropFilter: 'blur(80px) saturate(2.4)',
+            backdropFilter: 'blur(40px) saturate(1.6)',
+            WebkitBackdropFilter: 'blur(40px) saturate(1.6)',
             border: `1px solid ${navBorder}`,
             borderRadius: 24,
             boxShadow: navShadow,
-            transition: 'width 0.38s cubic-bezier(0.34,1.56,0.64,1), background 0.6s, border-color 0.6s, box-shadow 0.6s',
+            transition: 'width 0.38s cubic-bezier(0.34,1.56,0.64,1), background 0.5s, border-color 0.5s, box-shadow 0.5s',
             overflow: 'hidden', display: 'flex', flexDirection: 'column',
             padding: '14px 10px', gap: 0,
           }}
@@ -378,7 +280,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           >
             <span style={{ flexShrink: 0, display: 'flex', color: 'var(--text-muted)' }}><IconSearch s={13} /></span>
             <span style={{ fontSize: 12, color: 'var(--text-muted)', opacity: open ? 1 : 0, transition: 'opacity 0.15s', whiteSpace: 'nowrap', flex: 1, textAlign: 'left' }}>Search…</span>
-            <span style={{ fontSize: 10, padding: '1px 5px', borderRadius: 4, background: 'rgba(0,0,0,0.05)', border: `1px solid ${divider}`, color: 'var(--text-muted)', fontFamily: 'monospace', opacity: open ? 1 : 0, transition: 'opacity 0.15s', flexShrink: 0 }}>⌘K</span>
+            <span style={{ fontSize: 10, fontFamily: 'Geist Mono, monospace', padding: '1px 5px', borderRadius: 4, background: 'rgba(0,0,0,0.05)', border: `1px solid ${divider}`, color: 'var(--text-muted)', opacity: open ? 1 : 0, transition: 'opacity 0.15s', flexShrink: 0 }}>⌘K</span>
           </button>
 
           {/* Nav items */}
@@ -393,7 +295,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                   onMouseEnter={e => { if (!active) (e.currentTarget as HTMLElement).style.background = hoverBg }}
                   onMouseLeave={e => { if (!active) (e.currentTarget as HTMLElement).style.background = 'transparent' }}
                 >
-                  {active && <span style={{ position: 'absolute', left: 0, top: '50%', transform: 'translateY(-50%)', width: 3, height: 18, borderRadius: 3, background: isSunset ? 'linear-gradient(to bottom, #f43f5e, #fb923c)' : isVisionPro ? 'linear-gradient(to bottom, #0071e3, #3b8fe8)' : 'linear-gradient(to bottom, #6366f1, #a78bfa)' }} />}
+                  {active && <span style={{ position: 'absolute', left: 0, top: '50%', transform: 'translateY(-50%)', width: 3, height: 18, borderRadius: 3, background: 'linear-gradient(to bottom, #6366f1, #a78bfa)' }} />}
                   <span style={{ flexShrink: 0, display: 'flex', color: active ? 'var(--accent)' : 'currentColor', opacity: active ? 1 : 0.68 }}><Icon s={17} /></span>
                   <span style={{ opacity: open ? 1 : 0, transform: open ? 'translateX(0)' : 'translateX(-4px)', transition: 'opacity 0.18s 0.04s, transform 0.18s 0.04s', overflow: 'hidden' }}>{item.label}</span>
                 </Link>
@@ -420,18 +322,17 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
               <span style={{ fontFamily: 'Geist Mono, monospace', fontSize: 12.5, color: 'var(--text-muted)', letterSpacing: '0.04em', whiteSpace: 'nowrap', opacity: open ? 1 : 0, transition: 'opacity 0.15s' }}>{time}</span>
             </div>
 
-            {/* Theme picker — carousel */}
-            <div style={{ borderRadius: 13, background: chipBg, border: `1px solid ${chipBorder}`, flexShrink: 0, overflow: 'hidden', padding: '8px 10px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{ flexShrink: 0, display: 'flex', color: 'var(--text-muted)' }}><IconPalette s={14} /></span>
-                <span style={{ fontSize: 11.5, fontWeight: 540, color: 'var(--text-muted)', opacity: open ? 1 : 0, transition: 'opacity 0.15s', whiteSpace: 'nowrap' }}>Theme</span>
+            {/* Day / Night toggle */}
+            <button onClick={toggleNight} style={{ display: 'flex', alignItems: 'center', gap: 9, width: '100%', padding: '8px 10px', borderRadius: 13, background: chipBg, border: `1px solid ${chipBorder}`, overflow: 'hidden', flexShrink: 0, cursor: 'pointer', fontFamily: 'Geist, sans-serif', textAlign: 'left' }}
+              onMouseEnter={e => (e.currentTarget.style.background = hoverBg)}
+              onMouseLeave={e => (e.currentTarget.style.background = chipBg)}
+            >
+              <span style={{ flexShrink: 0, display: 'flex', color: 'var(--text-muted)' }}>{night ? <IconMoon s={14} /> : <IconSun s={14} />}</span>
+              <span style={{ fontSize: 11.5, fontWeight: 540, color: 'var(--text-muted)', opacity: open ? 1 : 0, transition: 'opacity 0.15s', whiteSpace: 'nowrap', flex: 1 }}>{night ? 'Night' : 'Day'}</span>
+              <div style={{ width: 30, height: 17, borderRadius: 9, background: night ? 'var(--accent)' : 'rgba(128,128,128,0.25)', position: 'relative', flexShrink: 0, opacity: open ? 1 : 0, transition: 'opacity 0.15s, background 0.2s' }}>
+                <div style={{ position: 'absolute', top: 2, left: night ? 14.5 : 2, width: 13, height: 13, borderRadius: '50%', background: 'white', boxShadow: '0 1px 3px rgba(0,0,0,0.25)', transition: 'left 0.18s' }} />
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: open ? 8 : 0, maxHeight: open ? 28 : 0, opacity: open ? 1 : 0, overflow: 'hidden', transition: 'opacity 0.18s, max-height 0.22s, margin-top 0.18s' }}>
-                <button onClick={prevTheme} style={{ width: 20, height: 20, borderRadius: 6, border: `1px solid ${chipBorder}`, background: 'none', cursor: 'pointer', fontSize: 14, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0, flexShrink: 0, lineHeight: 1 }}>‹</button>
-                <span style={{ flex: 1, fontSize: 11.5, fontWeight: 580, color: 'var(--text-secondary)', whiteSpace: 'nowrap', textAlign: 'center' }}>{currentTheme.label}</span>
-                <button onClick={nextTheme} style={{ width: 20, height: 20, borderRadius: 6, border: `1px solid ${chipBorder}`, background: 'none', cursor: 'pointer', fontSize: 14, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0, flexShrink: 0, lineHeight: 1 }}>›</button>
-              </div>
-            </div>
+            </button>
 
             {/* Sound toggle */}
             <button onClick={sound.toggleMuted} style={{ display: 'flex', alignItems: 'center', gap: 9, padding: '8px 10px', borderRadius: 13, background: chipBg, border: `1px solid ${chipBorder}`, overflow: 'hidden', flexShrink: 0, cursor: 'pointer', fontFamily: 'Geist, sans-serif', textAlign: 'left' }}
@@ -456,7 +357,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                 </div>
               </button>
               {showUser && open && (
-                <div style={{ position: 'absolute', bottom: 50, left: 0, background: dropdownBg, backdropFilter: 'blur(40px)', border: `1px solid ${dropdownBorder}`, borderRadius: 14, padding: '8px', boxShadow: '0 12px 40px rgba(80,100,200,0.18)', minWidth: 206, animation: 'scaleIn 0.18s ease', zIndex: 100 }}>
+                <div style={{ position: 'absolute', bottom: 50, left: 0, background: dropdownBg, backdropFilter: 'blur(32px)', border: `1px solid ${dropdownBorder}`, borderRadius: 14, padding: '8px', boxShadow: 'var(--glass-shadow-hover)', minWidth: 206, animation: 'scaleIn 0.18s ease', zIndex: 100 }}>
                   <div style={{ padding: '8px 10px 10px', borderBottom: `1px solid ${divider}`, marginBottom: 6 }}>
                     <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 2 }}>Signed in as</div>
                     <div style={{ fontSize: 12.5, fontWeight: 560, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user.email}</div>
@@ -472,7 +373,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
       {/* ── MOBILE: Top bar ── */}
       {isMobile && (
-        <header style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50, height: 56, background: mobileBarBg, backdropFilter: 'blur(48px) saturate(2.2)', WebkitBackdropFilter: 'blur(48px) saturate(2.2)', borderBottom: `1px solid ${mobileBarBorder}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 16px', boxShadow: '0 2px 20px rgba(80,100,200,0.08)', transition: 'background 0.6s, border-color 0.6s' }}>
+        <header style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50, height: 56, background: mobileBarBg, backdropFilter: 'blur(32px) saturate(1.5)', WebkitBackdropFilter: 'blur(32px) saturate(1.5)', borderBottom: `1px solid ${mobileBarBorder}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 16px', boxShadow: 'var(--glass-shadow)', transition: 'background 0.5s, border-color 0.5s' }}>
           <Link href="/dashboard" style={{ display: 'flex', alignItems: 'center', gap: 9, textDecoration: 'none' }}>
             <div style={{ width: 30, height: 30, borderRadius: 9, background: 'linear-gradient(135deg, #6366f1, #a78bfa)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 10px rgba(99,102,241,0.38)' }}>
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 2h4v4H2zM8 2h4v4H8zM2 8h4v4H2z" fill="white" fillOpacity=".95"/><path d="M8 8h4v4H8z" fill="white" fillOpacity=".35"/></svg>
@@ -489,41 +390,26 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
               </Link>
             )}
             {/* Sound toggle */}
-            <button onClick={sound.toggleMuted} style={{ width: 32, height: 32, borderRadius: 10, border: '1px solid rgba(200,210,240,0.5)', background: 'rgba(255,255,255,0.72)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0, color: sound.muted ? 'var(--text-muted)' : 'var(--accent)' }}>
+            <button onClick={sound.toggleMuted} style={{ width: 32, height: 32, borderRadius: 10, border: `1px solid ${chipBorder}`, background: chipBg, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0, color: sound.muted ? 'var(--text-muted)' : 'var(--accent)' }}>
               <IconSound s={15} muted={sound.muted} />
             </button>
-            {/* Theme picker button */}
-            <button onClick={() => { setShowTheme(s => !s); setShowUser(false) }} style={{ width: 32, height: 32, borderRadius: 10, border: `1px solid ${'rgba(200,210,240,0.5)'}`, background: 'rgba(255,255,255,0.72)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0, transition: 'all 0.3s' }}>
-              <div style={{ width: 16, height: 16, borderRadius: 5, background: currentTheme.swatch, boxShadow: '0 1px 5px rgba(0,0,0,0.2)' }} />
+            {/* Day/night toggle */}
+            <button onClick={toggleNight} style={{ width: 32, height: 32, borderRadius: 10, border: `1px solid ${chipBorder}`, background: chipBg, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0, color: 'var(--text-secondary)' }}>
+              {night ? <IconMoon s={15} /> : <IconSun s={15} />}
             </button>
             {/* User avatar */}
-            <button onClick={() => { setShowUser(s => !s); setShowTheme(false) }} style={{ width: 32, height: 32, borderRadius: '50%', background: 'linear-gradient(135deg, #6366f1, #a78bfa)', border: 'none', cursor: 'pointer', fontSize: 12.5, fontWeight: 700, color: 'white', boxShadow: '0 2px 8px rgba(99,102,241,0.35)' }}>
+            <button onClick={() => { setShowUser(s => !s) }} style={{ width: 32, height: 32, borderRadius: '50%', background: 'linear-gradient(135deg, #6366f1, #a78bfa)', border: 'none', cursor: 'pointer', fontSize: 12.5, fontWeight: 700, color: 'white', boxShadow: '0 2px 8px rgba(99,102,241,0.35)' }}>
               {user.email?.[0].toUpperCase()}
             </button>
           </div>
         </header>
       )}
 
-      {/* ── MOBILE: Theme panel ── */}
-      {isMobile && showTheme && (
-        <>
-          <div style={{ position: 'fixed', inset: 0, zIndex: 98 }} onClick={() => setShowTheme(false)} />
-          <div style={{ position: 'fixed', top: 64, right: 12, zIndex: 99, background: dropdownBg, backdropFilter: 'blur(48px)', border: `1px solid ${dropdownBorder}`, borderRadius: 16, padding: '14px 16px', boxShadow: '0 12px 40px rgba(80,100,200,0.2)', animation: 'scaleIn 0.18s ease', minWidth: 190 }}>
-            <p style={{ fontSize: 11, fontWeight: 640, color: 'var(--accent-mid)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>Theme</p>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <button onClick={prevTheme} style={{ width: 30, height: 30, borderRadius: 8, border: `1px solid ${'rgba(200,210,240,0.4)'}`, background: 'none', cursor: 'pointer', fontSize: 18, color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, lineHeight: 1 }}>‹</button>
-              <span style={{ flex: 1, textAlign: 'center', fontSize: 13.5, fontWeight: 600, color: 'var(--text-primary)' }}>{currentTheme.label}</span>
-              <button onClick={nextTheme} style={{ width: 30, height: 30, borderRadius: 8, border: `1px solid ${'rgba(200,210,240,0.4)'}`, background: 'none', cursor: 'pointer', fontSize: 18, color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, lineHeight: 1 }}>›</button>
-            </div>
-          </div>
-        </>
-      )}
-
       {/* ── MOBILE: User dropdown ── */}
       {isMobile && showUser && (
         <>
           <div style={{ position: 'fixed', inset: 0, zIndex: 98 }} onClick={() => setShowUser(false)} />
-          <div style={{ position: 'fixed', top: 64, right: 12, zIndex: 99, background: dropdownBg, backdropFilter: 'blur(40px)', border: `1px solid ${dropdownBorder}`, borderRadius: 16, padding: '8px', boxShadow: '0 12px 40px rgba(80,100,200,0.18)', minWidth: 200, animation: 'scaleIn 0.18s ease' }}>
+          <div style={{ position: 'fixed', top: 64, right: 12, zIndex: 99, background: dropdownBg, backdropFilter: 'blur(32px)', border: `1px solid ${dropdownBorder}`, borderRadius: 16, padding: '8px', boxShadow: 'var(--glass-shadow-hover)', minWidth: 200, animation: 'scaleIn 0.18s ease' }}>
             <div style={{ padding: '8px 10px 10px', borderBottom: `1px solid ${divider}`, marginBottom: 6 }}>
               <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 2 }}>Signed in as</div>
               <div style={{ fontSize: 12.5, fontWeight: 560, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis' }}>{user.email}</div>
@@ -536,13 +422,13 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       {/* ── MOBILE: Bottom tab bar ── */}
       {isMobile && (
         <>
-          <nav style={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 50, background: mobileBarBg, backdropFilter: 'blur(48px) saturate(2.2)', WebkitBackdropFilter: 'blur(48px) saturate(2.2)', borderTop: `1px solid ${mobileBarBorder}`, paddingBottom: 'env(safe-area-inset-bottom)', display: 'flex', alignItems: 'stretch', boxShadow: '0 -4px 24px rgba(80,100,200,0.08)', transition: 'background 0.6s' }}>
+          <nav style={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 50, background: mobileBarBg, backdropFilter: 'blur(32px) saturate(1.5)', WebkitBackdropFilter: 'blur(32px) saturate(1.5)', borderTop: `1px solid ${mobileBarBorder}`, paddingBottom: 'env(safe-area-inset-bottom)', display: 'flex', alignItems: 'stretch', boxShadow: 'var(--glass-shadow)', transition: 'background 0.5s' }}>
             {MOBILE_PRIMARY.map(item => {
               const active = pathname === item.href
               const Icon   = item.icon
               return (
                 <Link key={item.href} href={item.href} onClick={() => !active && sound.click()} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 3, padding: '10px 4px 8px', textDecoration: 'none', color: active ? 'var(--accent)' : 'var(--text-muted)', position: 'relative' }}>
-                  {active && <span style={{ position: 'absolute', top: 0, left: '25%', right: '25%', height: 2.5, borderRadius: 2, background: isSunset ? 'linear-gradient(90deg, #f43f5e, #fb923c)' : isVisionPro ? '#0071e3' : 'linear-gradient(90deg, #6366f1, #a78bfa)' }} />}
+                  {active && <span style={{ position: 'absolute', top: 0, left: '25%', right: '25%', height: 2.5, borderRadius: 2, background: 'linear-gradient(90deg, #6366f1, #a78bfa)' }} />}
                   <span style={{ opacity: active ? 1 : 0.6, transition: 'all 0.18s', transform: active ? 'scale(1.12)' : 'scale(1)' }}><Icon s={20} /></span>
                   <span style={{ fontSize: 9.5, fontWeight: active ? 640 : 450, letterSpacing: '0.01em', whiteSpace: 'nowrap' }}>{item.label}</span>
                 </Link>
@@ -557,14 +443,14 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           {showMore && (
             <>
               <div style={{ position: 'fixed', inset: 0, zIndex: 58, background: 'rgba(0,0,0,0.18)', backdropFilter: 'blur(4px)' }} onClick={() => setShowMore(false)} />
-              <div style={{ position: 'fixed', bottom: 'calc(64px + env(safe-area-inset-bottom))', left: 12, right: 12, zIndex: 59, background: dropdownBg, backdropFilter: 'blur(48px)', border: `1px solid ${dropdownBorder}`, borderRadius: 20, padding: '16px', boxShadow: '0 -8px 40px rgba(80,100,200,0.14)', animation: 'slideUp 0.26s cubic-bezier(0.34,1.56,0.64,1)' }}>
-                <p style={{ fontSize: 11, fontWeight: 640, color: 'var(--accent-mid)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>More pages</p>
+              <div style={{ position: 'fixed', bottom: 'calc(64px + env(safe-area-inset-bottom))', left: 12, right: 12, zIndex: 59, background: dropdownBg, backdropFilter: 'blur(32px)', border: `1px solid ${dropdownBorder}`, borderRadius: 20, padding: '16px', boxShadow: 'var(--glass-shadow-hover)', animation: 'slideUp 0.26s cubic-bezier(0.34,1.56,0.64,1)' }}>
+                <p style={{ fontSize: 10, fontFamily: 'Geist Mono, monospace', fontWeight: 500, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 12 }}>More pages</p>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
                   {MOBILE_MORE.map(item => {
                     const active = pathname === item.href
                     const Icon   = item.icon
                     return (
-                      <Link key={item.href} href={item.href} onClick={() => { sound.click(); setShowMore(false) }} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 7, padding: '14px 8px', borderRadius: 14, textDecoration: 'none', background: active ? activeNavBg : ('rgba(99,102,241,0.04)'), border: `1px solid ${active ? activeNavBorder : 'transparent'}`, color: active ? 'var(--accent-deep)' : 'var(--text-secondary)' }}>
+                      <Link key={item.href} href={item.href} onClick={() => { sound.click(); setShowMore(false) }} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 7, padding: '14px 8px', borderRadius: 14, textDecoration: 'none', background: active ? activeNavBg : 'rgba(99,102,241,0.04)', border: `1px solid ${active ? activeNavBorder : 'transparent'}`, color: active ? 'var(--accent-deep)' : 'var(--text-secondary)' }}>
                         <span style={{ color: active ? 'var(--accent)' : 'var(--text-muted)' }}><Icon s={22} /></span>
                         <span style={{ fontSize: 11.5, fontWeight: active ? 620 : 460, textAlign: 'center' }}>{item.label}</span>
                       </Link>
@@ -594,7 +480,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
               <button onClick={() => setShowShortcuts(false)} style={{ border: 'none', background: 'none', cursor: 'pointer', fontSize: 18, color: 'var(--text-muted)' }}>✕</button>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-              <p style={{ fontSize: 11, fontWeight: 640, color: 'var(--accent-mid)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>Navigation (press g then key)</p>
+              <p className="page-eyebrow" style={{ marginBottom: 4 }}>Navigation (press g then key)</p>
               {NAV_ITEMS.map(item => (
                 <div key={item.key} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 12px', background: 'rgba(99,102,241,0.04)', borderRadius: 10 }}>
                   <span style={{ fontSize: 13.5, color: 'var(--text-secondary)' }}>{item.label}</span>
@@ -612,7 +498,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       {showCmdK && (
         <>
           <div style={{ position: 'fixed', top: 0, right: 0, bottom: 0, left: 0, zIndex: 800, background: 'rgba(4,8,32,0.38)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)' }} onClick={() => setShowCmdK(false)} />
-          <div style={{ position: 'fixed', top: '14%', left: '50%', transform: 'translateX(-50%)', zIndex: 801, width: 'min(560px, calc(100vw - 24px))', background: dropdownBg, border: `1px solid ${dropdownBorder}`, borderRadius: 22, overflow: 'hidden', boxShadow: '0 28px 80px rgba(60,80,180,0.26), 0 0 0 1px rgba(99,102,241,0.1)', animation: 'cmdIn 0.22s cubic-bezier(0.34,1.2,0.64,1)' }}>
+          <div style={{ position: 'fixed', top: '14%', left: '50%', transform: 'translateX(-50%)', zIndex: 801, width: 'min(560px, calc(100vw - 24px))', background: dropdownBg, border: `1px solid ${dropdownBorder}`, borderRadius: 22, overflow: 'hidden', boxShadow: 'var(--glass-shadow-hover)', animation: 'cmdIn 0.22s cubic-bezier(0.34,1.2,0.64,1)' }}>
             {/* Search row */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '14px 16px', borderBottom: `1px solid ${divider}` }}>
               <span style={{ display: 'flex', color: 'rgba(100,110,150,0.5)', flexShrink: 0 }}><IconSearch s={17} /></span>
@@ -621,10 +507,10 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                 value={cmdQuery}
                 onChange={e => setCmdQuery(e.target.value)}
                 onKeyDown={handleCmdKey}
-                placeholder="Search pages, themes, actions…"
+                placeholder="Search pages, actions…"
                 style={{ flex: 1, border: 'none', background: 'none', outline: 'none', fontSize: 15, color: 'var(--text-primary)', fontFamily: 'Geist, sans-serif', caretColor: 'var(--accent)' }}
               />
-              <span style={{ fontSize: 10, padding: '2px 6px', borderRadius: 5, border: `1px solid ${divider}`, color: 'var(--text-muted)', fontFamily: 'monospace', background: 'rgba(0,0,0,0.04)', whiteSpace: 'nowrap', flexShrink: 0 }}>ESC</span>
+              <span style={{ fontSize: 10, fontFamily: 'Geist Mono, monospace', padding: '2px 6px', borderRadius: 5, border: `1px solid ${divider}`, color: 'var(--text-muted)', background: 'rgba(0,0,0,0.04)', whiteSpace: 'nowrap', flexShrink: 0 }}>ESC</span>
             </div>
             {/* Results */}
             <div style={{ maxHeight: 380, overflowY: 'auto', padding: '6px' }}>
@@ -639,19 +525,16 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                       const Icon = item.icon
                       return (
                         <div key={item.label + i}>
-                          {showCat && <div style={{ padding: '8px 10px 2px', fontSize: 10, fontWeight: 640, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>{item.category}</div>}
+                          {showCat && <div className="page-eyebrow" style={{ padding: '8px 10px 2px', marginBottom: 0 }}>{item.category}</div>}
                           <div
                             onMouseEnter={() => setCmdIdx(i)}
                             onClick={() => { sound.click(); if (item.href) { router.push(item.href); setShowCmdK(false) } else if (item.action) item.action() }}
-                            style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 10px', borderRadius: 11, cursor: 'pointer', background: isActive ? ('rgba(99,102,241,0.08)') : 'transparent', transition: 'background 0.08s' }}
+                            style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 10px', borderRadius: 11, cursor: 'pointer', background: isActive ? 'rgba(99,102,241,0.08)' : 'transparent', transition: 'background 0.08s' }}
                           >
-                            <div style={{ width: 32, height: 32, borderRadius: 9, background: isActive ? ('rgba(99,102,241,0.12)') : ('rgba(0,0,0,0.04)'), display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'background 0.08s' }}>
-                              {item.swatch
-                                ? <div style={{ width: 14, height: 14, borderRadius: 4, background: item.swatch, boxShadow: '0 1px 4px rgba(0,0,0,0.18)' }} />
-                                : <span style={{ color: isActive ? 'var(--accent)' : 'var(--text-muted)', transition: 'color 0.08s', display: 'flex' }}><Icon s={15} /></span>
-                              }
+                            <div style={{ width: 32, height: 32, borderRadius: 9, background: isActive ? 'rgba(99,102,241,0.12)' : 'rgba(0,0,0,0.04)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'background 0.08s' }}>
+                              <span style={{ color: isActive ? 'var(--accent)' : 'var(--text-muted)', transition: 'color 0.08s', display: 'flex' }}><Icon s={15} /></span>
                             </div>
-                            <span style={{ fontSize: 13.5, fontWeight: isActive ? 540 : 430, color: isActive ? ('var(--text-primary)') : 'var(--text-secondary)', flex: 1, transition: 'color 0.08s' }}>{item.label}</span>
+                            <span style={{ fontSize: 13.5, fontWeight: isActive ? 540 : 430, color: isActive ? 'var(--text-primary)' : 'var(--text-secondary)', flex: 1, transition: 'color 0.08s' }}>{item.label}</span>
                             {item.href && <span style={{ fontSize: 12, color: 'var(--accent-mid)', opacity: isActive ? 1 : 0, transition: 'opacity 0.08s' }}>→</span>}
                           </div>
                         </div>

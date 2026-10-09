@@ -233,11 +233,11 @@ export default function KurtPage() {
               fontSize: 12.5, fontWeight: 540, fontFamily: 'Geist, sans-serif',
               background: subjFilter === s
                 ? (s === 'all' ? '#6366f1' : subjectColor(s))
-                : 'rgba(255,255,255,0.7)',
+                : 'rgba(128,128,128,0.07)',
               color: subjFilter === s ? 'white' : 'var(--text-secondary)',
               boxShadow: subjFilter === s ? `0 2px 10px ${s === 'all' ? 'rgba(99,102,241,0.3)' : subjectColor(s) + '44'}` : '0 1px 4px rgba(0,0,0,0.06)',
               transition: 'all 0.18s ease',
-              border: subjFilter === s ? 'none' : '1px solid rgba(200,210,240,0.5)',
+              border: subjFilter === s ? 'none' : '1px solid var(--border)',
             }}>
               {s === 'all' ? 'All subjects' : s}
             </button>
@@ -303,9 +303,9 @@ export default function KurtPage() {
               const due = getDueInfo(item.due_date)
               const color = subjectColor(item.subject)
               return (
-                <div key={item.id} style={{ display: 'flex', alignItems: 'flex-start', gap: 10, padding: '10px 10px', borderRadius: 12, background: item.completed ? 'transparent' : 'rgba(255,255,255,0.6)', border: '1px solid', borderColor: item.completed ? 'transparent' : 'rgba(255,255,255,0.9)', transition: 'all 0.18s', opacity: deletingHw === item.id ? 0.4 : 1, group: 'hw-item' } as React.CSSProperties}
-                  onMouseEnter={e => { if (!item.completed) (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.85)' }}
-                  onMouseLeave={e => { if (!item.completed) (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.6)' }}
+                <div key={item.id} style={{ display: 'flex', alignItems: 'flex-start', gap: 10, padding: '10px 10px', borderRadius: 12, background: item.completed ? 'transparent' : 'rgba(128,128,128,0.06)', border: '1px solid', borderColor: item.completed ? 'transparent' : 'var(--glass-border)', transition: 'all 0.18s', opacity: deletingHw === item.id ? 0.4 : 1, group: 'hw-item' } as React.CSSProperties}
+                  onMouseEnter={e => { if (!item.completed) (e.currentTarget as HTMLElement).style.background = 'rgba(128,128,128,0.12)' }}
+                  onMouseLeave={e => { if (!item.completed) (e.currentTarget as HTMLElement).style.background = 'rgba(128,128,128,0.06)' }}
                 >
                   {/* Checkbox */}
                   <button onClick={() => toggleHw(item.id, item.completed)} style={{ marginTop: 1, width: 18, height: 18, borderRadius: '50%', border: `1.5px solid ${item.completed ? color : 'rgba(99,102,241,0.3)'}`, background: item.completed ? color : 'transparent', cursor: 'pointer', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.18s', boxShadow: item.completed ? `0 2px 8px ${color}44` : 'none' }}>
@@ -405,9 +405,9 @@ export default function KurtPage() {
               const pct = getPct(paper.score, paper.max_score)
               const color = subjectColor(paper.subject)
               return (
-                <div key={paper.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 10px', borderRadius: 12, background: 'rgba(255,255,255,0.6)', border: '1px solid rgba(255,255,255,0.9)', transition: 'all 0.18s', opacity: deletingP === paper.id ? 0.4 : 1 }}
-                  onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.85)'}
-                  onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.6)'}
+                <div key={paper.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 10px', borderRadius: 12, background: 'rgba(128,128,128,0.06)', border: '1px solid var(--glass-border)', transition: 'all 0.18s', opacity: deletingP === paper.id ? 0.4 : 1 }}
+                  onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = 'rgba(128,128,128,0.12)'}
+                  onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = 'rgba(128,128,128,0.06)'}
                 >
                   {/* Score ring */}
                   <div style={{ flexShrink: 0, width: 42, height: 42, borderRadius: '50%', border: `2.5px solid ${pct != null ? pctColor(pct) : 'rgba(148,163,184,0.3)'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', background: pct != null ? pctColor(pct) + '12' : 'rgba(148,163,184,0.06)' }}>
@@ -477,7 +477,7 @@ export default function KurtPage() {
                 : null
               const color = subjectColor(subj)
               return (
-                <button key={subj} onClick={() => setSubjFilter(subjFilter === subj ? 'all' : subj)} style={{ textAlign: 'left', padding: '14px', borderRadius: 14, border: `1.5px solid ${subjFilter === subj ? color : 'rgba(200,210,240,0.4)'}`, background: subjFilter === subj ? color + '10' : 'rgba(255,255,255,0.5)', cursor: 'pointer', transition: 'all 0.18s', fontFamily: 'Geist, sans-serif' }}>
+                <button key={subj} onClick={() => setSubjFilter(subjFilter === subj ? 'all' : subj)} style={{ textAlign: 'left', padding: '14px', borderRadius: 14, border: `1.5px solid ${subjFilter === subj ? color : 'var(--border)'}`, background: subjFilter === subj ? color + '10' : 'rgba(128,128,128,0.05)', cursor: 'pointer', transition: 'all 0.18s', fontFamily: 'Geist, sans-serif' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
                     <div style={{ width: 8, height: 8, borderRadius: '50%', background: color, flexShrink: 0 }} />
                     <span style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--text-primary)' }}>{subj}</span>
