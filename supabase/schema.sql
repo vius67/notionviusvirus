@@ -20,6 +20,7 @@ create table todos (
   due_date date,
   priority text check (priority in ('low','medium','high')),
   completed boolean default false,
+  status text not null default 'todo',
   created_at timestamptz default now()
 );
 
@@ -27,13 +28,29 @@ create table todos (
 create table past_papers (
   id uuid primary key default gen_random_uuid(),
   user_id uuid references auth.users(id) on delete cascade,
+  name text,
   subject text not null,
   year int,
   score numeric,
   max_score numeric,
   notes text,
   completed_at date,
+  attachment_path text,
   created_at timestamptz default now()
+);
+
+-- Daily check-ins (dashboard streak tracker)
+create table daily_checkins (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references auth.users(id) on delete cascade,
+  date date not null,
+  maths boolean default false,
+  ucat boolean default false,
+  science boolean default false,
+  kurt boolean default false,
+  beam boolean default false,
+  enterprise boolean default false,
+  unique (user_id, date)
 );
 
 -- Study Sessions
@@ -89,6 +106,7 @@ alter table study_sessions enable row level security;
 alter table calendar_events enable row level security;
 alter table notes enable row level security;
 alter table sentral_sync enable row level security;
+alter table daily_checkins enable row level security;
 
 create policy "own data" on homework for all using (auth.uid() = user_id);
 create policy "own data" on todos for all using (auth.uid() = user_id);
@@ -96,6 +114,16 @@ create policy "own data" on past_papers for all using (auth.uid() = user_id);
 create policy "own data" on study_sessions for all using (auth.uid() = user_id);
 create policy "own data" on calendar_events for all using (auth.uid() = user_id);
 create policy "own data" on notes for all using (auth.uid() = user_id);
+create policy "own data" on daily_checkins for all using (auth.uid() = user_id);
 
 -- client can read its own row (to show status/timetable) but only the server (service role) may write cookie_string
 create policy "read own sentral sync" on sentral_sync for select using (auth.uid() = user_id);
+
+-- Storage bucket for past-paper attachments (private, per-user folders: <user_id>/<paper_id>.<ext>)
+insert into storage.buckets (id, name, public)
+values ('past-papers', 'past-papers', false)
+on conflict (id) do nothing;
+
+create policy "own past paper files" on storage.objects for all
+  using (bucket_id = 'past-papers' and (storage.foldername(name))[1] = auth.uid()::text)
+  with check (bucket_id = 'past-papers' and (storage.foldername(name))[1] = auth.uid()::text);
